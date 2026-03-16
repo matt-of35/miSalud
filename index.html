@@ -7,11 +7,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mi Salud">
-<meta name="description" content="Seguimiento personal de resultados médicos">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-152.png">
-<link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png">
-<link rel="apple-touch-icon" sizes="512x512" href="icons/icon-512.png">
 <title>Mi Salud</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
@@ -21,14 +18,15 @@
   --blue-50:#E6F1FB;--blue-100:#B5D4F4;--blue-400:#378ADD;--blue-800:#0C447C;
   --red-50:#FCEBEB;--red-100:#F7C1C1;--red-400:#E24B4A;--red-800:#791F1F;
   --amber-50:#FAEEDA;--amber-100:#FAC775;--amber-400:#BA7517;--amber-800:#633806;
-  --gray-50:#F1EFE8;--gray-100:#D3D1C7;--gray-200:#B4B2A9;--gray-400:#888780;--gray-800:#444441;
-  --accent:#1D9E75;--bg:#f0f4f2;--card:#ffffff;--text:#1a1a1a;--text2:#666;--border:rgba(0,0,0,0.09);
+  --purple-50:#EEEDFE;--purple-100:#CECBF6;--purple-400:#7F77DD;--purple-800:#3C3489;
+  --gray-50:#F1EFE8;--gray-100:#D3D1C7;--gray-400:#888780;--gray-800:#444441;
+  --accent:#1D9E75;--bg:#f0f4f2;--card:#fff;--text:#1a1a1a;--text2:#666;--border:rgba(0,0,0,0.09);
 }
 html,body{height:100%;font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;}
-#app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto;background:var(--bg);position:relative;}
+#app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto;background:var(--bg);}
 .screen{display:none;flex-direction:column;height:100%;overflow:hidden;}
 .screen.active{display:flex;}
-.header{background:var(--accent);color:white;padding:env(safe-area-inset-top,16px) 20px 20px;padding-top:calc(env(safe-area-inset-top,0px) + 14px);flex-shrink:0;}
+.header{background:var(--accent);color:white;padding:calc(env(safe-area-inset-top,0px)+14px) 20px 20px;flex-shrink:0;}
 .header h1{font-size:22px;font-weight:600;margin-top:2px;}
 .header p{font-size:13px;opacity:0.82;}
 .header-row{display:flex;align-items:center;gap:10px;margin-bottom:2px;}
@@ -37,72 +35,60 @@ html,body{height:100%;font-family:'DM Sans',system-ui,sans-serif;background:var(
 .curve::after{content:'';position:absolute;bottom:0;left:0;right:0;height:18px;background:var(--bg);border-radius:18px 18px 0 0;}
 .content{flex:1;overflow-y:auto;padding:14px;-webkit-overflow-scrolling:touch;}
 .nav{background:var(--card);border-top:0.5px solid var(--border);display:flex;padding:6px 0;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px));flex-shrink:0;}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;cursor:pointer;font-family:inherit;font-size:9px;color:var(--text2);padding:4px 0;}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;cursor:pointer;font-family:inherit;font-size:8px;color:var(--text2);padding:3px 0;}
 .nav-btn.active{color:var(--accent);}
-.nav-icon{font-size:19px;line-height:1;}
+.nav-icon{font-size:17px;line-height:1;}
 .card{background:var(--card);border-radius:16px;border:0.5px solid var(--border);padding:14px;margin-bottom:10px;}
-.quick-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
-.stat-card{background:var(--card);border-radius:14px;padding:13px;border:0.5px solid var(--border);text-align:center;}
-.stat-icon{font-size:20px;margin-bottom:4px;}
-.stat-value{font-size:20px;font-weight:600;}
-.stat-label{font-size:11px;color:var(--text2);margin-top:1px;}
 .section-title{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;}
-.exam-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:0.5px solid var(--border);cursor:pointer;}
-.exam-row:last-child{border-bottom:none;}
-.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.dot-ok{background:var(--teal-400);}
-.dot-warn{background:var(--amber-400);}
-.dot-high{background:var(--red-400);}
-.exam-info{flex:1;}
-.exam-name{font-size:14px;font-weight:500;}
-.exam-date{font-size:11px;color:var(--text2);margin-top:1px;}
-.exam-val{font-size:14px;font-weight:600;}
-.val-ok{color:var(--teal-600);}
-.val-warn{color:var(--amber-400);}
-.val-high{color:var(--red-400);}
-.form-group{margin-bottom:12px;}
-.form-label{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:0.3px;}
-.form-input{width:100%;padding:11px 13px;border:0.5px solid rgba(0,0,0,0.18);border-radius:11px;font-size:15px;font-family:inherit;background:var(--card);color:var(--text);outline:none;-webkit-appearance:none;}
-.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(29,158,117,0.13);}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:32px;}
-.btn-primary{width:100%;background:var(--accent);color:white;border:none;border-radius:13px;padding:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:6px;}
-.btn-secondary{width:100%;background:transparent;color:var(--accent);border:1.5px solid var(--accent);border-radius:13px;padding:12px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;margin-top:8px;}
-.btn-danger{width:100%;background:transparent;color:var(--red-400);border:1.5px solid var(--red-400);border-radius:13px;padding:12px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;margin-top:8px;}
-.btn-small{padding:7px 13px;border-radius:9px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;border:none;background:var(--accent);color:white;}
-.category-pills{display:flex;flex-wrap:wrap;gap:7px;margin-top:5px;}
-.pill{padding:6px 13px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid rgba(0,0,0,0.15);background:var(--card);color:var(--text2);font-family:inherit;}
-.pill.selected{background:var(--teal-50);color:var(--teal-600);border-color:var(--teal-400);}
-.new-option-box{display:none;margin-top:9px;background:var(--teal-50);border-radius:11px;padding:11px;border:1px solid var(--teal-100);}
-.new-option-box label{font-size:12px;color:var(--teal-600);font-weight:600;display:block;margin-bottom:6px;}
-.new-option-row{display:flex;gap:8px;align-items:center;}
-.filter-tabs{display:flex;gap:7px;margin-bottom:12px;overflow-x:auto;padding-bottom:3px;scrollbar-width:none;}
-.filter-tabs::-webkit-scrollbar{display:none;}
-.tab{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid rgba(0,0,0,0.12);background:var(--card);color:var(--text2);white-space:nowrap;font-family:inherit;}
-.tab.active{background:var(--accent);color:white;border-color:var(--accent);}
-.result-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:0.5px solid var(--border);cursor:pointer;}
-.result-item:last-child{border-bottom:none;}
-.result-date-col{text-align:center;min-width:44px;}
-.result-month{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;}
-.result-day{font-size:20px;font-weight:600;line-height:1;}
-.result-info{flex:1;}
-.result-name{font-size:14px;font-weight:500;}
-.result-sub{font-size:11px;color:var(--text2);margin-top:1px;}
 .badge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;}
 .badge-ok{background:var(--teal-50);color:var(--teal-600);}
 .badge-warn{background:var(--amber-50);color:var(--amber-400);}
 .badge-high{background:var(--red-50);color:var(--red-400);}
+.badge-pos{background:var(--red-50);color:var(--red-400);}
+.badge-neg{background:var(--teal-50);color:var(--teal-600);}
+.badge-nr{background:var(--teal-50);color:var(--teal-600);}
+.badge-info{background:var(--blue-50);color:var(--blue-400);}
+.badge-purple{background:var(--purple-50);color:var(--purple-400);}
+.form-group{margin-bottom:12px;}
+.form-label{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:0.3px;}
+.form-input{width:100%;padding:11px 13px;border:0.5px solid rgba(0,0,0,0.18);border-radius:11px;font-size:15px;font-family:inherit;background:var(--card);color:var(--text);outline:none;-webkit-appearance:none;}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(29,158,117,0.13);}
+textarea.form-input{resize:vertical;min-height:90px;line-height:1.5;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:32px;}
+.btn-primary{width:100%;background:var(--accent);color:white;border:none;border-radius:13px;padding:13px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:6px;}
+.btn-secondary{width:100%;background:transparent;color:var(--accent);border:1.5px solid var(--accent);border-radius:13px;padding:11px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;margin-top:6px;}
+.btn-danger{width:100%;background:transparent;color:var(--red-400);border:1.5px solid var(--red-400);border-radius:13px;padding:11px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;margin-top:6px;}
+.btn-small{padding:7px 13px;border-radius:9px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;border:none;background:var(--accent);color:white;}
+.pill{padding:6px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid rgba(0,0,0,0.15);background:var(--card);color:var(--text2);font-family:inherit;}
+.pill.selected{background:var(--teal-50);color:var(--teal-600);border-color:var(--teal-400);}
+.pills-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px;}
+.filter-tabs{display:flex;gap:7px;margin-bottom:12px;overflow-x:auto;padding-bottom:3px;scrollbar-width:none;}
+.filter-tabs::-webkit-scrollbar{display:none;}
+.tab{padding:6px 13px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid rgba(0,0,0,0.12);background:var(--card);color:var(--text2);white-space:nowrap;font-family:inherit;}
+.tab.active{background:var(--accent);color:white;border-color:var(--accent);}
+.result-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:0.5px solid var(--border);cursor:pointer;}
+.result-item:last-child{border-bottom:none;}
+.result-date-col{text-align:center;min-width:42px;}
+.result-month{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;}
+.result-day{font-size:19px;font-weight:600;line-height:1;}
+.result-info{flex:1;}
+.result-name{font-size:14px;font-weight:500;}
+.result-sub{font-size:11px;color:var(--text2);margin-top:1px;}
 .range-bar{height:8px;border-radius:4px;background:var(--gray-100);position:relative;margin:14px 0 6px;}
 .range-fill{position:absolute;height:100%;border-radius:4px;background:var(--teal-100);}
 .range-dot{position:absolute;width:16px;height:16px;border-radius:50%;background:var(--teal-400);top:-4px;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.2);}
 .range-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);}
-.mini-bars{display:flex;gap:5px;align-items:flex-end;height:52px;margin-top:10px;}
-.mini-bar{flex:1;border-radius:3px 3px 0 0;background:var(--teal-100);min-width:18px;}
+.mini-bars{display:flex;gap:5px;align-items:flex-end;height:50px;margin-top:10px;}
+.mini-bar{flex:1;border-radius:3px 3px 0 0;background:var(--teal-100);min-width:16px;}
 .mini-bar.current{background:var(--teal-400);}
 .mini-labels{display:flex;gap:5px;margin-top:3px;}
 .mini-labels span{flex:1;text-align:center;font-size:9px;color:var(--text2);}
 .alarm-card{border-left:3px solid var(--red-400);border-radius:0 12px 12px 0;background:var(--card);padding:11px 13px;margin-bottom:8px;border-top:0.5px solid var(--border);border-right:0.5px solid var(--border);border-bottom:0.5px solid var(--border);}
 .alarm-card.warn{border-left-color:var(--amber-400);}
+.alarm-card.info{border-left-color:var(--blue-400);}
+.alarm-card.purple{border-left-color:var(--purple-400);}
 .alarm-title{font-size:14px;font-weight:600;}
 .alarm-sub{font-size:12px;color:var(--text2);margin-top:2px;}
 .alarm-action{font-size:12px;color:var(--accent);font-weight:500;margin-top:5px;}
@@ -122,18 +108,71 @@ select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://
 .rec-card.high .rec-body{color:var(--red-800);}
 .rec-tips{margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(0,0,0,0.08);}
 .rec-tip{font-size:12px;padding:3px 0;display:flex;gap:6px;line-height:1.5;}
-.toast{position:fixed;bottom:calc(70px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(10px);background:var(--teal-800);color:var(--teal-50);border-radius:12px;padding:11px 22px;font-size:14px;font-weight:500;text-align:center;opacity:0;transition:all 0.3s;pointer-events:none;z-index:999;white-space:nowrap;}
+.toast{position:fixed;bottom:calc(68px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(10px);background:var(--teal-800);color:var(--teal-50);border-radius:12px;padding:10px 20px;font-size:14px;font-weight:500;text-align:center;opacity:0;transition:all 0.3s;pointer-events:none;z-index:999;white-space:nowrap;max-width:90vw;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-.empty-state{text-align:center;padding:30px 14px;color:var(--text2);font-size:14px;}
-.empty-icon{font-size:36px;margin-bottom:10px;}
-.ref-info{background:var(--teal-50);border-radius:10px;padding:9px 12px;font-size:12px;color:var(--teal-600);margin-bottom:10px;}
+.empty-state{text-align:center;padding:28px 14px;color:var(--text2);font-size:14px;}
+.empty-icon{font-size:34px;margin-bottom:10px;}
 .notice{background:var(--blue-50);border-radius:13px;padding:12px 14px;border:0.5px solid var(--blue-100);}
-.notice-title{font-size:12px;font-weight:600;color:var(--blue-800);margin-bottom:4px;}
+.notice-title{font-size:12px;font-weight:600;color:var(--blue-800);margin-bottom:3px;}
 .notice-body{font-size:12px;color:var(--blue-800);line-height:1.6;}
 .chart-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
-.chart-bar{width:100%;border-radius:3px 3px 0 0;min-width:18px;}
+.chart-bar{width:100%;border-radius:3px 3px 0 0;min-width:16px;}
 .chart-val{font-size:9px;font-weight:600;}
 .chart-lbl{font-size:8px;color:var(--text2);text-align:center;}
+/* HOME summary cards */
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.summ-card{background:var(--card);border-radius:14px;padding:12px;border:0.5px solid var(--border);cursor:pointer;transition:transform 0.1s;}
+.summ-card:active{transform:scale(0.97);}
+.summ-icon{font-size:22px;margin-bottom:5px;}
+.summ-title{font-size:12px;font-weight:600;color:var(--text);}
+.summ-sub{font-size:11px;color:var(--text2);margin-top:2px;}
+.summ-status{display:flex;align-items:center;gap:5px;margin-top:6px;}
+.summ-dot{width:8px;height:8px;border-radius:50%;}
+/* Import */
+.drop-zone{border:2px dashed var(--teal-100);border-radius:16px;padding:28px 16px;text-align:center;cursor:pointer;background:var(--card);margin-bottom:12px;}
+.drop-zone.dragover{border-color:var(--teal-400);background:var(--teal-50);}
+.file-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card);border-radius:12px;border:0.5px solid var(--border);margin-bottom:8px;}
+.file-info{flex:1;min-width:0;}
+.file-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.file-size{font-size:11px;color:var(--text2);}
+.file-remove{background:none;border:none;cursor:pointer;font-size:18px;color:var(--gray-400);padding:2px 6px;}
+.progress-wrap{background:var(--teal-50);border-radius:12px;padding:14px;margin-bottom:12px;}
+.progress-bar-bg{height:6px;background:var(--teal-100);border-radius:3px;overflow:hidden;margin:8px 0;}
+.progress-bar-fill{height:100%;background:var(--teal-400);border-radius:3px;transition:width 0.3s;}
+.preview-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:0.5px solid var(--border);}
+.preview-item:last-child{border-bottom:none;}
+.preview-check{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--teal-400);background:var(--teal-50);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:13px;}
+.preview-check.checked{background:var(--teal-400);color:white;}
+.api-key-wrap{position:relative;}
+.api-key-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--text2);}
+.warning-box{background:var(--amber-50);border-radius:12px;padding:11px 13px;border:0.5px solid var(--amber-100);margin-bottom:12px;}
+.warning-title{font-size:12px;font-weight:600;color:var(--amber-800);margin-bottom:3px;}
+.warning-body{font-size:12px;color:var(--amber-800);line-height:1.6;}
+/* Calendar */
+.cal-month{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin:10px 0;}
+.cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:12px;border-radius:8px;cursor:pointer;position:relative;}
+.cal-day.empty{pointer-events:none;}
+.cal-day.today{background:var(--teal-50);color:var(--teal-600);font-weight:700;}
+.cal-day.has-event{background:var(--teal-400);color:white;font-weight:600;}
+.cal-day.has-event.urgent{background:var(--red-400);}
+.cal-day.has-event.warn{background:var(--amber-400);}
+.cal-day.past{color:var(--gray-400);}
+.cal-header{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px;}
+.cal-header span{text-align:center;font-size:10px;font-weight:600;color:var(--text2);}
+.cal-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.cal-nav-btn{background:none;border:0.5px solid var(--border);border-radius:8px;padding:5px 12px;cursor:pointer;font-family:inherit;font-size:13px;}
+.event-dot{width:5px;height:5px;border-radius:50%;background:white;position:absolute;bottom:3px;left:50%;transform:translateX(-50%);}
+/* Ophtho */
+.ophtho-table{width:100%;border-collapse:collapse;font-size:13px;}
+.ophtho-table th{font-size:11px;font-weight:600;color:var(--text2);padding:4px 8px;text-align:center;background:var(--bg);border-radius:6px;}
+.ophtho-table td{padding:6px 8px;text-align:center;border-bottom:0.5px solid var(--border);}
+.ophtho-table input{width:100%;padding:5px 6px;border:0.5px solid rgba(0,0,0,0.15);border-radius:7px;font-size:13px;font-family:inherit;text-align:center;background:var(--card);color:var(--text);outline:none;}
+.ophtho-table input:focus{border-color:var(--accent);}
+/* Study card */
+.study-card{background:var(--card);border-radius:14px;border:0.5px solid var(--border);padding:14px;margin-bottom:10px;cursor:pointer;}
+.study-header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+.study-type{font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;background:var(--purple-50);color:var(--purple-400);}
+.study-body{font-size:13px;color:var(--text2);margin-top:8px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 #install-banner{display:none;background:var(--teal-800);color:white;padding:12px 16px;text-align:center;font-size:13px;line-height:1.5;flex-shrink:0;}
 #install-banner button{background:white;color:var(--teal-800);border:none;border-radius:8px;padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;margin-top:6px;font-family:inherit;}
 </style>
@@ -152,69 +191,89 @@ select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://
   <div class="header"><p id="greeting">Buenos días</p><h1>Mi Salud</h1></div>
   <div class="curve"></div>
   <div class="content">
-    <div class="quick-stats">
-      <div class="stat-card"><div class="stat-icon">🩺</div><div class="stat-value" id="h-total">0</div><div class="stat-label">Resultados</div></div>
-      <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-value" id="h-date">—</div><div class="stat-label">Último chequeo</div></div>
-    </div>
+    <div id="home-stats" class="summary-grid"></div>
     <div id="alarms-home"></div>
-    <div class="section-title">Últimos resultados</div>
-    <div class="card" id="recent-results"></div>
-    <button class="btn-primary" onclick="nav('add')">+ Agregar resultado</button>
+    <div class="section-title">Acceso rápido</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+      <button class="btn-secondary" style="margin:0;font-size:13px;" onclick="nav('add')">➕ Agregar resultado</button>
+      <button class="btn-secondary" style="margin:0;font-size:13px;" onclick="nav('import')">📄 Importar PDF</button>
+      <button class="btn-secondary" style="margin:0;font-size:13px;" onclick="nav('studies')">🔬 Estudios</button>
+      <button class="btn-secondary" style="margin:0;font-size:13px;" onclick="nav('ophtho')">👁 Oftalmología</button>
+    </div>
   </div>
   <div class="nav">
     <button class="nav-btn active" onclick="nav('home')"><span class="nav-icon">🏠</span>Inicio</button>
     <button class="nav-btn" onclick="nav('history')"><span class="nav-icon">📋</span>Historial</button>
+    <button class="nav-btn" onclick="nav('calendar')"><span class="nav-icon">📅</span>Calendario</button>
     <button class="nav-btn" onclick="nav('charts')"><span class="nav-icon">📈</span>Gráficos</button>
     <button class="nav-btn" onclick="nav('recs')"><span class="nav-icon">💡</span>Consejos</button>
-    <button class="nav-btn" onclick="nav('add')"><span class="nav-icon">➕</span>Agregar</button>
+    <button class="nav-btn" onclick="nav('more')"><span class="nav-icon">⋯</span>Más</button>
   </div>
 </div>
 
-<!-- ADD -->
+<!-- ADD RESULT -->
 <div class="screen" id="screen-add">
   <div class="header"><div class="header-row"><button class="back-btn" onclick="nav('home')">← Volver</button><h1>Nuevo resultado</h1></div></div>
   <div class="curve"></div>
   <div class="content">
     <div class="card">
       <div class="form-group">
+        <label class="form-label">Tipo de resultado</label>
+        <select class="form-input" id="result-type" onchange="onResultTypeChange()">
+          <option value="numeric">Numérico (ej. Glucosa 95 mg/dL)</option>
+          <option value="qualitative">Cualitativo (ej. VDRL No Reactivo)</option>
+        </select>
+      </div>
+      <div class="form-group">
         <label class="form-label">Categoría</label>
-        <div class="category-pills" id="cat-pills"></div>
-        <div class="new-option-box" id="new-cat-box">
-          <label>Nueva categoría:</label>
-          <div class="new-option-row">
-            <input class="form-input" type="text" id="new-cat-input" placeholder="Nombre de categoría..." style="flex:1;font-size:13px;padding:8px 10px;">
-            <button class="btn-small" onclick="addNewCat()">Agregar</button>
-          </div>
-        </div>
+        <div class="pills-wrap" id="cat-pills"></div>
       </div>
       <div class="form-group">
         <label class="form-label">Examen</label>
         <select class="form-input" id="exam-select" onchange="onExamChange()"><option value="">Seleccionar...</option></select>
-        <div class="new-option-box" id="new-exam-box">
-          <label>Nuevo examen:</label>
-          <div class="new-option-row">
-            <input class="form-input" type="text" id="new-exam-input" placeholder="Nombre del examen..." style="flex:1;font-size:13px;padding:8px 10px;">
+        <div id="new-exam-box" style="display:none;margin-top:9px;background:var(--teal-50);border-radius:11px;padding:11px;border:1px solid var(--teal-100);">
+          <label style="font-size:12px;color:var(--teal-600);font-weight:600;display:block;margin-bottom:6px;">Nuevo examen:</label>
+          <div style="display:flex;gap:8px;">
+            <input class="form-input" type="text" id="new-exam-input" placeholder="Nombre..." style="flex:1;font-size:13px;padding:8px 10px;">
             <button class="btn-small" onclick="addNewExam()">Agregar</button>
           </div>
         </div>
       </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Valor</label><input class="form-input" type="number" id="val-input" placeholder="ej. 95" step="any" inputmode="decimal"></div>
-        <div class="form-group"><label class="form-label">Unidad</label><input class="form-input" type="text" id="unit-input" placeholder="mg/dL"></div>
+      <!-- Numeric fields -->
+      <div id="numeric-fields">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Valor</label><input class="form-input" type="number" id="val-input" placeholder="ej. 95" step="any" inputmode="decimal"></div>
+          <div class="form-group"><label class="form-label">Unidad</label><input class="form-input" type="text" id="unit-input" placeholder="mg/dL"></div>
+        </div>
+        <div id="ref-info" style="display:none;background:var(--teal-50);border-radius:10px;padding:9px 12px;font-size:12px;color:var(--teal-600);margin-bottom:10px;"><strong>Referencia: </strong><span id="ref-text"></span></div>
+      </div>
+      <!-- Qualitative fields -->
+      <div id="qualitative-fields" style="display:none;">
+        <div class="form-group">
+          <label class="form-label">Resultado</label>
+          <select class="form-input" id="qual-result">
+            <option value="No Reactivo">No Reactivo</option>
+            <option value="Reactivo">Reactivo</option>
+            <option value="Negativo">Negativo</option>
+            <option value="Positivo">Positivo</option>
+            <option value="Normal">Normal</option>
+            <option value="Alterado">Alterado</option>
+          </select>
+        </div>
       </div>
       <div class="form-group"><label class="form-label">Fecha</label><input class="form-input" type="date" id="date-input"></div>
       <div class="form-group"><label class="form-label">Laboratorio (opcional)</label><input class="form-input" type="text" id="lab-input" placeholder="Nombre del laboratorio"></div>
-      <div class="form-group"><label class="form-label">Notas (opcional)</label><input class="form-input" type="text" id="notes-input" placeholder="Observaciones del médico..."></div>
-      <div class="ref-info" id="ref-info" style="display:none;"><strong>Referencia: </strong><span id="ref-text"></span></div>
+      <div class="form-group"><label class="form-label">Notas (opcional)</label><input class="form-input" type="text" id="notes-input" placeholder="Observaciones..."></div>
       <button class="btn-primary" onclick="saveResult()">Guardar resultado</button>
     </div>
   </div>
   <div class="nav">
     <button class="nav-btn" onclick="nav('home')"><span class="nav-icon">🏠</span>Inicio</button>
     <button class="nav-btn" onclick="nav('history')"><span class="nav-icon">📋</span>Historial</button>
+    <button class="nav-btn" onclick="nav('calendar')"><span class="nav-icon">📅</span>Calendario</button>
     <button class="nav-btn" onclick="nav('charts')"><span class="nav-icon">📈</span>Gráficos</button>
     <button class="nav-btn" onclick="nav('recs')"><span class="nav-icon">💡</span>Consejos</button>
-    <button class="nav-btn active" onclick="nav('add')"><span class="nav-icon">➕</span>Agregar</button>
+    <button class="nav-btn active" onclick="nav('more')"><span class="nav-icon">⋯</span>Más</button>
   </div>
 </div>
 
@@ -229,9 +288,25 @@ select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://
   <div class="nav">
     <button class="nav-btn" onclick="nav('home')"><span class="nav-icon">🏠</span>Inicio</button>
     <button class="nav-btn active" onclick="nav('history')"><span class="nav-icon">📋</span>Historial</button>
+    <button class="nav-btn" onclick="nav('calendar')"><span class="nav-icon">📅</span>Calendario</button>
     <button class="nav-btn" onclick="nav('charts')"><span class="nav-icon">📈</span>Gráficos</button>
     <button class="nav-btn" onclick="nav('recs')"><span class="nav-icon">💡</span>Consejos</button>
-    <button class="nav-btn" onclick="nav('add')"><span class="nav-icon">➕</span>Agregar</button>
+    <button class="nav-btn" onclick="nav('more')"><span class="nav-icon">⋯</span>Más</button>
+  </div>
+</div>
+
+<!-- CALENDAR -->
+<div class="screen" id="screen-calendar">
+  <div class="header"><h1>📅 Calendario</h1><p>Próximos chequeos sugeridos</p></div>
+  <div class="curve"></div>
+  <div class="content" id="calendar-content"></div>
+  <div class="nav">
+    <button class="nav-btn" onclick="nav('home')"><span class="nav-icon">🏠</span>Inicio</button>
+    <button class="nav-btn" onclick="nav('history')"><span class="nav-icon">📋</span>Historial</button>
+    <button class="nav-btn active" onclick="nav('calendar')"><span class="nav-icon">📅</span>Calendario</button>
+    <button class="nav-btn" onclick="nav('charts')"><span class="nav-icon">📈</span>Gráficos</button>
+    <button class="nav-btn" onclick="nav('recs')"><span class="nav-icon">💡</span>Consejos</button>
+    <button class="nav-btn" onclick="nav('more')"><span class="nav-icon">⋯</span>Más</button>
   </div>
 </div>
 
@@ -243,9 +318,10 @@ select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://
   <div class="nav">
     <button class="nav-btn" onclick="nav('home')"><span class="nav-icon">🏠</span>Inicio</button>
     <button class="nav-btn" onclick="nav('history')"><span class="nav-icon">📋</span>Historial</button>
+    <button class="nav-btn" onclick="nav('calendar')"><span class="nav-icon">📅</span>Calendario</button>
     <button class="nav-btn active" onclick="nav('charts')"><span class="nav-icon">📈</span>Gráficos</button>
     <button class="nav-btn" onclick="nav('recs')"><span class="nav-icon">💡</span>Consejos</button>
-    <button class="nav-btn" onclick="nav('add')"><span class="nav-icon">➕</span>Agregar</button>
+    <button class="nav-btn" onclick="nav('more')"><span class="nav-icon">⋯</span>Más</button>
   </div>
 </div>
 
@@ -257,135 +333,232 @@ select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://
   <div class="nav">
     <button class="nav-btn" onclick="nav('home')"><span class="nav-icon">🏠</span>Inicio</button>
     <button class="nav-btn" onclick="nav('history')"><span class="nav-icon">📋</span>Historial</button>
+    <button class="nav-btn" onclick="nav('calendar')"><span class="nav-icon">📅</span>Calendario</button>
     <button class="nav-btn" onclick="nav('charts')"><span class="nav-icon">📈</span>Gráficos</button>
     <button class="nav-btn active" onclick="nav('recs')"><span class="nav-icon">💡</span>Consejos</button>
-    <button class="nav-btn" onclick="nav('add')"><span class="nav-icon">➕</span>Agregar</button>
+    <button class="nav-btn" onclick="nav('more')"><span class="nav-icon">⋯</span>Más</button>
+  </div>
+</div>
+
+<!-- MORE MENU -->
+<div class="screen" id="screen-more">
+  <div class="header"><h1>Más opciones</h1></div>
+  <div class="curve"></div>
+  <div class="content">
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div class="result-item" style="padding:14px 16px;" onclick="nav('import')"><span style="font-size:22px;margin-right:4px;">📄</span><div class="result-info"><div class="result-name">Importar PDF</div><div class="result-sub">Carga automática con IA</div></div><span style="color:var(--text2)">›</span></div>
+      <div class="result-item" style="padding:14px 16px;" onclick="nav('studies')"><span style="font-size:22px;margin-right:4px;">🔬</span><div class="result-info"><div class="result-name">Estudios médicos</div><div class="result-sub">Radiografía, ecografía, ECG</div></div><span style="color:var(--text2)">›</span></div>
+      <div class="result-item" style="padding:14px 16px;" onclick="nav('ophtho')"><span style="font-size:22px;margin-right:4px;">👁</span><div class="result-info"><div class="result-name">Recetas oftalmológicas</div><div class="result-sub">Lentes y corrección visual</div></div><span style="color:var(--text2)">›</span></div>
+      <div class="result-item" style="padding:14px 16px;border-bottom:none;" onclick="nav('calendar')"><span style="font-size:22px;margin-right:4px;">📅</span><div class="result-info"><div class="result-name">Calendario de chequeos</div><div class="result-sub">Próximos exámenes sugeridos</div></div><span style="color:var(--text2)">›</span></div>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nav-btn" onclick="nav('home')"><span class="nav-icon">🏠</span>Inicio</button>
+    <button class="nav-btn" onclick="nav('history')"><span class="nav-icon">📋</span>Historial</button>
+    <button class="nav-btn" onclick="nav('calendar')"><span class="nav-icon">📅</span>Calendario</button>
+    <button class="nav-btn" onclick="nav('charts')"><span class="nav-icon">📈</span>Gráficos</button>
+    <button class="nav-btn" onclick="nav('recs')"><span class="nav-icon">💡</span>Consejos</button>
+    <button class="nav-btn active" onclick="nav('more')"><span class="nav-icon">⋯</span>Más</button>
+  </div>
+</div>
+
+<!-- IMPORT PDF -->
+<div class="screen" id="screen-import">
+  <div class="header"><div class="header-row"><button class="back-btn" onclick="nav('home')">← Volver</button><h1>Importar PDF</h1></div><p>Carga automática con IA</p></div>
+  <div class="curve"></div>
+  <div class="content" id="import-content"></div>
+  <div class="nav">
+    <button class="nav-btn" onclick="nav('home')"><span class="nav-icon">🏠</span>Inicio</button>
+    <button class="nav-btn" onclick="nav('history')"><span class="nav-icon">📋</span>Historial</button>
+    <button class="nav-btn" onclick="nav('calendar')"><span class="nav-icon">📅</span>Calendario</button>
+    <button class="nav-btn" onclick="nav('charts')"><span class="nav-icon">📈</span>Gráficos</button>
+    <button class="nav-btn" onclick="nav('recs')"><span class="nav-icon">💡</span>Consejos</button>
+    <button class="nav-btn active" onclick="nav('more')"><span class="nav-icon">⋯</span>Más</button>
+  </div>
+</div>
+
+<!-- STUDIES -->
+<div class="screen" id="screen-studies">
+  <div class="header"><div class="header-row"><button class="back-btn" onclick="nav('home')">← Volver</button><h1>Estudios médicos</h1></div><p>Radiografía, ecografía, ECG y más</p></div>
+  <div class="curve"></div>
+  <div class="content" id="studies-content"></div>
+  <div class="nav">
+    <button class="nav-btn" onclick="nav('home')"><span class="nav-icon">🏠</span>Inicio</button>
+    <button class="nav-btn" onclick="nav('history')"><span class="nav-icon">📋</span>Historial</button>
+    <button class="nav-btn" onclick="nav('calendar')"><span class="nav-icon">📅</span>Calendario</button>
+    <button class="nav-btn" onclick="nav('charts')"><span class="nav-icon">📈</span>Gráficos</button>
+    <button class="nav-btn" onclick="nav('recs')"><span class="nav-icon">💡</span>Consejos</button>
+    <button class="nav-btn active" onclick="nav('more')"><span class="nav-icon">⋯</span>Más</button>
+  </div>
+</div>
+
+<!-- OPHTHO -->
+<div class="screen" id="screen-ophtho">
+  <div class="header"><div class="header-row"><button class="back-btn" onclick="nav('home')">← Volver</button><h1>Oftalmología</h1></div><p>Recetas y corrección visual</p></div>
+  <div class="curve"></div>
+  <div class="content" id="ophtho-content"></div>
+  <div class="nav">
+    <button class="nav-btn" onclick="nav('home')"><span class="nav-icon">🏠</span>Inicio</button>
+    <button class="nav-btn" onclick="nav('history')"><span class="nav-icon">📋</span>Historial</button>
+    <button class="nav-btn" onclick="nav('calendar')"><span class="nav-icon">📅</span>Calendario</button>
+    <button class="nav-btn" onclick="nav('charts')"><span class="nav-icon">📈</span>Gráficos</button>
+    <button class="nav-btn" onclick="nav('recs')"><span class="nav-icon">💡</span>Consejos</button>
+    <button class="nav-btn active" onclick="nav('more')"><span class="nav-icon">⋯</span>Más</button>
   </div>
 </div>
 
 <!-- DETAIL -->
 <div class="screen" id="screen-detail">
-  <div class="header">
-    <div class="header-row"><button class="back-btn" id="detail-back">← Volver</button></div>
-    <h1 id="detail-title"></h1><p id="detail-sub"></p>
-  </div>
+  <div class="header"><div class="header-row"><button class="back-btn" id="detail-back">← Volver</button></div><h1 id="detail-title"></h1><p id="detail-sub"></p></div>
   <div class="curve"></div>
   <div class="content" id="detail-content"></div>
   <div class="nav">
     <button class="nav-btn" onclick="nav('home')"><span class="nav-icon">🏠</span>Inicio</button>
     <button class="nav-btn" onclick="nav('history')"><span class="nav-icon">📋</span>Historial</button>
+    <button class="nav-btn" onclick="nav('calendar')"><span class="nav-icon">📅</span>Calendario</button>
     <button class="nav-btn" onclick="nav('charts')"><span class="nav-icon">📈</span>Gráficos</button>
     <button class="nav-btn" onclick="nav('recs')"><span class="nav-icon">💡</span>Consejos</button>
-    <button class="nav-btn" onclick="nav('add')"><span class="nav-icon">➕</span>Agregar</button>
+    <button class="nav-btn" onclick="nav('more')"><span class="nav-icon">⋯</span>Más</button>
   </div>
 </div>
-</div>
+</div><!-- end #app -->
 
 <script>
-const STORAGE_KEY='miSalud_v3';
+// ═══════════════════════════════════════════
+//  STORAGE
+// ═══════════════════════════════════════════
+const SK='miSalud_v4', AK='miSalud_apikey';
 
-// ─── DATOS REALES DE LOS PDFs ───
-// Laboratorio BioNet · Paciente: Matías Ortopan
-const SEED_DATA = [
-  // ═══ 15/07/2023 ═══
-  {id:1,exam:'Creatinina',value:0.87,unit:'mg/dL',date:'2023-07-15',cat:'Riñón',lab:'BioNet La Florida',notes:''},
-  {id:2,exam:'Vitamina B12',value:239,unit:'pg/mL',date:'2023-07-15',cat:'Vitaminas',lab:'BioNet La Florida',notes:''},
-  {id:3,exam:'Colesterol total',value:171,unit:'mg/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:4,exam:'Colesterol HDL',value:48.7,unit:'mg/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:5,exam:'Colesterol LDL',value:109.9,unit:'mg/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:6,exam:'Triglicéridos',value:62,unit:'mg/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:7,exam:'Glucosa',value:88,unit:'mg/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:8,exam:'Ácido úrico',value:3.1,unit:'mg/dL',date:'2023-07-15',cat:'Riñón',lab:'BioNet La Florida',notes:'* Bajo rango referencia 3.5-7.2'},
-  {id:9,exam:'Proteínas totales',value:7.3,unit:'gr/dL',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:10,exam:'Albúmina',value:4.2,unit:'gr/dL',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:11,exam:'Calcio',value:8.8,unit:'mg/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:12,exam:'Fósforo',value:3.8,unit:'mg/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:13,exam:'Bilirrubina total',value:0.6,unit:'mg/dL',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:14,exam:'Fosfatasa alcalina',value:59,unit:'U/L',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:15,exam:'LDH',value:139,unit:'U/L',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:16,exam:'SGOT (GOT)',value:14,unit:'U/L',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:17,exam:'SGPT (GPT)',value:17,unit:'U/L',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:18,exam:'GGT',value:13,unit:'U/L',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:'* Bajo rango referencia 15-85'},
-  {id:19,exam:'Vitamina D',value:18,unit:'ng/mL',date:'2023-07-15',cat:'Vitaminas',lab:'BioNet La Florida',notes:'* Bajo rango referencia 20-100'},
-  {id:20,exam:'Hemoglobina',value:16.4,unit:'gr/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:21,exam:'Hematocrito',value:48.5,unit:'%',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:22,exam:'Leucocitos',value:4.2,unit:'k/uL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:23,exam:'Plaquetas',value:202,unit:'k/uL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:24,exam:'TSH',value:1.34,unit:'mUI/L',date:'2023-07-15',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
-  {id:25,exam:'T4 libre',value:1.16,unit:'ng/dL',date:'2023-07-15',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
-  {id:26,exam:'Insulina basal',value:4.4,unit:'uUI/mL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:27,exam:'HOMA IR',value:1,unit:'índice',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:'Ref: <2.5'},
+// ─── SEED DATA (from PDFs) ───
+const SEED={
+  results:[
+    // 2023-07-15
+    {id:1,type:'numeric',exam:'Creatinina',value:0.87,unit:'mg/dL',date:'2023-07-15',cat:'Riñón',lab:'BioNet La Florida',notes:''},
+    {id:2,type:'numeric',exam:'Vitamina B12',value:239,unit:'pg/mL',date:'2023-07-15',cat:'Vitaminas',lab:'BioNet La Florida',notes:''},
+    {id:3,type:'numeric',exam:'Colesterol total',value:171,unit:'mg/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:4,type:'numeric',exam:'Colesterol HDL',value:48.7,unit:'mg/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:5,type:'numeric',exam:'Colesterol LDL',value:109.9,unit:'mg/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:6,type:'numeric',exam:'Triglicéridos',value:62,unit:'mg/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:7,type:'numeric',exam:'Glucosa',value:88,unit:'mg/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:8,type:'numeric',exam:'Ácido úrico',value:3.1,unit:'mg/dL',date:'2023-07-15',cat:'Riñón',lab:'BioNet La Florida',notes:'* Bajo rango'},
+    {id:9,type:'numeric',exam:'Proteínas totales',value:7.3,unit:'gr/dL',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:10,type:'numeric',exam:'Albúmina',value:4.2,unit:'gr/dL',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:11,type:'numeric',exam:'Calcio',value:8.8,unit:'mg/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:12,type:'numeric',exam:'Fósforo',value:3.8,unit:'mg/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:13,type:'numeric',exam:'Bilirrubina total',value:0.6,unit:'mg/dL',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:14,type:'numeric',exam:'Fosfatasa alcalina',value:59,unit:'U/L',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:15,type:'numeric',exam:'LDH',value:139,unit:'U/L',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:16,type:'numeric',exam:'SGOT (GOT)',value:14,unit:'U/L',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:17,type:'numeric',exam:'SGPT (GPT)',value:17,unit:'U/L',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:18,type:'numeric',exam:'GGT',value:13,unit:'U/L',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:'* Bajo rango'},
+    {id:19,type:'numeric',exam:'Vitamina D',value:18,unit:'ng/mL',date:'2023-07-15',cat:'Vitaminas',lab:'BioNet La Florida',notes:'* Bajo rango'},
+    {id:20,type:'numeric',exam:'Hemoglobina',value:16.4,unit:'gr/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:21,type:'numeric',exam:'Hematocrito',value:48.5,unit:'%',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:22,type:'numeric',exam:'Leucocitos',value:4.2,unit:'k/uL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:23,type:'numeric',exam:'Plaquetas',value:202,unit:'k/uL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:24,type:'numeric',exam:'TSH',value:1.34,unit:'mUI/L',date:'2023-07-15',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+    {id:25,type:'numeric',exam:'T4 libre',value:1.16,unit:'ng/dL',date:'2023-07-15',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+    {id:26,type:'numeric',exam:'Insulina basal',value:4.4,unit:'uUI/mL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:27,type:'numeric',exam:'HOMA IR',value:1,unit:'índice',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:'Ref: <2.5'},
+    // Cualitativos 2023
+    {id:28,type:'qualitative',exam:'VDRL',qualResult:'No Reactivo',date:'2023-07-15',cat:'Serología',lab:'BioNet La Florida',notes:''},
+    {id:29,type:'qualitative',exam:'VIH Anticuerpos',qualResult:'No Reactivo',date:'2023-07-15',cat:'Serología',lab:'BioNet La Florida',notes:'Resultado confidencial'},
+    {id:30,type:'qualitative',exam:'Hepatitis B Ag superficie (HBsAg)',qualResult:'No Reactivo',date:'2023-07-15',cat:'Serología',lab:'BioNet La Florida',notes:''},
+    // 2025-01-30
+    {id:31,type:'numeric',exam:'Vitamina B12',value:263,unit:'pg/mL',date:'2025-01-30',cat:'Vitaminas',lab:'BioNet La Florida',notes:''},
+    {id:32,type:'numeric',exam:'Creatinina',value:0.96,unit:'mg/dL',date:'2025-01-30',cat:'Riñón',lab:'BioNet La Florida',notes:''},
+    {id:33,type:'numeric',exam:'Sodio',value:141,unit:'mEq/L',date:'2025-01-30',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
+    {id:34,type:'numeric',exam:'Potasio',value:3.9,unit:'mEq/L',date:'2025-01-30',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
+    {id:35,type:'numeric',exam:'Cloro',value:106,unit:'mEq/L',date:'2025-01-30',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
+    {id:36,type:'numeric',exam:'Colesterol total',value:164,unit:'mg/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:37,type:'numeric',exam:'Colesterol HDL',value:51.6,unit:'mg/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:38,type:'numeric',exam:'Colesterol LDL',value:96.4,unit:'mg/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:39,type:'numeric',exam:'Triglicéridos',value:80,unit:'mg/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:40,type:'numeric',exam:'Glucosa',value:83,unit:'mg/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:41,type:'numeric',exam:'Ácido úrico',value:4.2,unit:'mg/dL',date:'2025-01-30',cat:'Riñón',lab:'BioNet La Florida',notes:''},
+    {id:42,type:'numeric',exam:'Proteínas totales',value:7.1,unit:'gr/dL',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:43,type:'numeric',exam:'Albúmina',value:4,unit:'gr/dL',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:44,type:'numeric',exam:'Calcio',value:8.9,unit:'mg/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:45,type:'numeric',exam:'Fósforo',value:3.2,unit:'mg/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:46,type:'numeric',exam:'Bilirrubina total',value:1,unit:'mg/dL',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:47,type:'numeric',exam:'Fosfatasa alcalina',value:55,unit:'U/L',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:48,type:'numeric',exam:'LDH',value:158,unit:'U/L',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:49,type:'numeric',exam:'SGOT (GOT)',value:16,unit:'U/L',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:50,type:'numeric',exam:'SGPT (GPT)',value:21,unit:'U/L',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:51,type:'numeric',exam:'GGT',value:17,unit:'U/L',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:52,type:'numeric',exam:'Vitamina D',value:26.9,unit:'ng/mL',date:'2025-01-30',cat:'Vitaminas',lab:'BioNet La Florida',notes:''},
+    {id:53,type:'numeric',exam:'Hemoglobina',value:15.5,unit:'gr/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:54,type:'numeric',exam:'Hematocrito',value:45.1,unit:'%',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:55,type:'numeric',exam:'Leucocitos',value:4.6,unit:'k/uL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:56,type:'numeric',exam:'Plaquetas',value:188,unit:'k/uL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:57,type:'numeric',exam:'TSH',value:2.96,unit:'mUI/L',date:'2025-01-30',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+    {id:58,type:'numeric',exam:'T4 libre',value:1.51,unit:'ng/dL',date:'2025-01-30',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+    {id:59,type:'numeric',exam:'T4 total',value:7.8,unit:'ug/dL',date:'2025-01-30',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+    {id:60,type:'numeric',exam:'T3 total',value:1.24,unit:'ng/mL',date:'2025-01-30',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+    {id:61,type:'numeric',exam:'Insulina basal',value:4.4,unit:'uUI/mL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:62,type:'numeric',exam:'HOMA IR',value:0.9,unit:'índice',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:'Ref: <2.5'},
+    // Cualitativos 2025-01-30
+    {id:63,type:'qualitative',exam:'VDRL',qualResult:'No Reactivo',date:'2025-01-30',cat:'Serología',lab:'BioNet La Florida',notes:''},
+    {id:64,type:'qualitative',exam:'VIH Anticuerpos',qualResult:'No Reactivo',date:'2025-01-30',cat:'Serología',lab:'BioNet La Florida',notes:''},
+    {id:65,type:'qualitative',exam:'Hepatitis B Ag superficie (HBsAg)',qualResult:'No Reactivo',date:'2025-01-30',cat:'Serología',lab:'BioNet La Florida',notes:''},
+    {id:66,type:'qualitative',exam:'Hepatitis C Anticuerpos (Anti-HVC)',qualResult:'No Reactivo',date:'2025-01-30',cat:'Serología',lab:'BioNet La Florida',notes:''},
+    {id:67,type:'qualitative',exam:'Hepatitis A IgM',qualResult:'No Reactivo',date:'2025-01-30',cat:'Serología',lab:'BioNet La Florida',notes:''},
+    {id:68,type:'qualitative',exam:'Hepatitis A IgG',qualResult:'No Reactivo',date:'2025-01-30',cat:'Serología',lab:'BioNet La Florida',notes:''},
+    {id:69,type:'qualitative',exam:'Herpes II IgG',qualResult:'No Reactivo',date:'2025-01-30',cat:'Serología',lab:'BioNet La Florida',notes:'Valor: 0.22'},
+    {id:70,type:'qualitative',exam:'Herpes I IgM',qualResult:'No Reactivo',date:'2025-01-30',cat:'Serología',lab:'BioNet La Florida',notes:'Valor: 0.34'},
+    {id:71,type:'qualitative',exam:'Panel ITS (Chlamydia/Gonococo/Mycoplasma)',qualResult:'Negativo',date:'2025-01-30',cat:'Serología',lab:'BioNet La Florida',notes:'7 patógenos negativos por PCR'},
+    // 2025-09-02
+    {id:72,type:'numeric',exam:'Vitamina B12',value:301,unit:'pg/mL',date:'2025-09-02',cat:'Vitaminas',lab:'BioNet La Florida',notes:''},
+    {id:73,type:'numeric',exam:'Creatinina',value:1.0,unit:'mg/dL',date:'2025-09-02',cat:'Riñón',lab:'BioNet La Florida',notes:''},
+    {id:74,type:'numeric',exam:'Glucosa',value:82,unit:'mg/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:75,type:'numeric',exam:'Sodio',value:142,unit:'mEq/L',date:'2025-09-02',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
+    {id:76,type:'numeric',exam:'Potasio',value:4.6,unit:'mEq/L',date:'2025-09-02',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
+    {id:77,type:'numeric',exam:'Cloro',value:105,unit:'mEq/L',date:'2025-09-02',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
+    {id:78,type:'numeric',exam:'Colesterol total',value:215,unit:'mg/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:'* Elevado'},
+    {id:79,type:'numeric',exam:'Colesterol HDL',value:54,unit:'mg/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:80,type:'numeric',exam:'Colesterol LDL',value:146.2,unit:'mg/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:'Límite alto'},
+    {id:81,type:'numeric',exam:'Triglicéridos',value:74,unit:'mg/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:82,type:'numeric',exam:'Ácido úrico',value:3.8,unit:'mg/dL',date:'2025-09-02',cat:'Riñón',lab:'BioNet La Florida',notes:''},
+    {id:83,type:'numeric',exam:'Proteínas totales',value:7.4,unit:'gr/dL',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:84,type:'numeric',exam:'Albúmina',value:4,unit:'gr/dL',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:85,type:'numeric',exam:'Calcio',value:9.7,unit:'mg/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:86,type:'numeric',exam:'Fósforo',value:4.1,unit:'mg/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:87,type:'numeric',exam:'Bilirrubina total',value:0.59,unit:'mg/dL',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:88,type:'numeric',exam:'Fosfatasa alcalina',value:52,unit:'U/L',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:89,type:'numeric',exam:'LDH',value:170,unit:'U/L',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:90,type:'numeric',exam:'SGOT (GOT)',value:19,unit:'U/L',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:91,type:'numeric',exam:'SGPT (GPT)',value:18,unit:'U/L',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:92,type:'numeric',exam:'GGT',value:17,unit:'U/L',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+    {id:93,type:'numeric',exam:'Vitamina D',value:23.3,unit:'ng/mL',date:'2025-09-02',cat:'Vitaminas',lab:'BioNet La Florida',notes:''},
+    {id:94,type:'numeric',exam:'Hemoglobina',value:15.8,unit:'gr/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:95,type:'numeric',exam:'Hematocrito',value:45.5,unit:'%',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:96,type:'numeric',exam:'Leucocitos',value:5.5,unit:'k/uL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:97,type:'numeric',exam:'Plaquetas',value:239,unit:'k/uL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:98,type:'numeric',exam:'TSH',value:3.02,unit:'mUI/L',date:'2025-09-02',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+    {id:99,type:'numeric',exam:'T4 libre',value:1.5,unit:'ng/dL',date:'2025-09-02',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+    {id:100,type:'numeric',exam:'T4 total',value:7.3,unit:'ug/dL',date:'2025-09-02',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+    {id:101,type:'numeric',exam:'T3 total',value:1.21,unit:'ng/mL',date:'2025-09-02',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+    {id:102,type:'numeric',exam:'Insulina basal',value:7.5,unit:'uUI/mL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+    {id:103,type:'numeric',exam:'HOMA IR',value:1.5,unit:'índice',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:'Ref: <2.5'},
+    // Cualitativos 2025-09-02
+    {id:104,type:'qualitative',exam:'VDRL',qualResult:'No Reactivo',date:'2025-09-02',cat:'Serología',lab:'BioNet La Florida',notes:''},
+    {id:105,type:'qualitative',exam:'VIH Anticuerpos',qualResult:'No Reactivo',date:'2025-09-02',cat:'Serología',lab:'BioNet La Florida',notes:''},
+    {id:106,type:'qualitative',exam:'Hepatitis B Ag superficie (HBsAg)',qualResult:'No Reactivo',date:'2025-09-02',cat:'Serología',lab:'BioNet La Florida',notes:''},
+    {id:107,type:'qualitative',exam:'Hepatitis C Anticuerpos (Anti-HVC)',qualResult:'No Reactivo',date:'2025-09-02',cat:'Serología',lab:'BioNet La Florida',notes:''},
+    {id:108,type:'qualitative',exam:'Herpes II IgG',qualResult:'No Reactivo',date:'2025-09-02',cat:'Serología',lab:'BioNet La Florida',notes:'Valor: 0.13'},
+    {id:109,type:'qualitative',exam:'Herpes I IgM',qualResult:'No Reactivo',date:'2025-09-02',cat:'Serología',lab:'BioNet La Florida',notes:'Valor: 0.33'},
+  ],
+  nextId:120,
+  customCats:[],
+  customExams:[],
+  refs:{},
+  studies:[],
+  ophtho:[],
+  nextStudyId:1,
+  nextOphthoId:1
+};
 
-  // ═══ 30/01/2025 ═══
-  {id:28,exam:'Vitamina B12',value:263,unit:'pg/mL',date:'2025-01-30',cat:'Vitaminas',lab:'BioNet La Florida',notes:''},
-  {id:29,exam:'Creatinina',value:0.96,unit:'mg/dL',date:'2025-01-30',cat:'Riñón',lab:'BioNet La Florida',notes:''},
-  {id:30,exam:'Sodio',value:141,unit:'mEq/L',date:'2025-01-30',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
-  {id:31,exam:'Potasio',value:3.9,unit:'mEq/L',date:'2025-01-30',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
-  {id:32,exam:'Cloro',value:106,unit:'mEq/L',date:'2025-01-30',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
-  {id:33,exam:'Colesterol total',value:164,unit:'mg/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:34,exam:'Colesterol HDL',value:51.6,unit:'mg/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:35,exam:'Colesterol LDL',value:96.4,unit:'mg/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:36,exam:'Triglicéridos',value:80,unit:'mg/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:37,exam:'Glucosa',value:83,unit:'mg/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:38,exam:'Ácido úrico',value:4.2,unit:'mg/dL',date:'2025-01-30',cat:'Riñón',lab:'BioNet La Florida',notes:''},
-  {id:39,exam:'Proteínas totales',value:7.1,unit:'gr/dL',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:40,exam:'Albúmina',value:4,unit:'gr/dL',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:41,exam:'Calcio',value:8.9,unit:'mg/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:42,exam:'Fósforo',value:3.2,unit:'mg/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:43,exam:'Bilirrubina total',value:1,unit:'mg/dL',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:44,exam:'Fosfatasa alcalina',value:55,unit:'U/L',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:45,exam:'LDH',value:158,unit:'U/L',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:46,exam:'SGOT (GOT)',value:16,unit:'U/L',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:47,exam:'SGPT (GPT)',value:21,unit:'U/L',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:48,exam:'GGT',value:17,unit:'U/L',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:49,exam:'Vitamina D',value:26.9,unit:'ng/mL',date:'2025-01-30',cat:'Vitaminas',lab:'BioNet La Florida',notes:''},
-  {id:50,exam:'Hemoglobina',value:15.5,unit:'gr/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:51,exam:'Hematocrito',value:45.1,unit:'%',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:52,exam:'Leucocitos',value:4.6,unit:'k/uL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:53,exam:'Plaquetas',value:188,unit:'k/uL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:54,exam:'TSH',value:2.96,unit:'mUI/L',date:'2025-01-30',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
-  {id:55,exam:'T4 libre',value:1.51,unit:'ng/dL',date:'2025-01-30',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
-  {id:56,exam:'T4 total',value:7.8,unit:'ug/dL',date:'2025-01-30',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
-  {id:57,exam:'T3 total',value:1.24,unit:'ng/mL',date:'2025-01-30',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
-  {id:58,exam:'Insulina basal',value:4.4,unit:'uUI/mL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:59,exam:'HOMA IR',value:0.9,unit:'índice',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:'Ref: <2.5'},
-
-  // ═══ 02/09/2025 ═══
-  {id:60,exam:'Vitamina B12',value:301,unit:'pg/mL',date:'2025-09-02',cat:'Vitaminas',lab:'BioNet La Florida',notes:''},
-  {id:61,exam:'Creatinina',value:1.0,unit:'mg/dL',date:'2025-09-02',cat:'Riñón',lab:'BioNet La Florida',notes:''},
-  {id:62,exam:'Glucosa',value:82,unit:'mg/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:63,exam:'Sodio',value:142,unit:'mEq/L',date:'2025-09-02',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
-  {id:64,exam:'Potasio',value:4.6,unit:'mEq/L',date:'2025-09-02',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
-  {id:65,exam:'Cloro',value:105,unit:'mEq/L',date:'2025-09-02',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
-  {id:66,exam:'Colesterol total',value:215,unit:'mg/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:'* Elevado'},
-  {id:67,exam:'Colesterol HDL',value:54,unit:'mg/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:68,exam:'Colesterol LDL',value:146.2,unit:'mg/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:'Límite alto 130-159'},
-  {id:69,exam:'Triglicéridos',value:74,unit:'mg/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:70,exam:'Ácido úrico',value:3.8,unit:'mg/dL',date:'2025-09-02',cat:'Riñón',lab:'BioNet La Florida',notes:''},
-  {id:71,exam:'Proteínas totales',value:7.4,unit:'gr/dL',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:72,exam:'Albúmina',value:4,unit:'gr/dL',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:73,exam:'Calcio',value:9.7,unit:'mg/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:74,exam:'Fósforo',value:4.1,unit:'mg/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:75,exam:'Bilirrubina total',value:0.59,unit:'mg/dL',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:76,exam:'Fosfatasa alcalina',value:52,unit:'U/L',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:77,exam:'LDH',value:170,unit:'U/L',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:78,exam:'SGOT (GOT)',value:19,unit:'U/L',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:79,exam:'SGPT (GPT)',value:18,unit:'U/L',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:80,exam:'GGT',value:17,unit:'U/L',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
-  {id:81,exam:'Vitamina D',value:23.3,unit:'ng/mL',date:'2025-09-02',cat:'Vitaminas',lab:'BioNet La Florida',notes:''},
-  {id:82,exam:'Hemoglobina',value:15.8,unit:'gr/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:83,exam:'Hematocrito',value:45.5,unit:'%',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:84,exam:'Leucocitos',value:5.5,unit:'k/uL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:85,exam:'Plaquetas',value:239,unit:'k/uL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:86,exam:'TSH',value:3.02,unit:'mUI/L',date:'2025-09-02',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
-  {id:87,exam:'T4 libre',value:1.5,unit:'ng/dL',date:'2025-09-02',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
-  {id:88,exam:'T4 total',value:7.3,unit:'ug/dL',date:'2025-09-02',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
-  {id:89,exam:'T3 total',value:1.21,unit:'ng/mL',date:'2025-09-02',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
-  {id:90,exam:'Insulina basal',value:7.5,unit:'uUI/mL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
-  {id:91,exam:'HOMA IR',value:1.5,unit:'índice',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:'Ref: <2.5'},
-];
-
-const DEFAULT_REFS = {
+const DEFAULT_REFS={
   'Glucosa':{min:70,max:100,unit:'mg/dL',cat:'Sangre'},
   'Colesterol total':{min:0,max:200,unit:'mg/dL',cat:'Sangre'},
   'Colesterol HDL':{min:40,max:60,unit:'mg/dL',cat:'Sangre'},
@@ -420,90 +593,866 @@ const DEFAULT_REFS = {
   'HOMA IR':{min:0,max:2.5,unit:'índice',cat:'Sangre'},
 };
 
-const RECS_DB={
-  'Glucosa':{warn:{icon:'🍬',title:'Glucosa en límite',body:'Tu glucosa está cerca del rango alto.',tips:['Evita bebidas azucaradas','Prefiere cereales integrales','30 min de ejercicio diario','Controla en 3 meses']},high:{icon:'⚠️',title:'Glucosa elevada',body:'Tu glucosa supera el rango normal. Consulta médico.',tips:['Consulta médica en 2 semanas','Elimina azúcares añadidos','Camina 150 min/semana','Mide en ayunas cada 2 semanas']}},
-  'Colesterol total':{warn:{icon:'🫀',title:'Colesterol en límite',body:'Tu colesterol total está cerca del límite.',tips:['Reduce grasas saturadas','Más omega-3: salmón, nueces','Fibra soluble: avena, legumbres','Controla en 6 meses']},high:{icon:'❗',title:'Colesterol elevado',body:'Colesterol elevado. Requiere atención médica.',tips:['Consulta médico esta semana','Dieta baja en grasas saturadas','Ejercicio aeróbico 5 días/semana','Posible necesidad de medicación']}},
-  'Colesterol LDL':{warn:{icon:'🫀',title:'LDL en límite alto',body:'El colesterol LDL está cerca del límite.',tips:['Reducir grasas saturadas','Aumentar fibra','Ejercicio regular','Reevaluar en 3 meses']},high:{icon:'❗',title:'LDL elevado',body:'Colesterol LDL elevado.',tips:['Consulta médica pronto','Dieta mediterránea','Evitar tabaco','Posible necesidad de estatinas']}},
-  'Triglicéridos':{warn:{icon:'🍟',title:'Triglicéridos en límite',body:'Triglicéridos elevados se asocian a riesgo cardiovascular.',tips:['Reduce alcohol y azúcares','Evita harinas blancas','Más proteínas magras','Controla en 3 meses']},high:{icon:'⚠️',title:'Triglicéridos elevados',body:'Triglicéridos significativamente elevados.',tips:['Consulta médica urgente','Dieta sin alcohol ni azúcar','Omega-3 puede ayudar','Ejercicio diario']}},
-  'Vitamina D':{warn:{icon:'☀️',title:'Vitamina D insuficiente',body:'Niveles bajos. Afecta huesos e inmunidad.',tips:['15-20 min de sol diario','Come pescado graso, huevos','Consulta suplementación','Controla en 3 meses']},high:{icon:'☀️',title:'Vitamina D deficiente',body:'Deficiencia de vitamina D.',tips:['Consulta médico para suplemento','Exposición solar regular','Dieta rica en calcio','Re-evaluar en 2 meses']}},
-  'HOMA IR':{warn:{icon:'🩸',title:'HOMA IR elevándose',body:'El índice HOMA está aumentando, vigilar resistencia insulínica.',tips:['Reducir carbohidratos refinados','Ejercicio aeróbico regular','Bajar peso si hay sobrepeso','Controlar glucosa e insulina']},high:{icon:'⚠️',title:'Posible resistencia insulínica',body:'HOMA IR sobre el rango normal.',tips:['Consultar médico o endocrinólogo','Dieta baja en carbohidratos','Ejercicio diario fundamental','Descarta prediabetes']}},
-};
-const FOLLOWUP={
-  'Glucosa':{warn:90,high:30},'Colesterol total':{warn:180,high:60},'Colesterol LDL':{warn:90,high:45},
-  'Triglicéridos':{warn:90,high:30},'Vitamina D':{warn:90,high:60},'HOMA IR':{warn:90,high:45},
+// Category schedules (days between checks, icon, color)
+const CAT_SCHEDULE={
+  'Sangre':{icon:'🩸',days:365,label:'Hemograma y bioquímica',urgDays:180},
+  'Hígado':{icon:'🫀',days:365,label:'Perfil hepático'},
+  'Riñón':{icon:'🫘',days:365,label:'Función renal'},
+  'Tiroides':{icon:'🦋',days:365,label:'Perfil tiroideo'},
+  'Vitaminas':{icon:'☀️',days:180,label:'Vitaminas D y B12',urgDays:90},
+  'Electrolitos':{icon:'⚡',days:365,label:'Electrolitos'},
+  'Serología':{icon:'🧫',days:365,label:'Serología / ITS'},
+  'Oftalmología':{icon:'👁',days:730,label:'Control visual'},
+  'Estudios':{icon:'🔬',days:730,label:'Estudios de imagen/ECG'},
 };
 
+const RECS_DB={
+  'Glucosa':{warn:{icon:'🍬',title:'Glucosa en límite',body:'Tu glucosa está cerca del rango alto.',tips:['Evita bebidas azucaradas','Prefiere cereales integrales','30 min de ejercicio diario','Controla en 3 meses']},high:{icon:'⚠️',title:'Glucosa elevada',body:'Consulta a tu médico.',tips:['Consulta médica en 2 semanas','Elimina azúcares añadidos','Camina 150 min/semana']}},
+  'Colesterol total':{warn:{icon:'🫀',title:'Colesterol en límite',body:'Cerca del límite recomendado.',tips:['Reduce grasas saturadas','Más omega-3','Fibra soluble','Controla en 6 meses']},high:{icon:'❗',title:'Colesterol elevado',body:'Requiere atención médica.',tips:['Consulta médico esta semana','Dieta baja en grasas','Ejercicio aeróbico 5 días/semana']}},
+  'Colesterol LDL':{warn:{icon:'🫀',title:'LDL en límite',body:'El LDL está cerca del límite.',tips:['Reducir grasas saturadas','Aumentar fibra','Reevaluar en 3 meses']},high:{icon:'❗',title:'LDL elevado',body:'Consulta médico.',tips:['Consulta médica pronto','Dieta mediterránea','Posible necesidad de estatinas']}},
+  'Triglicéridos':{warn:{icon:'🍟',title:'Triglicéridos en límite',body:'Riesgo cardiovascular asociado.',tips:['Reduce alcohol y azúcares','Evita harinas blancas','Controla en 3 meses']},high:{icon:'⚠️',title:'Triglicéridos elevados',body:'Significativamente elevados.',tips:['Consulta médica urgente','Sin alcohol ni azúcar','Ejercicio diario']}},
+  'Vitamina D':{warn:{icon:'☀️',title:'Vitamina D insuficiente',body:'Afecta huesos e inmunidad.',tips:['15-20 min de sol diario','Come pescado graso, huevos','Consulta suplementación','Controla en 3 meses']},high:{icon:'☀️',title:'Vitamina D deficiente',body:'Requiere suplementación.',tips:['Consulta médico para dosis','Exposición solar regular','Re-evaluar en 2 meses']}},
+  'HOMA IR':{warn:{icon:'🩸',title:'HOMA IR elevándose',body:'Vigilar resistencia insulínica.',tips:['Reducir carbohidratos refinados','Ejercicio aeróbico','Controlar glucosa e insulina']},high:{icon:'⚠️',title:'Posible resistencia insulínica',body:'HOMA IR sobre el rango.',tips:['Consultar endocrinólogo','Dieta baja en carbohidratos','Ejercicio diario']}},
+};
+const FOLLOWUP={'Glucosa':{warn:90,high:30},'Colesterol total':{warn:180,high:60},'Colesterol LDL':{warn:90,high:45},'Triglicéridos':{warn:90,high:30},'Vitamina D':{warn:90,high:60},'HOMA IR':{warn:90,high:45}};
+
 function loadData(){
-  try{const r=localStorage.getItem(STORAGE_KEY);if(r)return JSON.parse(r);}catch(e){}
-  return{results:SEED_DATA,nextId:100,customCats:[],customExams:[],refs:{}};
+  try{const r=localStorage.getItem(SK);if(r)return JSON.parse(r);}catch(e){}
+  return JSON.parse(JSON.stringify(SEED));
 }
-function persist(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(D));}catch(e){}}
-let D=loadData(),histFilter='Todos',fromScreen='history';
+function persist(){try{localStorage.setItem(SK,JSON.stringify(D));}catch(e){}}
+let D=loadData(), histFilter='Todos', fromScreen='history';
+let calYear=new Date().getFullYear(), calMonth=new Date().getMonth();
+
+// ═══════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════
 function getRefs(){return Object.assign({},DEFAULT_REFS,D.refs||{});}
-function getStatus(exam,value){const r=getRefs()[exam];if(!r)return'ok';if(value<r.min||value>r.max){const p=value>r.max?(value-r.max)/r.max:(r.min-value)/r.min;return p>0.15?'high':'warn';}return'ok';}
-function fmtDate(d){if(!d)return{day:'—',month:'—',year:'—',full:'—'};const[y,m,day]=d.split('-');const mo=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];return{day,month:mo[parseInt(m)-1],year:y,full:`${day} ${mo[parseInt(m)-1]} ${y}`};}
-function getAlarms(){const lt={},al=[],today=new Date();D.results.forEach(r=>{if(!lt[r.exam]||r.date>lt[r.exam].date)lt[r.exam]=r;});Object.values(lt).forEach(r=>{const s=getStatus(r.exam,r.value);if(s==='ok')return;const ru=FOLLOWUP[r.exam];if(!ru)return;const days=s==='high'?ru.high:ru.warn;const next=new Date(r.date);next.setDate(next.getDate()+days);const dL=Math.ceil((next-today)/(864e5));al.push({exam:r.exam,value:r.value,unit:r.unit,status:s,daysLeft:dL,nextDate:next.toISOString().split('T')[0]});});return al.sort((a,b)=>a.daysLeft-b.daysLeft);}
+function getStatus(exam,value){
+  if(value===undefined)return'ok';
+  const r=getRefs()[exam];if(!r)return'ok';
+  if(value<r.min||value>r.max){const p=value>r.max?(value-r.max)/r.max:(r.min-value)/r.min;return p>0.15?'high':'warn';}
+  return'ok';
+}
+function getQualStatus(qualResult){
+  if(!qualResult)return'ok';
+  const v=qualResult.toLowerCase();
+  if(v==='no reactivo'||v==='negativo'||v==='normal')return'ok';
+  if(v==='reactivo'||v==='positivo'||v==='alterado')return'high';
+  return'ok';
+}
+function fmtDate(d){
+  if(!d)return{day:'—',month:'—',year:'—',full:'—'};
+  const[y,m,day]=d.split('-');
+  const mo=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  return{day,month:mo[parseInt(m)-1],year:y,full:`${day} ${mo[parseInt(m)-1]} ${y}`};
+}
+function countChequeos(){
+  const dates=new Set(D.results.map(r=>r.date));
+  return dates.size;
+}
+function getAlarms(){
+  const lt={};
+  D.results.forEach(r=>{if(!lt[r.exam]||r.date>lt[r.exam].date)lt[r.exam]=r;});
+  const al=[],today=new Date();
+  Object.values(lt).forEach(r=>{
+    const s=r.type==='qualitative'?getQualStatus(r.qualResult):getStatus(r.exam,r.value);
+    if(s==='ok')return;
+    const ru=FOLLOWUP[r.exam];if(!ru)return;
+    const days=s==='high'?ru.high:ru.warn;
+    const next=new Date(r.date);next.setDate(next.getDate()+days);
+    const dL=Math.ceil((next-today)/(864e5));
+    al.push({exam:r.exam,value:r.value||r.qualResult,unit:r.unit||'',status:s,daysLeft:dL,nextDate:next.toISOString().split('T')[0]});
+  });
+  return al.sort((a,b)=>a.daysLeft-b.daysLeft);
+}
 function setGreeting(){const h=new Date().getHours();document.getElementById('greeting').textContent=h<12?'Buenos días':h<19?'Buenas tardes':'Buenas noches';}
-function nav(s){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById('screen-'+s).classList.add('active');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));if(s==='home')renderHome();if(s==='history')renderHistory();if(s==='charts')renderCharts();if(s==='recs')renderRecs();if(s==='add')renderAddForm();}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+// ═══════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════
+function nav(s){
+  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
+  document.getElementById('screen-'+s).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  if(s==='home')renderHome();
+  if(s==='history')renderHistory();
+  if(s==='calendar')renderCalendar();
+  if(s==='charts')renderCharts();
+  if(s==='recs')renderRecs();
+  if(s==='add')renderAddForm();
+  if(s==='import')renderImport();
+  if(s==='studies')renderStudies();
+  if(s==='ophtho')renderOphtho();
+}
+
+// ═══════════════════════════════════════════
+//  HOME
+// ═══════════════════════════════════════════
 function renderHome(){
   setGreeting();
-  document.getElementById('h-total').textContent=D.results.length;
-  const sorted=[...D.results].sort((a,b)=>b.date.localeCompare(a.date));
-  if(sorted[0]){const d=fmtDate(sorted[0].date);document.getElementById('h-date').textContent=d.month+' '+d.year;}
-  const alarms=getAlarms().filter(a=>a.daysLeft<=60);
+  // Stats
+  const chequeos=countChequeos();
+  const lastDate=D.results.length?[...D.results].sort((a,b)=>b.date.localeCompare(a.date))[0].date:'';
+  const cats=[...new Set(D.results.map(r=>r.cat))];
+  // Build summary cards
+  const statsEl=document.getElementById('home-stats');
+  statsEl.innerHTML=`
+    <div class="summ-card" onclick="nav('history')">
+      <div class="summ-icon">📋</div>
+      <div class="summ-title">${chequeos} chequeos</div>
+      <div class="summ-sub">${D.results.length} resultados cargados</div>
+    </div>
+    <div class="summ-card" onclick="nav('calendar')">
+      <div class="summ-icon">📅</div>
+      <div class="summ-title">Último: ${lastDate?fmtDate(lastDate).month+' '+fmtDate(lastDate).year:'—'}</div>
+      <div class="summ-sub">Ver calendario</div>
+    </div>
+    ${cats.slice(0,4).map(c=>{
+      const catRes=D.results.filter(r=>r.cat===c);
+      const anyAltered=catRes.some(r=>r.type==='qualitative'?getQualStatus(r.qualResult)!=='ok':getStatus(r.exam,r.value)!=='ok');
+      const sch=CAT_SCHEDULE[c];
+      return`<div class="summ-card" onclick="filterAndNav('${c}')">
+        <div class="summ-icon">${sch?sch.icon:'🔬'}</div>
+        <div class="summ-title">${c}</div>
+        <div class="summ-sub">${catRes.length} resultados</div>
+        <div class="summ-status"><div class="summ-dot" style="background:${anyAltered?'var(--amber-400)':'var(--teal-400)'}"></div><span style="font-size:11px;color:var(--text2)">${anyAltered?'Revisar':'OK'}</span></div>
+      </div>`;
+    }).join('')}
+  `;
+  // Alarms
+  const alarms=getAlarms().filter(a=>a.daysLeft<=30);
   const alEl=document.getElementById('alarms-home');
-  if(alarms.length){alEl.innerHTML=`<div class="section-title">🔔 Alertas de seguimiento</div>`+alarms.slice(0,3).map(a=>{const cl=a.status==='high'?'':'warn';const msg=a.daysLeft<=0?'¡Seguimiento vencido!':`Control en ${a.daysLeft} día${a.daysLeft!==1?'s':''}`;return`<div class="alarm-card ${cl}"><div class="alarm-title">${a.exam}</div><div class="alarm-sub">${a.value} ${a.unit} · ${a.status==='high'?'Elevado':'En límite'}</div><div class="alarm-action">📅 ${msg} · ${fmtDate(a.nextDate).full}</div></div>`;}).join('');}else{alEl.innerHTML='';}
-  const el=document.getElementById('recent-results');
-  if(!sorted.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">🩺</div>Sin resultados</div>`;return;}
-  el.innerHTML=sorted.slice(0,6).map(r=>{const s=getStatus(r.exam,r.value);const dc=s==='ok'?'dot-ok':s==='warn'?'dot-warn':'dot-high';const vc=s==='ok'?'val-ok':s==='warn'?'val-warn':'val-high';return`<div class="exam-row" onclick="showDetail(${r.id},'home')"><div class="dot ${dc}"></div><div class="exam-info"><div class="exam-name">${r.exam}</div><div class="exam-date">${fmtDate(r.date).full}</div></div><div class="exam-val ${vc}">${r.value} <span style="font-size:11px;font-weight:400">${r.unit}</span></div></div>`;}).join('');
+  if(alarms.length){
+    alEl.innerHTML=`<div class="section-title">🔔 Seguimientos urgentes</div>`+alarms.slice(0,2).map(a=>{
+      const cl=a.status==='high'?'':'warn';
+      const msg=a.daysLeft<=0?'¡Vencido!':`En ${a.daysLeft} día${a.daysLeft!==1?'s':''}`;
+      return`<div class="alarm-card ${cl}"><div class="alarm-title">${a.exam}</div><div class="alarm-sub">${a.value} ${a.unit} · ${a.status==='high'?'Elevado':'En límite'}</div><div class="alarm-action">📅 ${msg} · ${fmtDate(a.nextDate).full}</div></div>`;
+    }).join('');
+  }else{alEl.innerHTML='';}
 }
+function filterAndNav(cat){histFilter=cat;nav('history');}
+
+// ═══════════════════════════════════════════
+//  HISTORY
+// ═══════════════════════════════════════════
 function renderHistory(){
-  const cats=['Todos',...new Set(D.results.map(r=>r.cat))];
-  document.getElementById('history-tabs').innerHTML=cats.map(c=>`<button class="tab${histFilter===c?' active':''}" onclick="filterHist('${c}',this)">${c}</button>`).join('');
+  const allCats=['Todos',...new Set(D.results.map(r=>r.cat)),'Estudios','Oftalmología'];
+  document.getElementById('history-tabs').innerHTML=allCats.map(c=>`<button class="tab${histFilter===c?' active':''}" onclick="filterHist('${c}',this)">${c}</button>`).join('');
+  const el=document.getElementById('history-list');
+  if(histFilter==='Estudios'){renderStudiesInline(el);return;}
+  if(histFilter==='Oftalmología'){renderOphthoInline(el);return;}
   const filtered=histFilter==='Todos'?D.results:D.results.filter(r=>r.cat===histFilter);
   const sorted=[...filtered].sort((a,b)=>b.date.localeCompare(a.date));
-  const el=document.getElementById('history-list');
   if(!sorted.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div>Sin resultados</div>`;return;}
-  el.innerHTML=sorted.map(r=>{const s=getStatus(r.exam,r.value);const bc=s==='ok'?'badge-ok':s==='warn'?'badge-warn':'badge-high';const bl=s==='ok'?'Normal':s==='warn'?'Límite':'Elevado';const d=fmtDate(r.date);return`<div class="result-item" onclick="showDetail(${r.id},'history')"><div class="result-date-col"><div class="result-month">${d.month}</div><div class="result-day">${d.day}</div></div><div class="result-info"><div class="result-name">${r.exam}</div><div class="result-sub">${r.lab||r.cat}</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:600">${r.value} <span style="font-size:11px;font-weight:400;color:var(--text2)">${r.unit}</span></div><span class="badge ${bc}">${bl}</span></div></div>`;}).join('');
+  el.innerHTML=sorted.map(r=>{
+    const isQ=r.type==='qualitative';
+    const s=isQ?getQualStatus(r.qualResult):getStatus(r.exam,r.value);
+    const bc=isQ?(s==='ok'?'badge-nr':(s==='high'?'badge-pos':'badge-warn')):( s==='ok'?'badge-ok':s==='warn'?'badge-warn':'badge-high');
+    const bl=isQ?(r.qualResult):(s==='ok'?'Normal':s==='warn'?'Límite':'Elevado');
+    const val=isQ?`<span class="badge ${bc}">${bl}</span>`:`<div style="font-size:14px;font-weight:600">${r.value} <span style="font-size:11px;font-weight:400;color:var(--text2)">${r.unit}</span></div><span class="badge ${bc}">${bl}</span>`;
+    const d=fmtDate(r.date);
+    return`<div class="result-item" onclick="showDetail(${r.id},'history')">
+      <div class="result-date-col"><div class="result-month">${d.month}</div><div class="result-day">${d.day}</div></div>
+      <div class="result-info"><div class="result-name">${r.exam}</div><div class="result-sub">${r.lab||r.cat}</div></div>
+      <div style="text-align:right">${val}</div>
+    </div>`;
+  }).join('');
 }
 function filterHist(cat,btn){histFilter=cat;document.querySelectorAll('#history-tabs .tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');renderHistory();}
-function renderCharts(){
-  const exams=[...new Set(D.results.map(r=>r.exam))];
-  const el=document.getElementById('charts-content');
-  if(!exams.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">📈</div>Sin datos</div>`;return;}
-  el.innerHTML=exams.map(exam=>{const items=D.results.filter(r=>r.exam===exam).sort((a,b)=>a.date.localeCompare(b.date));const maxV=Math.max(...items.map(x=>x.value));const bars=items.map(x=>{const h=Math.max(8,Math.round((x.value/maxV)*60));const s=getStatus(exam,x.value);const color=s==='ok'?'var(--teal-400)':s==='warn'?'var(--amber-400)':'var(--red-400)';return`<div class="chart-bar-wrap"><div class="chart-val" style="color:${color}">${x.value}</div><div class="chart-bar" style="height:${h}px;background:${color}"></div><div class="chart-lbl">${fmtDate(x.date).month}<br>${fmtDate(x.date).year.slice(2)}</div></div>`;}).join('');const latest=items[items.length-1];const s=getStatus(exam,latest.value);const bc=s==='ok'?'badge-ok':s==='warn'?'badge-warn':'badge-high';const bl=s==='ok'?'Normal':s==='warn'?'Límite':'Elevado';return`<div class="card" onclick="showDetail(${latest.id},'charts')"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><div><div style="font-size:14px;font-weight:600">${exam}</div><div style="font-size:11px;color:var(--text2)">${items.length} medición${items.length>1?'es':''}</div></div><span class="badge ${bc}">${bl}</span></div><div style="display:flex;gap:5px;align-items:flex-end;height:88px;padding-bottom:3px;">${bars}</div></div>`;}).join('');
+function renderStudiesInline(el){
+  if(!D.studies||!D.studies.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">🔬</div>Sin estudios<br><button class="btn-primary" style="margin-top:12px;width:auto;padding:10px 20px" onclick="nav('studies')">+ Agregar estudio</button></div>`;return;}
+  el.innerHTML=[...D.studies].sort((a,b)=>b.date.localeCompare(a.date)).map(s=>{
+    const d=fmtDate(s.date);
+    return`<div class="result-item" onclick="showStudyDetail(${s.id})">
+      <div class="result-date-col"><div class="result-month">${d.month}</div><div class="result-day">${d.day}</div></div>
+      <div class="result-info"><div class="result-name">${s.title}</div><div class="result-sub">${s.type}${s.doctor?' · '+s.doctor:''}</div></div>
+      <span class="badge badge-purple">${s.type}</span>
+    </div>`;
+  }).join('');
 }
+function renderOphthoInline(el){
+  if(!D.ophtho||!D.ophtho.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">👁</div>Sin recetas<br><button class="btn-primary" style="margin-top:12px;width:auto;padding:10px 20px" onclick="nav('ophtho')">+ Agregar receta</button></div>`;return;}
+  el.innerHTML=[...D.ophtho].sort((a,b)=>b.date.localeCompare(a.date)).map(o=>{
+    const d=fmtDate(o.date);
+    return`<div class="result-item" onclick="showOphthoDetail(${o.id})">
+      <div class="result-date-col"><div class="result-month">${d.month}</div><div class="result-day">${d.day}</div></div>
+      <div class="result-info"><div class="result-name">Receta oftalmológica</div><div class="result-sub">${o.doctor||'Sin médico'}${o.notes?' · '+o.notes:''}</div></div>
+      <span class="badge badge-info">👁</span>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════
+//  CALENDAR
+// ═══════════════════════════════════════════
+function renderCalendar(){
+  // Calculate next suggested check dates per category
+  const suggestions=buildSuggestions();
+  const eventMap={};
+  suggestions.forEach(s=>{
+    const k=s.nextDate;
+    if(!eventMap[k])eventMap[k]=[];
+    eventMap[k].push(s);
+  });
+
+  const today=new Date();
+  const firstDay=new Date(calYear,calMonth,1);
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  const startDow=(firstDay.getDay()+6)%7; // Mon=0
+  const months=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+  let calHTML=`
+    <div class="card">
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="calPrev()">‹</button>
+        <strong style="font-size:15px">${months[calMonth]} ${calYear}</strong>
+        <button class="cal-nav-btn" onclick="calNext()">›</button>
+      </div>
+      <div class="cal-header">
+        ${['Lu','Ma','Mi','Ju','Vi','Sa','Do'].map(d=>`<span>${d}</span>`).join('')}
+      </div>
+      <div class="cal-month">
+  `;
+  for(let i=0;i<startDow;i++)calHTML+=`<div class="cal-day empty"></div>`;
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday=today.getFullYear()===calYear&&today.getMonth()===calMonth&&today.getDate()===d;
+    const events=eventMap[dateStr]||[];
+    const hasPast=new Date(dateStr)<today;
+    let cls='cal-day';
+    if(isToday)cls+=' today';
+    if(events.length){
+      const urgent=events.some(e=>e.urgency==='high');
+      const warn=events.some(e=>e.urgency==='warn');
+      cls+=urgent?' has-event urgent':warn?' has-event warn':' has-event';
+    }
+    if(hasPast&&!isToday&&!events.length)cls+=' past';
+    calHTML+=`<div class="${cls}" onclick="showCalDay('${dateStr}')">${d}${events.length?'<div class="event-dot"></div>':''}</div>`;
+  }
+  calHTML+=`</div></div>`;
+
+  // Legend
+  calHTML+=`<div class="card"><div class="section-title">Leyenda</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px"><div style="width:12px;height:12px;border-radius:4px;background:var(--teal-400)"></div>Programado</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px"><div style="width:12px;height:12px;border-radius:4px;background:var(--amber-400)"></div>Pronto</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px"><div style="width:12px;height:12px;border-radius:4px;background:var(--red-400)"></div>Urgente</div>
+    </div>
+  </div>`;
+
+  // Upcoming list
+  calHTML+=`<div class="section-title">Próximos chequeos sugeridos</div>`;
+  const sorted=suggestions.sort((a,b)=>a.nextDate.localeCompare(b.nextDate));
+  sorted.forEach(s=>{
+    const daysLeft=Math.ceil((new Date(s.nextDate)-today)/(864e5));
+    const msg=daysLeft<=0?'¡Ya!':`En ${daysLeft} día${daysLeft!==1?'s':''}`;
+    const cl=daysLeft<=0?'':'daysLeft<=30?warn':'info';
+    const borderColor=daysLeft<=0?'var(--red-400)':daysLeft<=60?'var(--amber-400)':'var(--blue-400)';
+    calHTML+=`<div class="alarm-card" style="border-left-color:${borderColor}">
+      <div class="alarm-title">${s.icon} ${s.cat}</div>
+      <div class="alarm-sub">${s.label} · Último: ${fmtDate(s.lastDate).full}</div>
+      <div class="alarm-action">📅 ${msg} · ${fmtDate(s.nextDate).full}</div>
+    </div>`;
+  });
+
+  document.getElementById('calendar-content').innerHTML=calHTML;
+}
+
+function buildSuggestions(){
+  const catLastDate={};
+  D.results.forEach(r=>{
+    if(!catLastDate[r.cat]||r.date>catLastDate[r.cat])catLastDate[r.cat]=r.date;
+  });
+  if(D.ophtho&&D.ophtho.length){
+    const lastO=[...D.ophtho].sort((a,b)=>b.date.localeCompare(a.date))[0];
+    if(lastO&&(!catLastDate['Oftalmología']||lastO.date>catLastDate['Oftalmología']))catLastDate['Oftalmología']=lastO.date;
+  }
+  if(D.studies&&D.studies.length){
+    const lastS=[...D.studies].sort((a,b)=>b.date.localeCompare(a.date))[0];
+    if(lastS&&(!catLastDate['Estudios']||lastS.date>catLastDate['Estudios']))catLastDate['Estudios']=lastS.date;
+  }
+  const sugg=[];
+  Object.entries(CAT_SCHEDULE).forEach(([cat,sch])=>{
+    const last=catLastDate[cat];
+    if(!last)return;
+    const nextD=new Date(last);nextD.setDate(nextD.getDate()+sch.days);
+    const today=new Date();
+    const dLeft=Math.ceil((nextD-today)/(864e5));
+    const urgency=dLeft<=0?'high':dLeft<=60?'warn':'ok';
+    sugg.push({cat,icon:sch.icon,label:sch.label,lastDate:last,nextDate:nextD.toISOString().split('T')[0],daysLeft:dLeft,urgency});
+  });
+  return sugg;
+}
+
+function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
+function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}
+function showCalDay(dateStr){
+  const sugg=buildSuggestions().filter(s=>s.nextDate===dateStr);
+  if(sugg.length){alert(sugg.map(s=>`${s.icon} ${s.cat}: ${s.label}\nFecha sugerida: ${fmtDate(dateStr).full}`).join('\n\n'));}
+}
+
+// ═══════════════════════════════════════════
+//  CHARTS
+// ═══════════════════════════════════════════
+function renderCharts(){
+  const numericOnly=D.results.filter(r=>r.type==='numeric');
+  const exams=[...new Set(numericOnly.map(r=>r.exam))];
+  const el=document.getElementById('charts-content');
+  if(!exams.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">📈</div>Sin datos numéricos</div>`;return;}
+  el.innerHTML=exams.map(exam=>{
+    const items=numericOnly.filter(r=>r.exam===exam).sort((a,b)=>a.date.localeCompare(b.date));
+    if(items.length<1)return'';
+    const maxV=Math.max(...items.map(x=>x.value));
+    const bars=items.map(x=>{const h=Math.max(8,Math.round((x.value/maxV)*60));const s=getStatus(exam,x.value);const color=s==='ok'?'var(--teal-400)':s==='warn'?'var(--amber-400)':'var(--red-400)';return`<div class="chart-bar-wrap"><div class="chart-val" style="color:${color}">${x.value}</div><div class="chart-bar" style="height:${h}px;background:${color}"></div><div class="chart-lbl">${fmtDate(x.date).month}<br>${fmtDate(x.date).year.slice(2)}</div></div>`;}).join('');
+    const latest=items[items.length-1];const s=getStatus(exam,latest.value);const bc=s==='ok'?'badge-ok':s==='warn'?'badge-warn':'badge-high';const bl=s==='ok'?'Normal':s==='warn'?'Límite':'Elevado';
+    return`<div class="card" onclick="showDetail(${latest.id},'charts')"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><div><div style="font-size:14px;font-weight:600">${exam}</div><div style="font-size:11px;color:var(--text2)">${items.length} medición${items.length>1?'es':''}</div></div><span class="badge ${bc}">${bl}</span></div><div style="display:flex;gap:5px;align-items:flex-end;height:88px;padding-bottom:3px;">${bars}</div></div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════
+//  RECOMMENDATIONS
+// ═══════════════════════════════════════════
 function renderRecs(){
   const latest={};D.results.forEach(r=>{if(!latest[r.exam]||r.date>latest[r.exam].date)latest[r.exam]=r;});
   const alarms=getAlarms();let html='';
-  if(alarms.length){html+=`<div class="section-title">🔔 Seguimientos pendientes</div>`;alarms.forEach(a=>{const cl=a.status==='high'?'':'warn';const msg=a.daysLeft<=0?'¡Vencido!':`En ${a.daysLeft} día${a.daysLeft!==1?'s':''}`;html+=`<div class="alarm-card ${cl}"><div class="alarm-title">${a.exam} — ${a.value} ${a.unit}</div><div class="alarm-sub">${a.status==='high'?'Valor elevado':'Valor en límite'}</div><div class="alarm-action">📅 ${msg} · ${fmtDate(a.nextDate).full}</div></div>`;});html+='<div style="height:4px"></div>';}
+  if(alarms.length){html+=`<div class="section-title">🔔 Seguimientos pendientes</div>`;alarms.forEach(a=>{const cl=a.status==='high'?'':'warn';const msg=a.daysLeft<=0?'¡Vencido!':`En ${a.daysLeft} día${a.daysLeft!==1?'s':''}`;html+=`<div class="alarm-card ${cl}"><div class="alarm-title">${a.exam} — ${a.value} ${a.unit}</div><div class="alarm-sub">${a.status==='high'?'Valor elevado':'En límite'}</div><div class="alarm-action">📅 ${msg} · ${fmtDate(a.nextDate).full}</div></div>`;});html+='<div style="height:4px"></div>';}
   let hasRecs=false;
-  Object.values(latest).forEach(r=>{const s=getStatus(r.exam,r.value);if(s==='ok')return;const db=RECS_DB[r.exam];if(!db)return;const rec=db[s]||db['warn'];if(!rec)return;hasRecs=true;html+=`<div class="rec-card ${s}"><div class="rec-header"><span class="rec-icon">${rec.icon}</span><div class="rec-title">${rec.title}</div></div><div class="rec-body">${rec.body}</div><div class="rec-tips">${rec.tips.map(t=>`<div class="rec-tip"><span>•</span><span>${t}</span></div>`).join('')}</div></div>`;});
-  if(!hasRecs&&!alarms.length)html=`<div class="card" style="text-align:center;padding:24px;"><div style="font-size:38px;margin-bottom:10px;">🎉</div><div style="font-size:16px;font-weight:600;color:var(--teal-600);margin-bottom:6px;">¡Todo en orden!</div><div style="font-size:13px;color:var(--text2)">Todos tus valores están dentro del rango normal.</div></div>`;
-  const total=Object.keys(latest).length;
-  if(total>0){const ok=Object.values(latest).filter(r=>getStatus(r.exam,r.value)==='ok').length;const pct=Math.round((ok/total)*100);const color=pct>=80?'var(--teal-400)':pct>=60?'var(--amber-400)':'var(--red-400)';html+=`<div class="card" style="text-align:center;"><div class="section-title">Resumen de salud</div><div style="font-size:42px;font-weight:700;color:${color};margin:8px 0">${pct}%</div><div style="font-size:13px;color:var(--text2)">${ok} de ${total} valores en rango normal</div></div>`;}
-  html+=`<div class="notice"><div class="notice-title">⚕️ Aviso importante</div><div class="notice-body">Estas recomendaciones son orientativas y no reemplazan la consulta médica. Consulta siempre con tu médico ante cualquier valor fuera de rango.</div></div><div style="height:10px"></div>`;
+  Object.values(latest).forEach(r=>{
+    const s=r.type==='qualitative'?getQualStatus(r.qualResult):getStatus(r.exam,r.value);
+    if(s==='ok')return;
+    if(r.type==='qualitative'){
+      hasRecs=true;
+      html+=`<div class="rec-card high"><div class="rec-header"><span class="rec-icon">⚠️</span><div class="rec-title">${r.exam}: ${r.qualResult}</div></div><div class="rec-body">Este resultado requiere evaluación médica.</div><div class="rec-tips"><div class="rec-tip"><span>•</span><span>Consulta con tu médico para interpretar este resultado</span></div></div></div>`;
+      return;
+    }
+    const db=RECS_DB[r.exam];if(!db)return;const rec=db[s]||db['warn'];if(!rec)return;
+    hasRecs=true;html+=`<div class="rec-card ${s}"><div class="rec-header"><span class="rec-icon">${rec.icon}</span><div class="rec-title">${rec.title}</div></div><div class="rec-body">${rec.body}</div><div class="rec-tips">${rec.tips.map(t=>`<div class="rec-tip"><span>•</span><span>${t}</span></div>`).join('')}</div></div>`;
+  });
+  if(!hasRecs&&!alarms.length)html=`<div class="card" style="text-align:center;padding:24px;"><div style="font-size:38px;margin-bottom:10px;">🎉</div><div style="font-size:16px;font-weight:600;color:var(--teal-600)">¡Todo en orden!</div><div style="font-size:13px;color:var(--text2);margin-top:6px">Todos tus valores recientes están dentro del rango normal.</div></div>`;
+  const numTotal=Object.values(latest).filter(r=>r.type==='numeric').length;
+  if(numTotal>0){const ok=Object.values(latest).filter(r=>r.type==='numeric'&&getStatus(r.exam,r.value)==='ok').length;const pct=Math.round((ok/numTotal)*100);const color=pct>=80?'var(--teal-400)':pct>=60?'var(--amber-400)':'var(--red-400)';html+=`<div class="card" style="text-align:center;"><div class="section-title">Resumen valores numéricos</div><div style="font-size:42px;font-weight:700;color:${color};margin:8px 0">${pct}%</div><div style="font-size:13px;color:var(--text2)">${ok} de ${numTotal} en rango normal</div></div>`;}
+  html+=`<div class="notice"><div class="notice-title">⚕️ Aviso importante</div><div class="notice-body">Recomendaciones orientativas. No reemplazan la consulta médica.</div></div><div style="height:10px"></div>`;
   document.getElementById('recs-content').innerHTML=html;
 }
+
+// ═══════════════════════════════════════════
+//  ADD RESULT FORM
+// ═══════════════════════════════════════════
+const ALL_CATS=['Sangre','Hígado','Riñón','Tiroides','Vitaminas','Electrolitos','Serología','Otro'];
+const QUAL_EXAMS=['VDRL','VIH Anticuerpos','Hepatitis A IgM','Hepatitis A IgG','Hepatitis B Ag superficie (HBsAg)','Hepatitis C Anticuerpos (Anti-HVC)','Herpes I IgG','Herpes I IgM','Herpes II IgG','Herpes II IgM','Panel ITS (Chlamydia/Gonococo/Mycoplasma)','RPR (Sífilis)'];
+
 function renderAddForm(){
-  const allCats=['Sangre','Corazón','Riñón','Hígado','Tiroides','Vitaminas','Electrolitos',...(D.customCats||[]),'Otro'];
+  const allCats=[...ALL_CATS,...(D.customCats||[])];
   document.getElementById('cat-pills').innerHTML=allCats.map((c,i)=>`<button class="pill${i===0?' selected':''}" onclick="selectCat(this,'${c}')">${c}</button>`).join('');
-  rebuildExamSelect('Sangre');
+  onResultTypeChange();
 }
-function rebuildExamSelect(cat){const refs=getRefs();const base=Object.entries(refs).filter(([k,v])=>v.cat===cat).map(([k])=>k);const custom=(D.customExams||[]).filter(e=>e.cat===cat).map(e=>e.name);document.getElementById('exam-select').innerHTML=`<option value="">Seleccionar...</option>`+[...base,...custom,'Otro'].map(e=>`<option value="${e}">${e}</option>`).join('');document.getElementById('ref-info').style.display='none';document.getElementById('new-exam-box').style.display='none';}
-function selectCat(btn,cat){document.querySelectorAll('#cat-pills .pill').forEach(p=>p.classList.remove('selected'));btn.classList.add('selected');if(cat==='Otro'){document.getElementById('new-cat-box').style.display='block';document.getElementById('exam-select').innerHTML='<option value="">Agrega la categoría primero</option>';}else{document.getElementById('new-cat-box').style.display='none';rebuildExamSelect(cat);}}
-function addNewCat(){const val=document.getElementById('new-cat-input').value.trim();if(!val)return;if(!D.customCats)D.customCats=[];if(!D.customCats.includes(val))D.customCats.push(val);persist();const pills=document.getElementById('cat-pills');if(![...pills.querySelectorAll('.pill')].find(p=>p.textContent===val)){const btn=document.createElement('button');btn.className='pill';btn.textContent=val;btn.onclick=()=>selectCat(btn,val);pills.insertBefore(btn,pills.lastElementChild);}document.querySelectorAll('#cat-pills .pill').forEach(p=>p.classList.remove('selected'));const nb=[...pills.querySelectorAll('.pill')].find(p=>p.textContent===val);if(nb)nb.classList.add('selected');document.getElementById('new-cat-input').value='';document.getElementById('new-cat-box').style.display='none';rebuildExamSelect(val);toast('✓ Categoría "'+val+'" agregada');}
-function onExamChange(){const exam=document.getElementById('exam-select').value;if(exam==='Otro'){document.getElementById('new-exam-box').style.display='block';document.getElementById('ref-info').style.display='none';return;}document.getElementById('new-exam-box').style.display='none';const ref=getRefs()[exam];if(ref){document.getElementById('unit-input').value=ref.unit;document.getElementById('ref-text').textContent=`${ref.min}–${ref.max} ${ref.unit}`;document.getElementById('ref-info').style.display='block';}else{document.getElementById('ref-info').style.display='none';}}
-function addNewExam(){const name=document.getElementById('new-exam-input').value.trim();const cat=[...document.querySelectorAll('#cat-pills .pill')].find(p=>p.classList.contains('selected'))?.textContent||'Otro';if(!name)return;if(!D.customExams)D.customExams=[];if(!D.customExams.find(e=>e.name===name&&e.cat===cat))D.customExams.push({name,cat});persist();const sel=document.getElementById('exam-select');if(![...sel.options].find(o=>o.value===name)){const opt=document.createElement('option');opt.value=name;opt.textContent=name;sel.insertBefore(opt,sel.lastElementChild);}sel.value=name;document.getElementById('new-exam-input').value='';document.getElementById('new-exam-box').style.display='none';document.getElementById('ref-info').style.display='none';toast('✓ Examen "'+name+'" agregado');}
-function saveResult(){const exam=document.getElementById('exam-select').value;const val=parseFloat(document.getElementById('val-input').value);const unit=document.getElementById('unit-input').value;const date=document.getElementById('date-input').value;if(!exam||exam==='Otro'||isNaN(val)||!date){alert('Completa examen, valor y fecha');return;}const activeCat=[...document.querySelectorAll('#cat-pills .pill')].find(p=>p.classList.contains('selected'))?.textContent||'Otro';const ref=getRefs()[exam];D.results.push({id:D.nextId++,exam,value:val,unit:unit||(ref?ref.unit:''),date,cat:ref?ref.cat:activeCat,lab:document.getElementById('lab-input').value,notes:document.getElementById('notes-input').value});persist();document.getElementById('exam-select').value='';document.getElementById('val-input').value='';document.getElementById('unit-input').value='';document.getElementById('lab-input').value='';document.getElementById('notes-input').value='';document.getElementById('ref-info').style.display='none';toast('✓ Guardado en tu dispositivo');setTimeout(()=>nav('home'),1600);}
-function showDetail(id,from){fromScreen=from;const r=D.results.find(x=>x.id===id);if(!r)return;const refs=getRefs();document.getElementById('detail-back').onclick=()=>nav(from);document.getElementById('detail-title').textContent=r.exam;document.getElementById('detail-sub').textContent=fmtDate(r.date).full+(r.lab?' · '+r.lab:'');const sameExam=D.results.filter(x=>x.exam===r.exam).sort((a,b)=>a.date.localeCompare(b.date));const idx=sameExam.findIndex(x=>x.id===id);const prev=sameExam[idx-1];let tH='';if(prev){const diff=r.value-prev.value;const arrow=diff>0?`<span style="color:var(--red-400)">▲ +${Math.abs(diff).toFixed(2)}</span>`:diff<0?`<span style="color:var(--teal-400)">▼ -${Math.abs(diff).toFixed(2)}</span>`:`<span style="color:var(--gray-400)">= Sin cambio</span>`;tH=`<div style="font-size:13px;color:var(--text2);margin-top:5px;">Anterior: ${prev.value} ${r.unit} ${arrow}</div>`;}let rH='';const rd=refs[r.exam];if(rd&&rd.max<9000){const pct=Math.min(100,Math.max(0,((r.value-rd.min)/(rd.max-rd.min))*100));const s=getStatus(r.exam,r.value);const dc=s==='ok'?'var(--teal-400)':s==='warn'?'var(--amber-400)':'var(--red-400)';rH=`<div class="section-title" style="margin-top:14px;">Rango de referencia</div><div class="range-bar"><div class="range-fill" style="width:${Math.min(pct,100)}%"></div><div class="range-dot" style="left:calc(${Math.min(pct,100)}% - 8px);background:${dc}"></div></div><div class="range-labels"><span>${rd.min}</span><span style="color:${dc};font-weight:600">${r.value}</span><span>${rd.max}</span></div><div style="font-size:11px;color:var(--text2);margin-top:4px;text-align:center;">Ref: ${rd.min}–${rd.max} ${r.unit}</div>`;}
-const maxV=Math.max(...sameExam.map(x=>x.value));const bH=sameExam.map(x=>`<div class="mini-bar${x.id===id?' current':''}" style="height:${Math.max(8,Math.round((x.value/maxV)*44))}px" title="${x.value}"></div>`).join('');const lH=sameExam.map(x=>`<span>${fmtDate(x.date).month} ${fmtDate(x.date).year.slice(2)}</span>`).join('');const nH=r.notes?`<div style="margin-top:10px;padding:9px 12px;background:var(--blue-50);border-radius:10px;font-size:13px;color:var(--blue-800);">📝 ${r.notes}</div>`:'';document.getElementById('detail-content').innerHTML=`<div class="card"><div style="font-size:32px;font-weight:700">${r.value} <span style="font-size:15px;font-weight:400;color:var(--text2)">${r.unit}</span></div>${tH}${rH}${nH}<button class="btn-danger" onclick="deleteResult(${r.id})">Eliminar resultado</button></div>${sameExam.length>1?`<div class="card"><div class="section-title">Evolución: ${r.exam}</div><div class="mini-bars">${bH}</div><div class="mini-labels">${lH}</div></div>`:''}<button class="btn-secondary" onclick="nav('add')">+ Agregar nuevo resultado</button>`;nav('detail');}
-function deleteResult(id){if(!confirm('¿Eliminar este resultado?'))return;D.results=D.results.filter(r=>r.id!==id);persist();nav(fromScreen);}
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+function onResultTypeChange(){
+  const type=document.getElementById('result-type').value;
+  document.getElementById('numeric-fields').style.display=type==='numeric'?'block':'none';
+  document.getElementById('qualitative-fields').style.display=type==='qualitative'?'block':'none';
+  const activeCat=[...document.querySelectorAll('#cat-pills .pill')].find(p=>p.classList.contains('selected'))?.textContent||'Sangre';
+  rebuildExamSelect(activeCat, type);
+}
+function rebuildExamSelect(cat, type){
+  if(!type)type=document.getElementById('result-type').value;
+  const refs=getRefs();
+  let exams=[];
+  if(type==='qualitative'){
+    exams=[...QUAL_EXAMS,...(D.customExams||[]).filter(e=>e.cat===cat&&e.qualitative).map(e=>e.name)];
+  } else {
+    exams=[...Object.entries(refs).filter(([k,v])=>v.cat===cat).map(([k])=>k),...(D.customExams||[]).filter(e=>e.cat===cat&&!e.qualitative).map(e=>e.name)];
+  }
+  document.getElementById('exam-select').innerHTML=`<option value="">Seleccionar...</option>`+[...exams,'Otro'].map(e=>`<option value="${e}">${e}</option>`).join('');
+  document.getElementById('new-exam-box').style.display='none';
+  document.getElementById('ref-info').style.display='none';
+}
+function selectCat(btn,cat){
+  document.querySelectorAll('#cat-pills .pill').forEach(p=>p.classList.remove('selected'));
+  btn.classList.add('selected');
+  rebuildExamSelect(cat);
+}
+function onExamChange(){
+  const exam=document.getElementById('exam-select').value;
+  if(exam==='Otro'){document.getElementById('new-exam-box').style.display='block';document.getElementById('ref-info').style.display='none';return;}
+  document.getElementById('new-exam-box').style.display='none';
+  const ref=getRefs()[exam];
+  if(ref){document.getElementById('unit-input').value=ref.unit;document.getElementById('ref-text').textContent=`${ref.min}–${ref.max} ${ref.unit}`;document.getElementById('ref-info').style.display='block';}
+  else{document.getElementById('ref-info').style.display='none';}
+}
+function addNewExam(){
+  const name=document.getElementById('new-exam-input').value.trim();
+  const cat=[...document.querySelectorAll('#cat-pills .pill')].find(p=>p.classList.contains('selected'))?.textContent||'Otro';
+  const type=document.getElementById('result-type').value;
+  if(!name)return;
+  if(!D.customExams)D.customExams=[];
+  if(!D.customExams.find(e=>e.name===name&&e.cat===cat))D.customExams.push({name,cat,qualitative:type==='qualitative'});
+  persist();
+  const sel=document.getElementById('exam-select');
+  if(![...sel.options].find(o=>o.value===name)){const opt=document.createElement('option');opt.value=name;opt.textContent=name;sel.insertBefore(opt,sel.lastElementChild);}
+  sel.value=name;
+  document.getElementById('new-exam-input').value='';
+  document.getElementById('new-exam-box').style.display='none';
+  toast('✓ Examen "'+name+'" agregado');
+}
+function saveResult(){
+  const exam=document.getElementById('exam-select').value;
+  const date=document.getElementById('date-input').value;
+  const type=document.getElementById('result-type').value;
+  if(!exam||exam==='Otro'||!date){alert('Completa examen y fecha');return;}
+  const activeCat=[...document.querySelectorAll('#cat-pills .pill')].find(p=>p.classList.contains('selected'))?.textContent||'Otro';
+  const ref=getRefs()[exam];
+  const base={id:D.nextId++,type,exam,date,cat:ref?ref.cat:activeCat,lab:document.getElementById('lab-input').value,notes:document.getElementById('notes-input').value};
+  if(type==='numeric'){
+    const val=parseFloat(document.getElementById('val-input').value);
+    const unit=document.getElementById('unit-input').value;
+    if(isNaN(val)){alert('Ingresa un valor numérico');return;}
+    Object.assign(base,{value:val,unit:unit||(ref?ref.unit:'')});
+  } else {
+    base.qualResult=document.getElementById('qual-result').value;
+  }
+  D.results.push(base);persist();
+  document.getElementById('exam-select').value='';
+  document.getElementById('val-input').value='';
+  document.getElementById('unit-input').value='';
+  document.getElementById('lab-input').value='';
+  document.getElementById('notes-input').value='';
+  document.getElementById('ref-info').style.display='none';
+  toast('✓ Guardado en tu dispositivo');
+  setTimeout(()=>nav('home'),1400);
+}
 
-if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch(e=>{});});}
+// ═══════════════════════════════════════════
+//  DETAIL
+// ═══════════════════════════════════════════
+function showDetail(id,from){
+  fromScreen=from;
+  const r=D.results.find(x=>x.id===id);if(!r)return;
+  const refs=getRefs();
+  document.getElementById('detail-back').onclick=()=>nav(from);
+  document.getElementById('detail-title').textContent=r.exam;
+  document.getElementById('detail-sub').textContent=fmtDate(r.date).full+(r.lab?' · '+r.lab:'');
+
+  let body='';
+  if(r.type==='qualitative'){
+    const s=getQualStatus(r.qualResult);
+    const bc=s==='ok'?'badge-nr':s==='high'?'badge-pos':'badge-warn';
+    body=`<div class="card">
+      <div style="font-size:26px;font-weight:700;margin-bottom:8px;">${r.qualResult}</div>
+      <span class="badge ${bc}" style="font-size:14px;padding:5px 12px;">${r.qualResult}</span>
+      ${r.notes?`<div style="margin-top:12px;padding:9px 12px;background:var(--blue-50);border-radius:10px;font-size:13px;color:var(--blue-800);">📝 ${r.notes}</div>`:''}
+      <button class="btn-danger" onclick="deleteResult(${r.id})">Eliminar resultado</button>
+    </div>`;
+  } else {
+    const sameExam=D.results.filter(x=>x.exam===r.exam&&x.type==='numeric').sort((a,b)=>a.date.localeCompare(b.date));
+    const idx=sameExam.findIndex(x=>x.id===id);
+    const prev=sameExam[idx-1];
+    let tH='';
+    if(prev){const diff=r.value-prev.value;const arrow=diff>0?`<span style="color:var(--red-400)">▲ +${Math.abs(diff).toFixed(2)}</span>`:diff<0?`<span style="color:var(--teal-400)">▼ -${Math.abs(diff).toFixed(2)}</span>`:`<span style="color:var(--gray-400)">= Sin cambio</span>`;tH=`<div style="font-size:13px;color:var(--text2);margin-top:5px;">Anterior: ${prev.value} ${r.unit} ${arrow}</div>`;}
+    let rH='';
+    const rd=refs[r.exam];
+    if(rd&&rd.max<9000){const pct=Math.min(100,Math.max(0,((r.value-rd.min)/(rd.max-rd.min))*100));const s=getStatus(r.exam,r.value);const dc=s==='ok'?'var(--teal-400)':s==='warn'?'var(--amber-400)':'var(--red-400)';rH=`<div class="section-title" style="margin-top:14px;">Rango de referencia</div><div class="range-bar"><div class="range-fill" style="width:${Math.min(pct,100)}%"></div><div class="range-dot" style="left:calc(${Math.min(pct,100)}% - 8px);background:${dc}"></div></div><div class="range-labels"><span>${rd.min}</span><span style="color:${dc};font-weight:600">${r.value}</span><span>${rd.max}</span></div><div style="font-size:11px;color:var(--text2);margin-top:4px;text-align:center;">Ref: ${rd.min}–${rd.max} ${r.unit}</div>`;}
+    const maxV=Math.max(...sameExam.map(x=>x.value));
+    const bH=sameExam.map(x=>`<div class="mini-bar${x.id===id?' current':''}" style="height:${Math.max(8,Math.round((x.value/maxV)*44))}px"></div>`).join('');
+    const lH=sameExam.map(x=>`<span>${fmtDate(x.date).month} ${fmtDate(x.date).year.slice(2)}</span>`).join('');
+    const nH=r.notes?`<div style="margin-top:10px;padding:9px 12px;background:var(--blue-50);border-radius:10px;font-size:13px;color:var(--blue-800);">📝 ${r.notes}</div>`:'';
+    body=`<div class="card"><div style="font-size:32px;font-weight:700">${r.value} <span style="font-size:15px;font-weight:400;color:var(--text2)">${r.unit}</span></div>${tH}${rH}${nH}<button class="btn-danger" onclick="deleteResult(${r.id})">Eliminar resultado</button></div>${sameExam.length>1?`<div class="card"><div class="section-title">Evolución: ${r.exam}</div><div class="mini-bars">${bH}</div><div class="mini-labels">${lH}</div></div>`:''}`;
+  }
+  document.getElementById('detail-content').innerHTML=body+`<button class="btn-secondary" onclick="nav('add')">+ Agregar nuevo resultado</button>`;
+  nav('detail');
+}
+function deleteResult(id){if(!confirm('¿Eliminar?'))return;D.results=D.results.filter(r=>r.id!==id);persist();nav(fromScreen);}
+
+// ═══════════════════════════════════════════
+//  STUDIES
+// ═══════════════════════════════════════════
+const STUDY_TYPES=['Radiografía','Ecografía','Electrocardiograma (ECG)','Resonancia magnética','Tomografía (TAC)','Mamografía','Colonoscopía','Endoscopía','Densitometría ósea','Otro'];
+
+function renderStudies(){
+  if(!D.studies)D.studies=[];
+  const el=document.getElementById('studies-content');
+  let html=`
+    <div class="card">
+      <div class="section-title">Nuevo estudio</div>
+      <div class="form-group">
+        <label class="form-label">Tipo de estudio</label>
+        <select class="form-input" id="study-type">
+          ${STUDY_TYPES.map(t=>`<option>${t}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Título / Descripción</label>
+        <input class="form-input" type="text" id="study-title" placeholder="ej. Radiografía de tórax AP">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fecha</label>
+        <input class="form-input" type="date" id="study-date" value="${new Date().toISOString().split('T')[0]}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Médico / Centro</label>
+        <input class="form-input" type="text" id="study-doctor" placeholder="Dr. Nombre o nombre del centro">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Resolución / Informe del médico</label>
+        <textarea class="form-input" id="study-report" placeholder="Pega aquí el texto del informe o escribe las conclusiones del médico..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Conclusión / Diagnóstico</label>
+        <input class="form-input" type="text" id="study-conclusion" placeholder="ej. Sin hallazgos patológicos">
+      </div>
+      <button class="btn-primary" onclick="saveStudy()">Guardar estudio</button>
+    </div>
+  `;
+  if(D.studies.length){
+    html+=`<div class="section-title">Estudios guardados</div>`;
+    html+=[...D.studies].sort((a,b)=>b.date.localeCompare(a.date)).map(s=>`
+      <div class="study-card" onclick="showStudyDetail(${s.id})">
+        <div class="study-header">
+          <div>
+            <div style="font-size:14px;font-weight:600">${s.title}</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px">${fmtDate(s.date).full}${s.doctor?' · '+s.doctor:''}</div>
+          </div>
+          <span class="badge badge-purple">${s.type}</span>
+        </div>
+        ${s.conclusion?`<div style="font-size:13px;color:var(--teal-600);margin-top:8px;font-weight:500">✓ ${s.conclusion}</div>`:''}
+        ${s.report?`<div class="study-body">${s.report}</div>`:''}
+      </div>
+    `).join('');
+  }
+  el.innerHTML=html;
+}
+
+function saveStudy(){
+  const title=document.getElementById('study-title').value.trim();
+  const date=document.getElementById('study-date').value;
+  const report=document.getElementById('study-report').value.trim();
+  if(!title||!date){alert('Completa el título y la fecha');return;}
+  if(!D.studies)D.studies=[];
+  if(!D.nextStudyId)D.nextStudyId=1;
+  D.studies.push({
+    id:D.nextStudyId++,
+    type:document.getElementById('study-type').value,
+    title,date,
+    doctor:document.getElementById('study-doctor').value,
+    report,
+    conclusion:document.getElementById('study-conclusion').value.trim()
+  });
+  persist();
+  toast('✓ Estudio guardado');
+  renderStudies();
+}
+
+function showStudyDetail(id){
+  const s=D.studies.find(x=>x.id===id);if(!s)return;
+  document.getElementById('detail-back').onclick=()=>nav('studies');
+  document.getElementById('detail-title').textContent=s.title;
+  document.getElementById('detail-sub').textContent=fmtDate(s.date).full+(s.doctor?' · '+s.doctor:'');
+  document.getElementById('detail-content').innerHTML=`
+    <div class="card">
+      <span class="badge badge-purple" style="margin-bottom:10px;display:inline-block;">${s.type}</span>
+      ${s.conclusion?`<div style="background:var(--teal-50);border-radius:10px;padding:10px 13px;margin-bottom:12px;"><div style="font-size:11px;font-weight:600;color:var(--teal-600);margin-bottom:3px;">CONCLUSIÓN</div><div style="font-size:14px;font-weight:500;color:var(--teal-800)">${s.conclusion}</div></div>`:''}
+      ${s.report?`<div style="margin-bottom:12px;"><div class="section-title">Informe médico</div><div style="font-size:13px;line-height:1.7;color:var(--text);white-space:pre-wrap">${s.report}</div></div>`:''}
+      <button class="btn-danger" onclick="deleteStudy(${s.id})">Eliminar estudio</button>
+    </div>
+    <button class="btn-secondary" onclick="nav('studies')">← Volver a estudios</button>
+  `;
+  nav('detail');
+}
+function deleteStudy(id){if(!confirm('¿Eliminar?'))return;D.studies=D.studies.filter(s=>s.id!==id);persist();nav('studies');}
+
+// ═══════════════════════════════════════════
+//  OPHTHALMOLOGY
+// ═══════════════════════════════════════════
+function renderOphtho(){
+  if(!D.ophtho)D.ophtho=[];
+  const el=document.getElementById('ophtho-content');
+  let html=`
+    <div class="card">
+      <div class="section-title">Nueva receta oftalmológica</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Fecha</label><input class="form-input" type="date" id="ophtho-date" value="${new Date().toISOString().split('T')[0]}"></div>
+        <div class="form-group"><label class="form-label">Médico</label><input class="form-input" type="text" id="ophtho-doctor" placeholder="Dr. Nombre"></div>
+      </div>
+      <div class="form-group" style="margin-top:4px">
+        <label class="form-label">Prescripción visual</label>
+        <div style="overflow-x:auto;">
+          <table class="ophtho-table">
+            <tr>
+              <th></th><th>Esfera</th><th>Cilindro</th><th>Eje °</th><th>Adición</th><th>AVsc</th>
+            </tr>
+            <tr>
+              <td style="font-weight:600;font-size:12px;color:var(--text2);">OD<br><span style="font-size:10px">Derecho</span></td>
+              <td><input id="od-sph" placeholder="+0.00"></td>
+              <td><input id="od-cyl" placeholder="-0.00"></td>
+              <td><input id="od-ax" placeholder="0"></td>
+              <td><input id="od-add" placeholder="+0.00"></td>
+              <td><input id="od-va" placeholder="20/20"></td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;font-size:12px;color:var(--text2);">OI<br><span style="font-size:10px">Izquierdo</span></td>
+              <td><input id="oi-sph" placeholder="+0.00"></td>
+              <td><input id="oi-cyl" placeholder="-0.00"></td>
+              <td><input id="oi-ax" placeholder="0"></td>
+              <td><input id="oi-add" placeholder="+0.00"></td>
+              <td><input id="oi-va" placeholder="20/20"></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tipo de lente</label>
+        <select class="form-input" id="ophtho-lens">
+          <option value="">Sin indicación</option>
+          <option>Monofocal</option>
+          <option>Bifocal</option>
+          <option>Progresivo</option>
+          <option>Lentes de contacto</option>
+          <option>Lentes de contacto multifocal</option>
+          <option>Sin corrección</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Diagnóstico / Observaciones</label>
+        <textarea class="form-input" id="ophtho-notes" placeholder="Miopía, astigmatismo, etc. Indicaciones del médico..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Presión ocular (mmHg)</label>
+        <div class="form-row">
+          <input class="form-input" type="text" id="ophtho-iop-od" placeholder="OD: ej. 14">
+          <input class="form-input" type="text" id="ophtho-iop-oi" placeholder="OI: ej. 15">
+        </div>
+      </div>
+      <button class="btn-primary" onclick="saveOphtho()">Guardar receta</button>
+    </div>
+  `;
+  if(D.ophtho.length){
+    html+=`<div class="section-title">Recetas guardadas</div>`;
+    html+=[...D.ophtho].sort((a,b)=>b.date.localeCompare(a.date)).map(o=>`
+      <div class="study-card" onclick="showOphthoDetail(${o.id})">
+        <div class="study-header">
+          <div>
+            <div style="font-size:14px;font-weight:600">Receta oftalmológica</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px">${fmtDate(o.date).full}${o.doctor?' · '+o.doctor:''}</div>
+          </div>
+          <span class="badge badge-info">👁</span>
+        </div>
+        <div style="font-size:12px;margin-top:8px;color:var(--text2);">
+          OD: ${o.od.sph||'—'} ${o.od.cyl||''} ${o.od.ax?'×'+o.od.ax:''}
+          &nbsp;|&nbsp;
+          OI: ${o.oi.sph||'—'} ${o.oi.cyl||''} ${o.oi.ax?'×'+o.oi.ax:''}
+          ${o.lens?' · '+o.lens:''}
+        </div>
+      </div>
+    `).join('');
+  }
+  el.innerHTML=html;
+}
+
+function saveOphtho(){
+  const date=document.getElementById('ophtho-date').value;
+  if(!date){alert('Ingresa la fecha');return;}
+  if(!D.ophtho)D.ophtho=[];
+  if(!D.nextOphthoId)D.nextOphthoId=1;
+  D.ophtho.push({
+    id:D.nextOphthoId++,
+    date,
+    doctor:document.getElementById('ophtho-doctor').value,
+    od:{sph:document.getElementById('od-sph').value,cyl:document.getElementById('od-cyl').value,ax:document.getElementById('od-ax').value,add:document.getElementById('od-add').value,va:document.getElementById('od-va').value},
+    oi:{sph:document.getElementById('oi-sph').value,cyl:document.getElementById('oi-cyl').value,ax:document.getElementById('oi-ax').value,add:document.getElementById('oi-add').value,va:document.getElementById('oi-va').value},
+    lens:document.getElementById('ophtho-lens').value,
+    notes:document.getElementById('ophtho-notes').value,
+    iopOD:document.getElementById('ophtho-iop-od').value,
+    iopOI:document.getElementById('ophtho-iop-oi').value,
+  });
+  persist();
+  toast('✓ Receta guardada');
+  renderOphtho();
+}
+
+function showOphthoDetail(id){
+  const o=D.ophtho.find(x=>x.id===id);if(!o)return;
+  document.getElementById('detail-back').onclick=()=>nav('ophtho');
+  document.getElementById('detail-title').textContent='Receta oftalmológica';
+  document.getElementById('detail-sub').textContent=fmtDate(o.date).full+(o.doctor?' · '+o.doctor:'');
+  const row=(label,d)=>`<tr><td style="font-weight:600;padding:6px 10px;color:var(--text2);font-size:12px;">${label}</td><td style="padding:6px 10px;text-align:center">${d.sph||'—'}</td><td style="padding:6px 10px;text-align:center">${d.cyl||'—'}</td><td style="padding:6px 10px;text-align:center">${d.ax||'—'}</td><td style="padding:6px 10px;text-align:center">${d.add||'—'}</td><td style="padding:6px 10px;text-align:center">${d.va||'—'}</td></tr>`;
+  document.getElementById('detail-content').innerHTML=`
+    <div class="card">
+      <div style="overflow-x:auto;margin-bottom:12px;">
+        <table class="ophtho-table" style="width:100%">
+          <tr><th></th><th>Esfera</th><th>Cilindro</th><th>Eje °</th><th>Adición</th><th>AV</th></tr>
+          ${row('OD Derecho',o.od)}
+          ${row('OI Izquierdo',o.oi)}
+        </table>
+      </div>
+      ${o.lens?`<div style="margin-bottom:8px;"><span style="font-size:12px;color:var(--text2)">Tipo de lente: </span><span style="font-size:13px;font-weight:500">${o.lens}</span></div>`:''}
+      ${(o.iopOD||o.iopOI)?`<div style="margin-bottom:8px;"><span style="font-size:12px;color:var(--text2)">Presión ocular: </span><span style="font-size:13px;font-weight:500">OD ${o.iopOD||'—'} mmHg · OI ${o.iopOI||'—'} mmHg</span></div>`:''}
+      ${o.notes?`<div style="margin-top:10px;padding:9px 12px;background:var(--blue-50);border-radius:10px;font-size:13px;color:var(--blue-800);white-space:pre-wrap">${o.notes}</div>`:''}
+      <button class="btn-danger" onclick="deleteOphtho(${o.id})">Eliminar receta</button>
+    </div>
+    <button class="btn-secondary" onclick="nav('ophtho')">← Volver a oftalmología</button>
+  `;
+  nav('detail');
+}
+function deleteOphtho(id){if(!confirm('¿Eliminar?'))return;D.ophtho=D.ophtho.filter(o=>o.id!==id);persist();nav('ophtho');}
+
+// ═══════════════════════════════════════════
+//  PDF IMPORT
+// ═══════════════════════════════════════════
+let importFiles=[],importPreviewed=[],importChecked=new Set();
+
+function renderImport(){
+  const savedKey=localStorage.getItem(AK)||'';
+  document.getElementById('import-content').innerHTML=`
+    <div class="card">
+      <div class="section-title">🔑 API Key de Anthropic</div>
+      <div class="warning-box">
+        <div class="warning-title">⚠️ Seguridad</div>
+        <div class="warning-body">La clave se guarda solo en tu dispositivo. Solo se envía a api.anthropic.com para leer el PDF. ~$0.01 USD por PDF.</div>
+      </div>
+      <div class="form-group">
+        <div class="api-key-wrap">
+          <input class="form-input" type="password" id="apikey-input" placeholder="sk-ant-api03-..." value="${savedKey}" style="padding-right:44px;">
+          <button class="api-key-toggle" onclick="this.previousElementSibling.type=this.previousElementSibling.type==='password'?'text':'password'">👁</button>
+        </div>
+      </div>
+      <button class="btn-small" onclick="localStorage.setItem('${AK}',document.getElementById('apikey-input').value.trim());toast('✓ Clave guardada')" style="width:100%">Guardar clave</button>
+    </div>
+    <div class="card">
+      <div class="section-title">📄 Seleccionar PDFs</div>
+      <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+        <div style="font-size:36px;margin-bottom:8px">📋</div>
+        <div style="font-size:15px;font-weight:600">Toca para seleccionar PDFs</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:4px">Puedes cargar varios a la vez</div>
+      </div>
+      <input type="file" id="file-input" accept="application/pdf" multiple style="display:none" onchange="handleFiles([...this.files])">
+      <div id="file-list"></div>
+      <button class="btn-primary" id="analyze-btn" onclick="analyzePDFs()" style="display:none">🔍 Analizar con IA</button>
+    </div>
+    <div id="progress-section" style="display:none">
+      <div class="progress-wrap">
+        <div style="font-size:13px;font-weight:500;color:var(--teal-800)">Analizando PDFs...</div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill" id="prog-fill" style="width:0%"></div></div>
+        <div style="font-size:12px;color:var(--teal-600)" id="prog-step">Iniciando...</div>
+      </div>
+    </div>
+    <div id="preview-section" style="display:none">
+      <div class="card">
+        <div class="section-title">✅ Resultados extraídos</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:10px">Desmarca los que no quieras importar</div>
+        <div id="preview-list"></div>
+        <button class="btn-primary" id="import-btn" onclick="confirmImport()" style="margin-top:10px">Importar seleccionados</button>
+      </div>
+    </div>
+  `;
+  const dz=document.getElementById('drop-zone');
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('dragover');});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('dragover'));
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('dragover');handleFiles([...e.dataTransfer.files]);});
+}
+
+function handleFiles(files){
+  const pdfs=files.filter(f=>f.type==='application/pdf');
+  if(!pdfs.length){toast('Solo se aceptan PDFs');return;}
+  importFiles=[...importFiles,...pdfs];
+  document.getElementById('file-list').innerHTML=importFiles.map((f,i)=>`
+    <div class="file-item"><div style="font-size:20px">📄</div><div class="file-info"><div class="file-name">${f.name}</div><div class="file-size">${(f.size/1024).toFixed(0)} KB</div></div><button class="file-remove" onclick="importFiles.splice(${i},1);handleFiles([])">✕</button></div>
+  `).join('');
+  document.getElementById('analyze-btn').style.display=importFiles.length?'block':'none';
+}
+
+async function analyzePDFs(){
+  const apiKey=localStorage.getItem(AK)||'';
+  if(!apiKey.startsWith('sk-ant')){alert('Guarda primero una API key válida');return;}
+  if(!importFiles.length){toast('Agrega al menos un PDF');return;}
+  document.getElementById('progress-section').style.display='block';
+  document.getElementById('preview-section').style.display='none';
+  document.getElementById('analyze-btn').disabled=true;
+  importPreviewed=[];importChecked=new Set();
+
+  for(let i=0;i<importFiles.length;i++){
+    const f=importFiles[i];
+    document.getElementById('prog-fill').style.width=Math.round((i/importFiles.length)*80)+'%';
+    document.getElementById('prog-step').textContent=`Analizando ${f.name} (${i+1}/${importFiles.length})...`;
+    try{
+      const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(f);});
+      const extracted=await callClaude(b64,apiKey);
+      importPreviewed.push(...extracted);
+    }catch(err){toast(`Error en ${f.name}: ${err.message}`);}
+  }
+  document.getElementById('prog-fill').style.width='100%';
+  document.getElementById('prog-step').textContent='Análisis completado';
+  setTimeout(()=>document.getElementById('progress-section').style.display='none',800);
+  if(!importPreviewed.length){toast('No se encontraron resultados');document.getElementById('analyze-btn').disabled=false;return;}
+  importPreviewed.forEach((_,i)=>importChecked.add(i));
+  renderPreview();
+  document.getElementById('preview-section').style.display='block';
+  document.getElementById('analyze-btn').disabled=false;
+}
+
+async function callClaude(b64,apiKey){
+  const SYS=`Eres un extractor de resultados de laboratorio médico.
+Analiza el PDF y extrae TODOS los resultados, tanto numéricos como cualitativos.
+Devuelve SOLO JSON válido sin markdown:
+{
+  "lab": "nombre laboratorio",
+  "date": "YYYY-MM-DD",
+  "results": [
+    {"exam":"Glucosa","type":"numeric","value":88,"unit":"mg/dL","cat":"Sangre","notes":""},
+    {"exam":"VDRL","type":"qualitative","qualResult":"No Reactivo","cat":"Serología","notes":""}
+  ]
+}
+Reglas:
+- type "numeric": exámenes con valores numéricos medibles
+- type "qualitative": resultados No Reactivo/Reactivo/Negativo/Positivo/Normal/Alterado
+- cat options: Sangre, Hígado, Riñón, Tiroides, Vitaminas, Electrolitos, Serología, Otro
+- date: fecha de toma de muestra en YYYY-MM-DD
+- Excluye: grupo sanguíneo, resultados confidenciales sin valor, comentarios del laboratorio`;
+
+  const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4000,system:SYS,messages:[{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},{type:'text',text:'Extrae todos los resultados de este PDF de laboratorio.'}]}]})
+  });
+  if(!resp.ok){const e=await resp.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${resp.status}`);}
+  const data=await resp.json();
+  const text=data.content.map(c=>c.text||'').join('');
+  const clean=text.replace(/```json|```/g,'').trim();
+  const parsed=JSON.parse(clean);
+  return(parsed.results||[]).map(r=>({...r,date:parsed.date||new Date().toISOString().split('T')[0],lab:parsed.lab||''})).filter(r=>r.exam&&(r.type==='qualitative'||(r.type==='numeric'&&!isNaN(r.value))));
+}
+
+function renderPreview(){
+  const byDate={};
+  importPreviewed.forEach((r,i)=>{if(!byDate[r.date])byDate[r.date]=[];byDate[r.date].push({r,i});});
+  document.getElementById('preview-list').innerHTML=Object.entries(byDate).sort(([a],[b])=>b.localeCompare(a)).map(([date,items])=>`
+    <div style="font-size:11px;font-weight:600;color:var(--text2);margin:10px 0 6px;text-transform:uppercase;">${fmtDate(date).full} · ${items[0].r.lab}</div>
+    ${items.map(({r,i})=>{
+      const chk=importChecked.has(i);
+      const val=r.type==='qualitative'?`<span class="badge ${r.qualResult==='No Reactivo'||r.qualResult==='Negativo'?'badge-nr':'badge-pos'}">${r.qualResult}</span>`:`<span style="font-size:13px;font-weight:600;color:var(--teal-600)">${r.value} ${r.unit}</span>`;
+      return`<div class="preview-item"><div class="preview-check ${chk?'checked':''}" onclick="importChecked.has(${i})?importChecked.delete(${i}):importChecked.add(${i});renderPreview()">${chk?'✓':''}</div><div style="flex:1"><div style="font-size:13px;font-weight:500">${r.exam}</div><div style="font-size:11px;color:var(--text2)">${r.cat}</div></div>${val}</div>`;
+    }).join('')}
+  `).join('');
+  document.getElementById('import-btn').textContent=`Importar ${importChecked.size} resultados`;
+}
+
+function confirmImport(){
+  if(!importChecked.size){toast('Selecciona al menos un resultado');return;}
+  let count=0;
+  importPreviewed.forEach((r,i)=>{
+    if(!importChecked.has(i))return;
+    D.results.push({id:D.nextId++,...r});count++;
+  });
+  persist();importFiles=[];importPreviewed=[];importChecked=new Set();
+  toast(`✓ ${count} resultados importados`);
+  setTimeout(()=>nav('home'),1400);
+}
+
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
 if(navigator.standalone===false&&/iphone|ipad|ipod/i.test(navigator.userAgent)){document.getElementById('install-banner').style.display='block';}
-
 document.getElementById('date-input').value=new Date().toISOString().split('T')[0];
 renderAddForm();
 renderHome();
