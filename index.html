@@ -848,7 +848,7 @@ function renderCalendar(){
   sorted.forEach(s=>{
     const daysLeft=Math.ceil((new Date(s.nextDate)-today)/(864e5));
     const msg=daysLeft<=0?'¡Ya!':`En ${daysLeft} día${daysLeft!==1?'s':''}`;
-    const cl=daysLeft<=0?'':'daysLeft<=30?warn':'info';
+    const cl=daysLeft<=0?'high':daysLeft<=60?'warn':'info';
     const borderColor=daysLeft<=0?'var(--red-400)':daysLeft<=60?'var(--amber-400)':'var(--blue-400)';
     calHTML+=`<div class="alarm-card" style="border-left-color:${borderColor}">
       <div class="alarm-title">${s.icon} ${s.cat}</div>
