@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1D9E75">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mi Salud">
+<meta name="description" content="Seguimiento personal de resultados médicos">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-152.png">
+<link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="icons/icon-512.png">
+<title>Mi Salud</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --teal-50:#E1F5EE;--teal-100:#9FE1CB;--teal-400:#1D9E75;--teal-600:#0F6E56;--teal-800:#085041;
+  --blue-50:#E6F1FB;--blue-100:#B5D4F4;--blue-400:#378ADD;--blue-800:#0C447C;
+  --red-50:#FCEBEB;--red-100:#F7C1C1;--red-400:#E24B4A;--red-800:#791F1F;
+  --amber-50:#FAEEDA;--amber-100:#FAC775;--amber-400:#BA7517;--amber-800:#633806;
+  --gray-50:#F1EFE8;--gray-100:#D3D1C7;--gray-400:#888780;--gray-800:#444441;
+  --accent:#1D9E75;
+  --bg:#f0f4f2;--card:#ffffff;--text:#1a1a1a;--text2:#666;--border:rgba(0,0,0,0.09);
+}
+html,body{height:100%;font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;}
+#app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto;background:var(--bg);position:relative;}
+.screen{display:none;flex-direction:column;height:100%;overflow:hidden;}
+.screen.active{display:flex;}
+.header{background:var(--accent);color:white;padding:env(safe-area-inset-top,16px) 20px 20px;padding-top:calc(env(safe-area-inset-top,0px) + 14px);flex-shrink:0;}
+.header h1{font-size:22px;font-weight:600;margin-top:2px;}
+.header p{font-size:13px;opacity:0.82;}
+.header-row{display:flex;align-items:center;gap:10px;margin-bottom:2px;}
+.back-btn{background:rgba(255,255,255,0.22);border:none;color:white;border-radius:8px;padding:5px 12px;font-size:13px;cursor:pointer;font-family:inherit;}
+.curve{background:var(--accent);height:18px;flex-shrink:0;position:relative;}
+.curve::after{content:'';position:absolute;bottom:0;left:0;right:0;height:18px;background:var(--bg);border-radius:18px 18px 0 0;}
+.content{flex:1;overflow-y:auto;padding:14px;-webkit-overflow-scrolling:touch;}
+.nav{background:var(--card);border-top:0.5px solid var(--border);display:flex;padding:6px 0;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px));flex-shrink:0;}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;cursor:pointer;font-family:inherit;font-size:9px;color:var(--text2);padding:4px 0;}
+.nav-btn.active{color:var(--accent);}
+.nav-icon{font-size:19px;line-height:1;}
+.card{background:var(--card);border-radius:16px;border:0.5px solid var(--border);padding:14px;margin-bottom:10px;}
+.quick-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.stat-card{background:var(--card);border-radius:14px;padding:13px;border:0.5px solid var(--border);text-align:center;}
+.stat-icon{font-size:20px;margin-bottom:4px;}
+.stat-value{font-size:20px;font-weight:600;}
+.stat-label{font-size:11px;color:var(--text2);margin-top:1px;}
+.section-title{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;}
+.exam-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:0.5px solid var(--border);cursor:pointer;}
+.exam-row:last-child{border-bottom:none;}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.dot-ok{background:var(--teal-400);}
+.dot-warn{background:var(--amber-400);}
+.dot-high{background:var(--red-400);}
+.exam-info{flex:1;}
+.exam-name{font-size:14px;font-weight:500;}
+.exam-date{font-size:11px;color:var(--text2);margin-top:1px;}
+.exam-val{font-size:14px;font-weight:600;}
+.val-ok{color:var(--teal-600);}
+.val-warn{color:var(--amber-400);}
+.val-high{color:var(--red-400);}
+.form-group{margin-bottom:12px;}
+.form-label{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:0.3px;}
+.form-input{width:100%;padding:11px 13px;border:0.5px solid rgba(0,0,0,0.18);border-radius:11px;font-size:15px;font-family:inherit;background:var(--card);color:var(--text);outline:none;-webkit-appearance:none;}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(29,158,117,0.13);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:32px;}
+.btn-primary{width:100%;background:var(--accent);color:white;border:none;border-radius:13px;padding:14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:6px;}
+.btn-secondary{width:100%;background:transparent;color:var(--accent);border:1.5px solid var(--accent);border-radius:13px;padding:12px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;margin-top:8px;}
+.btn-danger{width:100%;background:transparent;color:var(--red-400);border:1.5px solid var(--red-400);border-radius:13px;padding:12px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;margin-top:8px;}
+.btn-small{padding:7px 13px;border-radius:9px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;border:none;background:var(--accent);color:white;}
+.category-pills{display:flex;flex-wrap:wrap;gap:7px;margin-top:5px;}
+.pill{padding:6px 13px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid rgba(0,0,0,0.15);background:var(--card);color:var(--text2);font-family:inherit;}
+.pill.selected{background:var(--teal-50);color:var(--teal-600);border-color:var(--teal-400);}
+.new-option-box{display:none;margin-top:9px;background:var(--teal-50);border-radius:11px;padding:11px;border:1px solid var(--teal-100);}
+.new-option-box label{font-size:12px;color:var(--teal-600);font-weight:600;display:block;margin-bottom:6px;}
+.new-option-row{display:flex;gap:8px;align-items:center;}
+.filter-tabs{display:flex;gap:7px;margin-bottom:12px;overflow-x:auto;padding-bottom:3px;scrollbar-width:none;}
+.filter-tabs::-webkit-scrollbar{display:none;}
+.tab{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid rgba(0,0,0,0.12);background:var(--card);color:var(--text2);white-space:nowrap;font-family:inherit;}
+.tab.active{background:var(--accent);color:white;border-color:var(--accent);}
+.result-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:0.5px solid var(--border);cursor:pointer;}
+.result-item:last-child{border-bottom:none;}
+.result-date-col{text-align:center;min-width:44px;}
+.result-month{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;}
+.result-day{font-size:20px;font-weight:600;line-height:1;}
+.result-info{flex:1;}
+.result-name{font-size:14px;font-weight:500;}
+.result-sub{font-size:11px;color:var(--text2);margin-top:1px;}
+.badge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;}
+.badge-ok{background:var(--teal-50);color:var(--teal-600);}
+.badge-warn{background:var(--amber-50);color:var(--amber-400);}
+.badge-high{background:var(--red-50);color:var(--red-400);}
+.range-bar{height:8px;border-radius:4px;background:var(--gray-100);position:relative;margin:14px 0 6px;}
+.range-fill{position:absolute;height:100%;border-radius:4px;background:var(--teal-100);}
+.range-dot{position:absolute;width:16px;height:16px;border-radius:50%;background:var(--teal-400);top:-4px;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.2);}
+.range-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);}
+.mini-bars{display:flex;gap:5px;align-items:flex-end;height:52px;margin-top:10px;}
+.mini-bar{flex:1;border-radius:3px 3px 0 0;background:var(--teal-100);min-width:18px;}
+.mini-bar.current{background:var(--teal-400);}
+.mini-labels{display:flex;gap:5px;margin-top:3px;}
+.mini-labels span{flex:1;text-align:center;font-size:9px;color:var(--text2);}
+.alarm-card{border-left:3px solid var(--red-400);border-radius:0 12px 12px 0;background:var(--card);padding:11px 13px;margin-bottom:8px;border-top:0.5px solid var(--border);border-right:0.5px solid var(--border);border-bottom:0.5px solid var(--border);}
+.alarm-card.warn{border-left-color:var(--amber-400);}
+.alarm-title{font-size:14px;font-weight:600;}
+.alarm-sub{font-size:12px;color:var(--text2);margin-top:2px;}
+.alarm-action{font-size:12px;color:var(--accent);font-weight:500;margin-top:5px;}
+.rec-card{border-radius:14px;padding:14px;margin-bottom:10px;border:0.5px solid var(--border);}
+.rec-card.ok{background:var(--teal-50);}
+.rec-card.warn{background:var(--amber-50);}
+.rec-card.high{background:var(--red-50);}
+.rec-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.rec-icon{font-size:20px;}
+.rec-title{font-size:14px;font-weight:600;}
+.rec-card.ok .rec-title{color:var(--teal-800);}
+.rec-card.warn .rec-title{color:var(--amber-800);}
+.rec-card.high .rec-title{color:var(--red-800);}
+.rec-body{font-size:13px;line-height:1.6;}
+.rec-card.ok .rec-body{color:var(--teal-600);}
+.rec-card.warn .rec-body{color:var(--amber-800);}
+.rec-card.high .rec-body{color:var(--red-800);}
+.rec-tips{margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(0,0,0,0.08);}
+.rec-tip{font-size:12px;padding:3px 0;display:flex;gap:6px;line-height:1.5;}
+.toast{position:fixed;bottom:calc(70px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(10px);background:var(--teal-800);color:var(--teal-50);border-radius:12px;padding:11px 22px;font-size:14px;font-weight:500;text-align:center;opacity:0;transition:all 0.3s;pointer-events:none;z-index:999;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.empty-state{text-align:center;padding:30px 14px;color:var(--text2);font-size:14px;}
+.empty-icon{font-size:36px;margin-bottom:10px;}
+.ref-info{background:var(--teal-50);border-radius:10px;padding:9px 12px;font-size:12px;color:var(--teal-600);margin-bottom:10px;}
+.notice{background:var(--blue-50);border-radius:13px;padding:12px 14px;border:0.5px solid var(--blue-100);}
+.notice-title{font-size:12px;font-weight:600;color:var(--blue-800);margin-bottom:4px;}
+.notice-body{font-size:12px;color:var(--blue-800);line-height:1.6;}
+.chart-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.chart-bar{width:100%;border-radius:3px 3px 0 0;min-width:18px;}
+.chart-val{font-size:9px;font-weight:600;}
+.chart-lbl{font-size:8px;color:var(--text2);text-align:center;}
+/* Install banner */
+#install-banner{display:none;background:var(--teal-800);color:white;padding:12px 16px;text-align:center;font-size:13px;line-height:1.5;flex-shrink:0;}
+#install-banner button{background:white;color:var(--teal-800);border:none;border-radius:8px;padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;margin-top:6px;font-family:inherit;}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="install-banner">
+  <div>📲 Instala Mi Salud en tu iPhone</div>
+  <div style="font-size:11px;opacity:0.85;margin-top:2px;">Toca <strong>Compartir</strong> → <strong>Añadir a pantalla de inicio</strong></div>
+  <button onclick="document.getElementById('install-banner').style.display='none'">Entendido</button>
+</div>
+<div class="toast" id="toast"></div>
+
+<!-- HOME -->
+<div class="screen active" id="screen-home">
+  <div class="header"><p id="greeting">Buenos días</p><h1>Mi Salud</h1></div>
+  <div class="curve"></div>
+  <div class="content">
+    <div class="quick-stats">
+      <div class="stat-card"><div class="stat-icon">🩺</div><div class="stat-value" id="h-total">0</div><div class="stat-label">Resultados</div></div>
+      <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-value" id="h-date">—</div><div class="stat-label">Último chequeo</div></div>
+    </div>
+    <div id="alarms-home"></div>
+    <div class="section-title">Últimos resultados</div>
+    <div class="card" id="recent-results"></div>
+    <button class="btn-primary" onclick="nav('add')">+ Agregar resultado</button>
+  </div>
+  <div class="nav">
+    <button class="nav-btn active" onclick="nav('home')"><span class="nav-icon">🏠</span>Inicio</button>
+    <button class="nav-btn" onclick="nav('history')"><span class="nav-icon">📋</span>Historial</button>
+    <button class="nav-btn" onclick="nav('charts')"><span class="nav-icon">📈</span>Gráficos</button>
+    <button class="nav-btn" onclick="nav('recs')"><span class="nav-icon">💡</span>Consejos</button>
+    <button class="nav-btn" onclick="nav('add')"><span class="nav-icon">➕</span>Agregar</button>
+  </div>
+</div>
+
+<!-- ADD -->
+<div class="screen" id="screen-add">
+  <div class="header"><div class="header-row"><button class="back-btn" onclick="nav('home')">← Volver</button><h1>Nuevo resultado</h1></div></div>
+  <div class="curve"></div>
+  <div class="content">
+    <div class="card">
+      <div class="form-group">
+        <label class="form-label">Categoría</label>
+        <div class="category-pills" id="cat-pills"></div>
+        <div class="new-option-box" id="new-cat-box">
+          <label>Nueva categoría:</label>
+          <div class="new-option-row">
+            <input class="form-input" type="text" id="new-cat-input" placeholder="Nombre de categoría..." style="flex:1;font-size:13px;padding:8px 10px;">
+            <button class="btn-small" onclick="addNewCat()">Agregar</button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Examen</label>
+        <select class="form-input" id="exam-select" onchange="onExamChange()"><option value="">Seleccionar...</option></select>
+        <div class="new-option-box" id="new-exam-box">
+          <label>Nuevo examen:</label>
+          <div class="new-option-row">
+            <input class="form-input" type="text" id="new-exam-input" placeholder="Nombre del examen..." style="flex:1;font-size:13px;padding:8px 10px;">
+            <button class="btn-small" onclick="addNewExam()">Agregar</button>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Valor</label><input class="form-input" type="number" id="val-input" placeholder="ej. 95" step="any" inputmode="decimal"></div>
+        <div class="form-group"><label class="form-label">Unidad</label><input class="form-input" type="text" id="unit-input" placeholder="mg/dL"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Fecha</label><input class="form-input" type="date" id="date-input"></div>
+      <div class="form-group"><label class="form-label">Laboratorio (opcional)</label><input class="form-input" type="text" id="lab-input" placeholder="Nombre del laboratorio"></div>
+      <div class="form-group"><label class="form-label">Notas (opcional)</label><input class="form-input" type="text" id="notes-input" placeholder="Observaciones del médico..."></div>
+      <div class="ref-info" id="ref-info" style="display:none;"><strong>Referencia: </strong><span id="ref-text"></span></div>
+      <button class="btn-primary" onclick="saveResult()">Guardar resultado</button>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nav-btn" onclick="nav('home')"><span class="nav-icon">🏠</span>Inicio</button>
+    <button class="nav-btn" onclick="nav('history')"><span class="nav-icon">📋</span>Historial</button>
+    <button class="nav-btn" onclick="nav('charts')"><span class="nav-icon">📈</span>Gráficos</button>
+    <button class="nav-btn" onclick="nav('recs')"><span class="nav-icon">💡</span>Consejos</button>
+    <button class="nav-btn active" onclick="nav('add')"><span class="nav-icon">➕</span>Agregar</button>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div class="screen" id="screen-history">
+  <div class="header"><h1>Historial</h1><p>Todos tus resultados</p></div>
+  <div class="curve"></div>
+  <div class="content">
+    <div class="filter-tabs" id="history-tabs"></div>
+    <div class="card" id="history-list"></div>
+  </div>
+  <div class="nav">
+    <button class="nav-btn" onclick="nav('home')"><span class="nav-icon">🏠</span>Inicio</button>
+    <button class="nav-btn active" onclick="nav('history')"><span class="nav-icon">📋</span>Historial</button>
+    <button class="nav-btn" onclick="nav('charts')"><span class="nav-icon">📈</span>Gráficos</button>
+    <button class="nav-btn" onclick="nav('recs')"><span class="nav-icon">💡</span>Consejos</button>
+    <button class="nav-btn" onclick="nav('add')"><span class="nav-icon">➕</span>Agregar</button>
+  </div>
+</div>
+
+<!-- CHARTS -->
+<div class="screen" id="screen-charts">
+  <div class="header"><h1>Gráficos</h1><p>Evolución de tus valores</p></div>
+  <div class="curve"></div>
+  <div class="content" id="charts-content"></div>
+  <div class="nav">
+    <button class="nav-btn" onclick="nav('home')"><span class="nav-icon">🏠</span>Inicio</button>
+    <button class="nav-btn" onclick="nav('history')"><span class="nav-icon">📋</span>Historial</button>
+    <button class="nav-btn active" onclick="nav('charts')"><span class="nav-icon">📈</span>Gráficos</button>
+    <button class="nav-btn" onclick="nav('recs')"><span class="nav-icon">💡</span>Consejos</button>
+    <button class="nav-btn" onclick="nav('add')"><span class="nav-icon">➕</span>Agregar</button>
+  </div>
+</div>
+
+<!-- RECOMMENDATIONS -->
+<div class="screen" id="screen-recs">
+  <div class="header"><h1>💡 Recomendaciones</h1><p>Basadas en tus resultados</p></div>
+  <div class="curve"></div>
+  <div class="content" id="recs-content"></div>
+  <div class="nav">
+    <button class="nav-btn" onclick="nav('home')"><span class="nav-icon">🏠</span>Inicio</button>
+    <button class="nav-btn" onclick="nav('history')"><span class="nav-icon">📋</span>Historial</button>
+    <button class="nav-btn" onclick="nav('charts')"><span class="nav-icon">📈</span>Gráficos</button>
+    <button class="nav-btn active" onclick="nav('recs')"><span class="nav-icon">💡</span>Consejos</button>
+    <button class="nav-btn" onclick="nav('add')"><span class="nav-icon">➕</span>Agregar</button>
+  </div>
+</div>
+
+<!-- DETAIL -->
+<div class="screen" id="screen-detail">
+  <div class="header">
+    <div class="header-row"><button class="back-btn" id="detail-back">← Volver</button></div>
+    <h1 id="detail-title"></h1><p id="detail-sub"></p>
+  </div>
+  <div class="curve"></div>
+  <div class="content" id="detail-content"></div>
+  <div class="nav">
+    <button class="nav-btn" onclick="nav('home')"><span class="nav-icon">🏠</span>Inicio</button>
+    <button class="nav-btn" onclick="nav('history')"><span class="nav-icon">📋</span>Historial</button>
+    <button class="nav-btn" onclick="nav('charts')"><span class="nav-icon">📈</span>Gráficos</button>
+    <button class="nav-btn" onclick="nav('recs')"><span class="nav-icon">💡</span>Consejos</button>
+    <button class="nav-btn" onclick="nav('add')"><span class="nav-icon">➕</span>Agregar</button>
+  </div>
+</div>
+</div>
+
+<script>
+const STORAGE_KEY='miSalud_v3';
+const DEFAULT_REFS={
+  'Glucosa':{min:70,max:100,unit:'mg/dL',cat:'Sangre'},
+  'Colesterol total':{min:0,max:200,unit:'mg/dL',cat:'Sangre'},
+  'Colesterol HDL':{min:40,max:999,unit:'mg/dL',cat:'Sangre'},
+  'Colesterol LDL':{min:0,max:130,unit:'mg/dL',cat:'Sangre'},
+  'Triglicéridos':{min:0,max:150,unit:'mg/dL',cat:'Sangre'},
+  'Hemoglobina':{min:12,max:17,unit:'g/dL',cat:'Sangre'},
+  'Hematocrito':{min:36,max:50,unit:'%',cat:'Sangre'},
+  'Glóbulos blancos':{min:4.5,max:11,unit:'mil/µL',cat:'Sangre'},
+  'Presión sistólica':{min:90,max:120,unit:'mmHg',cat:'Corazón'},
+  'Presión diastólica':{min:60,max:80,unit:'mmHg',cat:'Corazón'},
+  'TSH':{min:0.4,max:4.0,unit:'mUI/L',cat:'Tiroides'},
+  'Creatinina':{min:0.6,max:1.2,unit:'mg/dL',cat:'Riñón'},
+  'Ácido úrico':{min:2.4,max:7.0,unit:'mg/dL',cat:'Riñón'},
+  'Vitamina D':{min:30,max:100,unit:'ng/mL',cat:'Vitaminas'},
+  'Vitamina B12':{min:200,max:900,unit:'pg/mL',cat:'Vitaminas'},
+  'Ferritina':{min:12,max:150,unit:'ng/mL',cat:'Sangre'},
+  'Hierro sérico':{min:60,max:170,unit:'µg/dL',cat:'Sangre'},
+};
+const RECS_DB={
+  'Glucosa':{warn:{icon:'🍬',title:'Glucosa en límite superior',body:'Tu glucosa está cerca del rango alto. Conviene revisar hábitos alimenticios.',tips:['Evita bebidas azucaradas y jugos envasados','Prefiere cereales integrales sobre refinados','Realiza 30 min de ejercicio aeróbico diario','Repite el examen en 3 meses']},high:{icon:'⚠️',title:'Glucosa elevada',body:'Tu glucosa supera el rango normal. Consulta a tu médico pronto.',tips:['Agenda consulta médica en las próximas 2 semanas','Elimina azúcares añadidos de tu dieta','Camina al menos 150 min/semana','Mide en ayunas cada 2 semanas']}},
+  'Colesterol total':{warn:{icon:'🫀',title:'Colesterol en límite',body:'Tu colesterol total está cerca del límite recomendado.',tips:['Reduce grasas saturadas: frituras, embutidos','Consume más omega-3: salmón, nueces, chía','Aumenta fibra soluble: avena, legumbres','Controla en 6 meses']},high:{icon:'❗',title:'Colesterol elevado',body:'Tu colesterol total está elevado. Requiere atención médica.',tips:['Consulta con tu médico esta semana','Dieta estricta baja en grasas saturadas','Ejercicio aeróbico mínimo 5 días/semana','Posible necesidad de medicación']}},
+  'Colesterol LDL':{warn:{icon:'🫀',title:'LDL en límite alto',body:'El colesterol LDL (malo) está cerca del límite.',tips:['Reducir grasas saturadas y trans','Aumentar consumo de fibra','Ejercicio regular','Reevaluar en 3 meses']},high:{icon:'❗',title:'LDL elevado',body:'El colesterol LDL está elevado. Consulta médico.',tips:['Consulta médica pronto','Dieta mediterránea recomendada','Evitar tabaco','Posible necesidad de estatinas']}},
+  'Triglicéridos':{warn:{icon:'🍟',title:'Triglicéridos en límite',body:'Los triglicéridos elevados se asocian a riesgo cardiovascular.',tips:['Reduce alcohol y azúcares simples','Evita harinas blancas','Más proteínas magras','Controla en 3 meses']},high:{icon:'⚠️',title:'Triglicéridos elevados',body:'Triglicéridos significativamente elevados. Requiere atención.',tips:['Consulta médica urgente','Dieta sin alcohol ni azúcar refinada','Omega-3 puede ayudar','Ejercicio diario']}},
+  'Presión sistólica':{warn:{icon:'💉',title:'Presión arterial elevada',body:'Tu presión sistólica supera el rango normal.',tips:['Reduce consumo de sodio','Técnicas de relajación','Monitorea cada 3 días','Consulta si persiste más de 2 semanas']},high:{icon:'🚨',title:'Hipertensión detectada',body:'Presión sistólica alta. Consulta médico pronto.',tips:['Consulta médico esta semana','Mide a la misma hora cada día','Reduce sal y alcohol','Evita cafeína en exceso']}},
+  'Presión diastólica':{warn:{icon:'💉',title:'Presión diastólica elevada',body:'La presión diastólica está sobre el rango normal.',tips:['Reducir sal y estrés','Ejercicio moderado','Monitoreo frecuente','Consultar si persiste']},high:{icon:'🚨',title:'Presión diastólica alta',body:'Presión diastólica significativamente alta.',tips:['Consultar médico esta semana','Control diario de presión','Dieta DASH recomendada','Evitar alcohol y tabaco']}},
+  'TSH':{warn:{icon:'🦋',title:'TSH fuera de rango',body:'Tu TSH sugiere posible alteración tiroidea.',tips:['Agenda consulta con endocrinólogo','Repite el examen en 4-6 semanas','Informa síntomas: fatiga, cambio de peso','No automediques']},high:{icon:'⚠️',title:'Disfunción tiroidea probable',body:'TSH muy alterado. Requiere evaluación especializada.',tips:['Consultar endocrinólogo urgente','Solicitar T3 y T4 libre','No suspender medicación sin consultar']}},
+  'Creatinina':{warn:{icon:'🫘',title:'Creatinina en límite',body:'Posible estrés renal. Vigila tu hidratación.',tips:['Aumenta agua (min 2L/día)','Evita antiinflamatorios sin indicación','Reduce proteína animal en exceso','Controla en 2-3 meses']},high:{icon:'⚠️',title:'Creatinina elevada',body:'Posible deterioro de función renal.',tips:['Consulta esta semana','Hidratación fundamental','Evitar nefrotóxicos','Pedir evaluación completa renal']}},
+  'Hemoglobina':{warn:{icon:'🩸',title:'Hemoglobina baja',body:'Posible anemia leve.',tips:['Aumenta hierro: carnes rojas, legumbres, espinaca','Combina con vitamina C','Evita té/café junto a comidas con hierro','Controla en 2 meses']},high:{icon:'⚠️',title:'Anemia probable',body:'Hemoglobina significativamente baja. Consulta médico.',tips:['Consulta médico esta semana','Solicitar ferritina y B12','Posible suplemento de hierro','Descartar causas subyacentes']}},
+  'Vitamina D':{warn:{icon:'☀️',title:'Vitamina D insuficiente',body:'Niveles bajos de vitamina D. Afecta huesos e inmunidad.',tips:['15-20 min de sol diario','Come pescado graso, huevos','Consulta suplementación','Controla en 3 meses']},high:{icon:'☀️',title:'Vitamina D deficiente',body:'Deficiencia severa. Requiere suplementación.',tips:['Consulta médico para dosis de suplemento','Exposición solar regular','Dieta rica en calcio','Re-evaluar en 2 meses']}},
+};
+const FOLLOWUP={
+  'Glucosa':{warn:90,high:30},'Colesterol total':{warn:180,high:60},'Colesterol LDL':{warn:90,high:45},
+  'Triglicéridos':{warn:90,high:30},'Presión sistólica':{warn:14,high:7},'Presión diastólica':{warn:14,high:7},
+  'TSH':{warn:42,high:14},'Creatinina':{warn:90,high:30},'Hemoglobina':{warn:60,high:21},'Vitamina D':{warn:90,high:60},
+};
+
+function loadData(){
+  try{const r=localStorage.getItem(STORAGE_KEY);if(r)return JSON.parse(r);}catch(e){}
+  return{results:[
+    {id:1,exam:'Glucosa',value:95,unit:'mg/dL',date:'2025-03-15',cat:'Sangre',lab:'Clínica Alemana',notes:''},
+    {id:2,exam:'Colesterol total',value:195,unit:'mg/dL',date:'2025-03-15',cat:'Sangre',lab:'Clínica Alemana',notes:''},
+    {id:3,exam:'Triglicéridos',value:172,unit:'mg/dL',date:'2025-03-15',cat:'Sangre',lab:'Clínica Alemana',notes:'Mejorar dieta'},
+    {id:4,exam:'Colesterol HDL',value:52,unit:'mg/dL',date:'2025-03-15',cat:'Sangre',lab:'Clínica Alemana',notes:''},
+    {id:5,exam:'Glucosa',value:102,unit:'mg/dL',date:'2024-09-10',cat:'Sangre',lab:'Lab. UC',notes:''},
+    {id:6,exam:'Colesterol total',value:210,unit:'mg/dL',date:'2024-09-10',cat:'Sangre',lab:'Lab. UC',notes:''},
+    {id:7,exam:'Presión sistólica',value:118,unit:'mmHg',date:'2025-01-22',cat:'Corazón',lab:'',notes:''},
+    {id:8,exam:'TSH',value:2.1,unit:'mUI/L',date:'2024-12-05',cat:'Tiroides',lab:'RedSalud',notes:''},
+  ],nextId:9,customCats:[],customExams:[],refs:{}};
+}
+function persist(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(D));}catch(e){}}
+let D=loadData(),histFilter='Todos',fromScreen='history';
+function getRefs(){return Object.assign({},DEFAULT_REFS,D.refs||{});}
+function getStatus(exam,value){const r=getRefs()[exam];if(!r)return'ok';if(value<r.min||value>r.max){const p=value>r.max?(value-r.max)/r.max:(r.min-value)/r.min;return p>0.15?'high':'warn';}return'ok';}
+function fmtDate(d){if(!d)return{day:'—',month:'—',year:'—',full:'—'};const[y,m,day]=d.split('-');const mo=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];return{day,month:mo[parseInt(m)-1],year:y,full:`${day} ${mo[parseInt(m)-1]} ${y}`};}
+function getAlarms(){const lt={},al=[],today=new Date();D.results.forEach(r=>{if(!lt[r.exam]||r.date>lt[r.exam].date)lt[r.exam]=r;});Object.values(lt).forEach(r=>{const s=getStatus(r.exam,r.value);if(s==='ok')return;const ru=FOLLOWUP[r.exam];if(!ru)return;const days=s==='high'?ru.high:ru.warn;const next=new Date(r.date);next.setDate(next.getDate()+days);const dL=Math.ceil((next-today)/(864e5));al.push({exam:r.exam,value:r.value,unit:r.unit,status:s,daysLeft:dL,nextDate:next.toISOString().split('T')[0]});});return al.sort((a,b)=>a.daysLeft-b.daysLeft);}
+function setGreeting(){const h=new Date().getHours();document.getElementById('greeting').textContent=h<12?'Buenos días':h<19?'Buenas tardes':'Buenas noches';}
+function nav(s){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById('screen-'+s).classList.add('active');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));if(s==='home')renderHome();if(s==='history')renderHistory();if(s==='charts')renderCharts();if(s==='recs')renderRecs();if(s==='add')renderAddForm();}
+function renderHome(){
+  setGreeting();
+  document.getElementById('h-total').textContent=D.results.length;
+  const sorted=[...D.results].sort((a,b)=>b.date.localeCompare(a.date));
+  if(sorted[0]){const d=fmtDate(sorted[0].date);document.getElementById('h-date').textContent=d.month+' '+d.year;}
+  const alarms=getAlarms().filter(a=>a.daysLeft<=14);
+  const alEl=document.getElementById('alarms-home');
+  if(alarms.length){alEl.innerHTML=`<div class="section-title">🔔 Alertas de seguimiento</div>`+alarms.slice(0,2).map(a=>{const cl=a.status==='high'?'':'warn';const msg=a.daysLeft<=0?'¡Seguimiento vencido!':`Control en ${a.daysLeft} día${a.daysLeft!==1?'s':''}`;return`<div class="alarm-card ${cl}"><div class="alarm-title">${a.exam}</div><div class="alarm-sub">${a.value} ${a.unit} · ${a.status==='high'?'Elevado':'En límite'}</div><div class="alarm-action">📅 ${msg} · ${fmtDate(a.nextDate).full}</div></div>`;}).join('');}else{alEl.innerHTML='';}
+  const el=document.getElementById('recent-results');
+  if(!sorted.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">🩺</div>Agrega tu primer resultado</div>`;return;}
+  el.innerHTML=sorted.slice(0,5).map(r=>{const s=getStatus(r.exam,r.value);const dc=s==='ok'?'dot-ok':s==='warn'?'dot-warn':'dot-high';const vc=s==='ok'?'val-ok':s==='warn'?'val-warn':'val-high';return`<div class="exam-row" onclick="showDetail(${r.id},'home')"><div class="dot ${dc}"></div><div class="exam-info"><div class="exam-name">${r.exam}</div><div class="exam-date">${fmtDate(r.date).full}</div></div><div class="exam-val ${vc}">${r.value} <span style="font-size:11px;font-weight:400">${r.unit}</span></div></div>`;}).join('');
+}
+function renderHistory(){
+  const cats=['Todos',...new Set(D.results.map(r=>r.cat))];
+  document.getElementById('history-tabs').innerHTML=cats.map(c=>`<button class="tab${histFilter===c?' active':''}" onclick="filterHist('${c}',this)">${c}</button>`).join('');
+  const filtered=histFilter==='Todos'?D.results:D.results.filter(r=>r.cat===histFilter);
+  const sorted=[...filtered].sort((a,b)=>b.date.localeCompare(a.date));
+  const el=document.getElementById('history-list');
+  if(!sorted.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div>Sin resultados</div>`;return;}
+  el.innerHTML=sorted.map(r=>{const s=getStatus(r.exam,r.value);const bc=s==='ok'?'badge-ok':s==='warn'?'badge-warn':'badge-high';const bl=s==='ok'?'Normal':s==='warn'?'Límite':'Elevado';const d=fmtDate(r.date);return`<div class="result-item" onclick="showDetail(${r.id},'history')"><div class="result-date-col"><div class="result-month">${d.month}</div><div class="result-day">${d.day}</div></div><div class="result-info"><div class="result-name">${r.exam}</div><div class="result-sub">${r.lab||r.cat}</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:600">${r.value} <span style="font-size:11px;font-weight:400;color:var(--text2)">${r.unit}</span></div><span class="badge ${bc}">${bl}</span></div></div>`;}).join('');
+}
+function filterHist(cat,btn){histFilter=cat;document.querySelectorAll('#history-tabs .tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');renderHistory();}
+function renderCharts(){
+  const exams=[...new Set(D.results.map(r=>r.exam))];
+  const el=document.getElementById('charts-content');
+  if(!exams.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">📈</div>Sin datos aún</div>`;return;}
+  el.innerHTML=exams.map(exam=>{const items=D.results.filter(r=>r.exam===exam).sort((a,b)=>a.date.localeCompare(b.date));const maxV=Math.max(...items.map(x=>x.value));const bars=items.map(x=>{const h=Math.max(8,Math.round((x.value/maxV)*60));const s=getStatus(exam,x.value);const color=s==='ok'?'var(--teal-400)':s==='warn'?'var(--amber-400)':'var(--red-400)';return`<div class="chart-bar-wrap"><div class="chart-val" style="color:${color}">${x.value}</div><div class="chart-bar" style="height:${h}px;background:${color}"></div><div class="chart-lbl">${fmtDate(x.date).month}<br>${fmtDate(x.date).year.slice(2)}</div></div>`;}).join('');const latest=items[items.length-1];const s=getStatus(exam,latest.value);const bc=s==='ok'?'badge-ok':s==='warn'?'badge-warn':'badge-high';const bl=s==='ok'?'Normal':s==='warn'?'Límite':'Elevado';return`<div class="card" onclick="showDetail(${latest.id},'charts')"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><div><div style="font-size:14px;font-weight:600">${exam}</div><div style="font-size:11px;color:var(--text2)">${items.length} medición${items.length>1?'es':''}</div></div><span class="badge ${bc}">${bl}</span></div><div style="display:flex;gap:5px;align-items:flex-end;height:88px;padding-bottom:3px;">${bars}</div></div>`;}).join('');
+}
+function renderRecs(){
+  const latest={};D.results.forEach(r=>{if(!latest[r.exam]||r.date>latest[r.exam].date)latest[r.exam]=r;});
+  const alarms=getAlarms();let html='';
+  if(alarms.length){html+=`<div class="section-title">🔔 Seguimientos pendientes</div>`;alarms.forEach(a=>{const cl=a.status==='high'?'':'warn';const msg=a.daysLeft<=0?'¡Vencido!':`En ${a.daysLeft} día${a.daysLeft!==1?'s':''}`;html+=`<div class="alarm-card ${cl}"><div class="alarm-title">${a.exam} — ${a.value} ${a.unit}</div><div class="alarm-sub">${a.status==='high'?'Valor elevado':'Valor en límite'}</div><div class="alarm-action">📅 ${msg} · ${fmtDate(a.nextDate).full}</div></div>`;});html+='<div style="height:4px"></div>';}
+  let hasRecs=false;
+  Object.values(latest).forEach(r=>{const s=getStatus(r.exam,r.value);if(s==='ok')return;const db=RECS_DB[r.exam];if(!db)return;const rec=db[s]||db['warn'];if(!rec)return;hasRecs=true;html+=`<div class="rec-card ${s}"><div class="rec-header"><span class="rec-icon">${rec.icon}</span><div class="rec-title">${rec.title}</div></div><div class="rec-body">${rec.body}</div><div class="rec-tips">${rec.tips.map(t=>`<div class="rec-tip"><span>•</span><span>${t}</span></div>`).join('')}</div></div>`;});
+  if(!hasRecs&&!alarms.length)html=`<div class="card" style="text-align:center;padding:24px;"><div style="font-size:38px;margin-bottom:10px;">🎉</div><div style="font-size:16px;font-weight:600;color:var(--teal-600);margin-bottom:6px;">¡Todo en orden!</div><div style="font-size:13px;color:var(--text2)">Todos tus valores están dentro del rango normal.</div></div>`;
+  const total=Object.keys(latest).length;
+  if(total>0){const ok=Object.values(latest).filter(r=>getStatus(r.exam,r.value)==='ok').length;const pct=Math.round((ok/total)*100);const color=pct>=80?'var(--teal-400)':pct>=60?'var(--amber-400)':'var(--red-400)';html+=`<div class="card" style="text-align:center;"><div class="section-title">Resumen de salud</div><div style="font-size:42px;font-weight:700;color:${color};margin:8px 0">${pct}%</div><div style="font-size:13px;color:var(--text2)">${ok} de ${total} valores en rango normal</div></div>`;}
+  html+=`<div class="notice"><div class="notice-title">⚕️ Aviso importante</div><div class="notice-body">Estas recomendaciones son orientativas y no reemplazan la consulta médica profesional. Ante cualquier valor fuera de rango, consulta siempre con tu médico.</div></div><div style="height:10px"></div>`;
+  document.getElementById('recs-content').innerHTML=html;
+}
+function renderAddForm(){
+  const allCats=['Sangre','Corazón','Riñón','Hígado','Tiroides','Vitaminas',...(D.customCats||[]),'Otro'];
+  document.getElementById('cat-pills').innerHTML=allCats.map((c,i)=>`<button class="pill${i===0?' selected':''}" onclick="selectCat(this,'${c}')">${c}</button>`).join('');
+  rebuildExamSelect('Sangre');
+}
+function rebuildExamSelect(cat){const refs=getRefs();const base=Object.entries(refs).filter(([k,v])=>v.cat===cat).map(([k])=>k);const custom=(D.customExams||[]).filter(e=>e.cat===cat).map(e=>e.name);document.getElementById('exam-select').innerHTML=`<option value="">Seleccionar...</option>`+[...base,...custom,'Otro'].map(e=>`<option value="${e}">${e}</option>`).join('');document.getElementById('ref-info').style.display='none';document.getElementById('new-exam-box').style.display='none';}
+function selectCat(btn,cat){document.querySelectorAll('#cat-pills .pill').forEach(p=>p.classList.remove('selected'));btn.classList.add('selected');if(cat==='Otro'){document.getElementById('new-cat-box').style.display='block';document.getElementById('exam-select').innerHTML='<option value="">Agrega la categoría primero</option>';}else{document.getElementById('new-cat-box').style.display='none';rebuildExamSelect(cat);}}
+function addNewCat(){const val=document.getElementById('new-cat-input').value.trim();if(!val)return;if(!D.customCats)D.customCats=[];if(!D.customCats.includes(val))D.customCats.push(val);persist();const pills=document.getElementById('cat-pills');if(![...pills.querySelectorAll('.pill')].find(p=>p.textContent===val)){const btn=document.createElement('button');btn.className='pill';btn.textContent=val;btn.onclick=()=>selectCat(btn,val);pills.insertBefore(btn,pills.lastElementChild);}document.querySelectorAll('#cat-pills .pill').forEach(p=>p.classList.remove('selected'));const nb=[...pills.querySelectorAll('.pill')].find(p=>p.textContent===val);if(nb)nb.classList.add('selected');document.getElementById('new-cat-input').value='';document.getElementById('new-cat-box').style.display='none';rebuildExamSelect(val);toast('✓ Categoría "'+val+'" agregada');}
+function onExamChange(){const exam=document.getElementById('exam-select').value;if(exam==='Otro'){document.getElementById('new-exam-box').style.display='block';document.getElementById('ref-info').style.display='none';return;}document.getElementById('new-exam-box').style.display='none';const ref=getRefs()[exam];if(ref){document.getElementById('unit-input').value=ref.unit;document.getElementById('ref-text').textContent=`${ref.min}–${ref.max} ${ref.unit}`;document.getElementById('ref-info').style.display='block';}else{document.getElementById('ref-info').style.display='none';}}
+function addNewExam(){const name=document.getElementById('new-exam-input').value.trim();const cat=[...document.querySelectorAll('#cat-pills .pill')].find(p=>p.classList.contains('selected'))?.textContent||'Otro';if(!name)return;if(!D.customExams)D.customExams=[];if(!D.customExams.find(e=>e.name===name&&e.cat===cat))D.customExams.push({name,cat});persist();const sel=document.getElementById('exam-select');if(![...sel.options].find(o=>o.value===name)){const opt=document.createElement('option');opt.value=name;opt.textContent=name;sel.insertBefore(opt,sel.lastElementChild);}sel.value=name;document.getElementById('new-exam-input').value='';document.getElementById('new-exam-box').style.display='none';document.getElementById('ref-info').style.display='none';toast('✓ Examen "'+name+'" agregado');}
+function saveResult(){const exam=document.getElementById('exam-select').value;const val=parseFloat(document.getElementById('val-input').value);const unit=document.getElementById('unit-input').value;const date=document.getElementById('date-input').value;if(!exam||exam==='Otro'||isNaN(val)||!date){alert('Completa examen, valor y fecha');return;}const activeCat=[...document.querySelectorAll('#cat-pills .pill')].find(p=>p.classList.contains('selected'))?.textContent||'Otro';const ref=getRefs()[exam];D.results.push({id:D.nextId++,exam,value:val,unit:unit||(ref?ref.unit:''),date,cat:ref?ref.cat:activeCat,lab:document.getElementById('lab-input').value,notes:document.getElementById('notes-input').value});persist();document.getElementById('exam-select').value='';document.getElementById('val-input').value='';document.getElementById('unit-input').value='';document.getElementById('lab-input').value='';document.getElementById('notes-input').value='';document.getElementById('ref-info').style.display='none';toast('✓ Guardado en tu dispositivo');setTimeout(()=>nav('home'),1600);}
+function showDetail(id,from){fromScreen=from;const r=D.results.find(x=>x.id===id);if(!r)return;const refs=getRefs();document.getElementById('detail-back').onclick=()=>nav(from);document.getElementById('detail-title').textContent=r.exam;document.getElementById('detail-sub').textContent=fmtDate(r.date).full+(r.lab?' · '+r.lab:'');const sameExam=D.results.filter(x=>x.exam===r.exam).sort((a,b)=>a.date.localeCompare(b.date));const idx=sameExam.findIndex(x=>x.id===id);const prev=sameExam[idx-1];let tH='';if(prev){const diff=r.value-prev.value;const arrow=diff>0?`<span style="color:var(--red-400)">▲ +${Math.abs(diff).toFixed(1)}</span>`:diff<0?`<span style="color:var(--teal-400)">▼ -${Math.abs(diff).toFixed(1)}</span>`:`<span style="color:var(--gray-400)">= Sin cambio</span>`;tH=`<div style="font-size:13px;color:var(--text2);margin-top:5px;">Anterior: ${prev.value} ${r.unit} ${arrow}</div>`;}let rH='';const rd=refs[r.exam];if(rd&&rd.max<9000){const pct=Math.min(100,Math.max(0,((r.value-rd.min)/(rd.max-rd.min))*100));const s=getStatus(r.exam,r.value);const dc=s==='ok'?'var(--teal-400)':s==='warn'?'var(--amber-400)':'var(--red-400)';rH=`<div class="section-title" style="margin-top:14px;">Rango de referencia</div><div class="range-bar"><div class="range-fill" style="width:${Math.min(pct,100)}%"></div><div class="range-dot" style="left:calc(${Math.min(pct,100)}% - 8px);background:${dc}"></div></div><div class="range-labels"><span>${rd.min}</span><span style="color:${dc};font-weight:600">${r.value}</span><span>${rd.max}</span></div><div style="font-size:11px;color:var(--text2);margin-top:4px;text-align:center;">Ref: ${rd.min}–${rd.max} ${r.unit}</div>`;}
+const maxV=Math.max(...sameExam.map(x=>x.value));const bH=sameExam.map(x=>`<div class="mini-bar${x.id===id?' current':''}" style="height:${Math.max(8,Math.round((x.value/maxV)*44))}px" title="${x.value}"></div>`).join('');const lH=sameExam.map(x=>`<span>${fmtDate(x.date).month}</span>`).join('');const nH=r.notes?`<div style="margin-top:10px;padding:9px 12px;background:var(--blue-50);border-radius:10px;font-size:13px;color:var(--blue-800);">📝 ${r.notes}</div>`:'';document.getElementById('detail-content').innerHTML=`<div class="card"><div style="font-size:32px;font-weight:700">${r.value} <span style="font-size:15px;font-weight:400;color:var(--text2)">${r.unit}</span></div>${tH}${rH}${nH}<button class="btn-danger" onclick="deleteResult(${r.id})">Eliminar resultado</button></div>${sameExam.length>1?`<div class="card"><div class="section-title">Historial: ${r.exam}</div><div class="mini-bars">${bH}</div><div class="mini-labels">${lH}</div></div>`:''}<button class="btn-secondary" onclick="nav('add')">+ Agregar nuevo resultado</button>`;nav('detail');}
+function deleteResult(id){if(!confirm('¿Eliminar este resultado?'))return;D.results=D.results.filter(r=>r.id!==id);persist();nav(fromScreen);}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+
+// Service Worker
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js').then(r=>{console.log('SW registrado');}).catch(e=>{console.log('SW error',e);});
+  });
+}
+
+// Show install banner on iOS if not standalone
+if(navigator.standalone===false && /iphone|ipad|ipod/i.test(navigator.userAgent)){
+  document.getElementById('install-banner').style.display='block';
+}
+
+document.getElementById('date-input').value=new Date().toISOString().split('T')[0];
+renderAddForm();
+renderHome();
+</script>
+</body>
+</html>
