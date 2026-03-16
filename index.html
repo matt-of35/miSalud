@@ -21,9 +21,8 @@
   --blue-50:#E6F1FB;--blue-100:#B5D4F4;--blue-400:#378ADD;--blue-800:#0C447C;
   --red-50:#FCEBEB;--red-100:#F7C1C1;--red-400:#E24B4A;--red-800:#791F1F;
   --amber-50:#FAEEDA;--amber-100:#FAC775;--amber-400:#BA7517;--amber-800:#633806;
-  --gray-50:#F1EFE8;--gray-100:#D3D1C7;--gray-400:#888780;--gray-800:#444441;
-  --accent:#1D9E75;
-  --bg:#f0f4f2;--card:#ffffff;--text:#1a1a1a;--text2:#666;--border:rgba(0,0,0,0.09);
+  --gray-50:#F1EFE8;--gray-100:#D3D1C7;--gray-200:#B4B2A9;--gray-400:#888780;--gray-800:#444441;
+  --accent:#1D9E75;--bg:#f0f4f2;--card:#ffffff;--text:#1a1a1a;--text2:#666;--border:rgba(0,0,0,0.09);
 }
 html,body{height:100%;font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;}
 #app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto;background:var(--bg);position:relative;}
@@ -135,7 +134,6 @@ select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://
 .chart-bar{width:100%;border-radius:3px 3px 0 0;min-width:18px;}
 .chart-val{font-size:9px;font-weight:600;}
 .chart-lbl{font-size:8px;color:var(--text2);text-align:center;}
-/* Install banner */
 #install-banner{display:none;background:var(--teal-800);color:white;padding:12px 16px;text-align:center;font-size:13px;line-height:1.5;flex-shrink:0;}
 #install-banner button{background:white;color:var(--teal-800);border:none;border-radius:8px;padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;margin-top:6px;font-family:inherit;}
 </style>
@@ -285,55 +283,159 @@ select.form-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://
 
 <script>
 const STORAGE_KEY='miSalud_v3';
-const DEFAULT_REFS={
+
+// ─── DATOS REALES DE LOS PDFs ───
+// Laboratorio BioNet · Paciente: Matías Ortopan
+const SEED_DATA = [
+  // ═══ 15/07/2023 ═══
+  {id:1,exam:'Creatinina',value:0.87,unit:'mg/dL',date:'2023-07-15',cat:'Riñón',lab:'BioNet La Florida',notes:''},
+  {id:2,exam:'Vitamina B12',value:239,unit:'pg/mL',date:'2023-07-15',cat:'Vitaminas',lab:'BioNet La Florida',notes:''},
+  {id:3,exam:'Colesterol total',value:171,unit:'mg/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:4,exam:'Colesterol HDL',value:48.7,unit:'mg/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:5,exam:'Colesterol LDL',value:109.9,unit:'mg/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:6,exam:'Triglicéridos',value:62,unit:'mg/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:7,exam:'Glucosa',value:88,unit:'mg/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:8,exam:'Ácido úrico',value:3.1,unit:'mg/dL',date:'2023-07-15',cat:'Riñón',lab:'BioNet La Florida',notes:'* Bajo rango referencia 3.5-7.2'},
+  {id:9,exam:'Proteínas totales',value:7.3,unit:'gr/dL',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:10,exam:'Albúmina',value:4.2,unit:'gr/dL',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:11,exam:'Calcio',value:8.8,unit:'mg/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:12,exam:'Fósforo',value:3.8,unit:'mg/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:13,exam:'Bilirrubina total',value:0.6,unit:'mg/dL',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:14,exam:'Fosfatasa alcalina',value:59,unit:'U/L',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:15,exam:'LDH',value:139,unit:'U/L',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:16,exam:'SGOT (GOT)',value:14,unit:'U/L',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:17,exam:'SGPT (GPT)',value:17,unit:'U/L',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:18,exam:'GGT',value:13,unit:'U/L',date:'2023-07-15',cat:'Hígado',lab:'BioNet La Florida',notes:'* Bajo rango referencia 15-85'},
+  {id:19,exam:'Vitamina D',value:18,unit:'ng/mL',date:'2023-07-15',cat:'Vitaminas',lab:'BioNet La Florida',notes:'* Bajo rango referencia 20-100'},
+  {id:20,exam:'Hemoglobina',value:16.4,unit:'gr/dL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:21,exam:'Hematocrito',value:48.5,unit:'%',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:22,exam:'Leucocitos',value:4.2,unit:'k/uL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:23,exam:'Plaquetas',value:202,unit:'k/uL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:24,exam:'TSH',value:1.34,unit:'mUI/L',date:'2023-07-15',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:25,exam:'T4 libre',value:1.16,unit:'ng/dL',date:'2023-07-15',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:26,exam:'Insulina basal',value:4.4,unit:'uUI/mL',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:27,exam:'HOMA IR',value:1,unit:'índice',date:'2023-07-15',cat:'Sangre',lab:'BioNet La Florida',notes:'Ref: <2.5'},
+
+  // ═══ 30/01/2025 ═══
+  {id:28,exam:'Vitamina B12',value:263,unit:'pg/mL',date:'2025-01-30',cat:'Vitaminas',lab:'BioNet La Florida',notes:''},
+  {id:29,exam:'Creatinina',value:0.96,unit:'mg/dL',date:'2025-01-30',cat:'Riñón',lab:'BioNet La Florida',notes:''},
+  {id:30,exam:'Sodio',value:141,unit:'mEq/L',date:'2025-01-30',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
+  {id:31,exam:'Potasio',value:3.9,unit:'mEq/L',date:'2025-01-30',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
+  {id:32,exam:'Cloro',value:106,unit:'mEq/L',date:'2025-01-30',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
+  {id:33,exam:'Colesterol total',value:164,unit:'mg/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:34,exam:'Colesterol HDL',value:51.6,unit:'mg/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:35,exam:'Colesterol LDL',value:96.4,unit:'mg/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:36,exam:'Triglicéridos',value:80,unit:'mg/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:37,exam:'Glucosa',value:83,unit:'mg/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:38,exam:'Ácido úrico',value:4.2,unit:'mg/dL',date:'2025-01-30',cat:'Riñón',lab:'BioNet La Florida',notes:''},
+  {id:39,exam:'Proteínas totales',value:7.1,unit:'gr/dL',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:40,exam:'Albúmina',value:4,unit:'gr/dL',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:41,exam:'Calcio',value:8.9,unit:'mg/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:42,exam:'Fósforo',value:3.2,unit:'mg/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:43,exam:'Bilirrubina total',value:1,unit:'mg/dL',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:44,exam:'Fosfatasa alcalina',value:55,unit:'U/L',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:45,exam:'LDH',value:158,unit:'U/L',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:46,exam:'SGOT (GOT)',value:16,unit:'U/L',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:47,exam:'SGPT (GPT)',value:21,unit:'U/L',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:48,exam:'GGT',value:17,unit:'U/L',date:'2025-01-30',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:49,exam:'Vitamina D',value:26.9,unit:'ng/mL',date:'2025-01-30',cat:'Vitaminas',lab:'BioNet La Florida',notes:''},
+  {id:50,exam:'Hemoglobina',value:15.5,unit:'gr/dL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:51,exam:'Hematocrito',value:45.1,unit:'%',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:52,exam:'Leucocitos',value:4.6,unit:'k/uL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:53,exam:'Plaquetas',value:188,unit:'k/uL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:54,exam:'TSH',value:2.96,unit:'mUI/L',date:'2025-01-30',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:55,exam:'T4 libre',value:1.51,unit:'ng/dL',date:'2025-01-30',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:56,exam:'T4 total',value:7.8,unit:'ug/dL',date:'2025-01-30',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:57,exam:'T3 total',value:1.24,unit:'ng/mL',date:'2025-01-30',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:58,exam:'Insulina basal',value:4.4,unit:'uUI/mL',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:59,exam:'HOMA IR',value:0.9,unit:'índice',date:'2025-01-30',cat:'Sangre',lab:'BioNet La Florida',notes:'Ref: <2.5'},
+
+  // ═══ 02/09/2025 ═══
+  {id:60,exam:'Vitamina B12',value:301,unit:'pg/mL',date:'2025-09-02',cat:'Vitaminas',lab:'BioNet La Florida',notes:''},
+  {id:61,exam:'Creatinina',value:1.0,unit:'mg/dL',date:'2025-09-02',cat:'Riñón',lab:'BioNet La Florida',notes:''},
+  {id:62,exam:'Glucosa',value:82,unit:'mg/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:63,exam:'Sodio',value:142,unit:'mEq/L',date:'2025-09-02',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
+  {id:64,exam:'Potasio',value:4.6,unit:'mEq/L',date:'2025-09-02',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
+  {id:65,exam:'Cloro',value:105,unit:'mEq/L',date:'2025-09-02',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
+  {id:66,exam:'Colesterol total',value:215,unit:'mg/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:'* Elevado'},
+  {id:67,exam:'Colesterol HDL',value:54,unit:'mg/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:68,exam:'Colesterol LDL',value:146.2,unit:'mg/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:'Límite alto 130-159'},
+  {id:69,exam:'Triglicéridos',value:74,unit:'mg/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:70,exam:'Ácido úrico',value:3.8,unit:'mg/dL',date:'2025-09-02',cat:'Riñón',lab:'BioNet La Florida',notes:''},
+  {id:71,exam:'Proteínas totales',value:7.4,unit:'gr/dL',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:72,exam:'Albúmina',value:4,unit:'gr/dL',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:73,exam:'Calcio',value:9.7,unit:'mg/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:74,exam:'Fósforo',value:4.1,unit:'mg/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:75,exam:'Bilirrubina total',value:0.59,unit:'mg/dL',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:76,exam:'Fosfatasa alcalina',value:52,unit:'U/L',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:77,exam:'LDH',value:170,unit:'U/L',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:78,exam:'SGOT (GOT)',value:19,unit:'U/L',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:79,exam:'SGPT (GPT)',value:18,unit:'U/L',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:80,exam:'GGT',value:17,unit:'U/L',date:'2025-09-02',cat:'Hígado',lab:'BioNet La Florida',notes:''},
+  {id:81,exam:'Vitamina D',value:23.3,unit:'ng/mL',date:'2025-09-02',cat:'Vitaminas',lab:'BioNet La Florida',notes:''},
+  {id:82,exam:'Hemoglobina',value:15.8,unit:'gr/dL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:83,exam:'Hematocrito',value:45.5,unit:'%',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:84,exam:'Leucocitos',value:5.5,unit:'k/uL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:85,exam:'Plaquetas',value:239,unit:'k/uL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:86,exam:'TSH',value:3.02,unit:'mUI/L',date:'2025-09-02',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:87,exam:'T4 libre',value:1.5,unit:'ng/dL',date:'2025-09-02',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:88,exam:'T4 total',value:7.3,unit:'ug/dL',date:'2025-09-02',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:89,exam:'T3 total',value:1.21,unit:'ng/mL',date:'2025-09-02',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:90,exam:'Insulina basal',value:7.5,unit:'uUI/mL',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:91,exam:'HOMA IR',value:1.5,unit:'índice',date:'2025-09-02',cat:'Sangre',lab:'BioNet La Florida',notes:'Ref: <2.5'},
+];
+
+const DEFAULT_REFS = {
   'Glucosa':{min:70,max:100,unit:'mg/dL',cat:'Sangre'},
   'Colesterol total':{min:0,max:200,unit:'mg/dL',cat:'Sangre'},
-  'Colesterol HDL':{min:40,max:999,unit:'mg/dL',cat:'Sangre'},
+  'Colesterol HDL':{min:40,max:60,unit:'mg/dL',cat:'Sangre'},
   'Colesterol LDL':{min:0,max:130,unit:'mg/dL',cat:'Sangre'},
   'Triglicéridos':{min:0,max:150,unit:'mg/dL',cat:'Sangre'},
-  'Hemoglobina':{min:12,max:17,unit:'g/dL',cat:'Sangre'},
-  'Hematocrito':{min:36,max:50,unit:'%',cat:'Sangre'},
-  'Glóbulos blancos':{min:4.5,max:11,unit:'mil/µL',cat:'Sangre'},
-  'Presión sistólica':{min:90,max:120,unit:'mmHg',cat:'Corazón'},
-  'Presión diastólica':{min:60,max:80,unit:'mmHg',cat:'Corazón'},
-  'TSH':{min:0.4,max:4.0,unit:'mUI/L',cat:'Tiroides'},
-  'Creatinina':{min:0.6,max:1.2,unit:'mg/dL',cat:'Riñón'},
-  'Ácido úrico':{min:2.4,max:7.0,unit:'mg/dL',cat:'Riñón'},
-  'Vitamina D':{min:30,max:100,unit:'ng/mL',cat:'Vitaminas'},
-  'Vitamina B12':{min:200,max:900,unit:'pg/mL',cat:'Vitaminas'},
-  'Ferritina':{min:12,max:150,unit:'ng/mL',cat:'Sangre'},
-  'Hierro sérico':{min:60,max:170,unit:'µg/dL',cat:'Sangre'},
+  'Hemoglobina':{min:13,max:17,unit:'gr/dL',cat:'Sangre'},
+  'Hematocrito':{min:41,max:49,unit:'%',cat:'Sangre'},
+  'Leucocitos':{min:4.1,max:9.5,unit:'k/uL',cat:'Sangre'},
+  'Plaquetas':{min:150,max:350,unit:'k/uL',cat:'Sangre'},
+  'Calcio':{min:8.3,max:10.6,unit:'mg/dL',cat:'Sangre'},
+  'Fósforo':{min:2.4,max:5.1,unit:'mg/dL',cat:'Sangre'},
+  'Insulina basal':{min:3,max:25,unit:'uUI/mL',cat:'Sangre'},
+  'Creatinina':{min:0.7,max:1.3,unit:'mg/dL',cat:'Riñón'},
+  'Ácido úrico':{min:3.5,max:7.2,unit:'mg/dL',cat:'Riñón'},
+  'Proteínas totales':{min:5.7,max:8.2,unit:'gr/dL',cat:'Hígado'},
+  'Albúmina':{min:3.4,max:5,unit:'gr/dL',cat:'Hígado'},
+  'Bilirrubina total':{min:0.3,max:1.2,unit:'mg/dL',cat:'Hígado'},
+  'Fosfatasa alcalina':{min:46,max:116,unit:'U/L',cat:'Hígado'},
+  'LDH':{min:85,max:227,unit:'U/L',cat:'Hígado'},
+  'SGOT (GOT)':{min:5,max:37,unit:'U/L',cat:'Hígado'},
+  'SGPT (GPT)':{min:16,max:63,unit:'U/L',cat:'Hígado'},
+  'GGT':{min:15,max:85,unit:'U/L',cat:'Hígado'},
+  'TSH':{min:0.55,max:4.78,unit:'mUI/L',cat:'Tiroides'},
+  'T4 libre':{min:0.89,max:1.76,unit:'ng/dL',cat:'Tiroides'},
+  'T4 total':{min:4.5,max:10.9,unit:'ug/dL',cat:'Tiroides'},
+  'T3 total':{min:0.6,max:1.81,unit:'ng/mL',cat:'Tiroides'},
+  'Vitamina D':{min:20,max:100,unit:'ng/mL',cat:'Vitaminas'},
+  'Vitamina B12':{min:211,max:911,unit:'pg/mL',cat:'Vitaminas'},
+  'Sodio':{min:136,max:145,unit:'mEq/L',cat:'Electrolitos'},
+  'Potasio':{min:3.5,max:5.1,unit:'mEq/L',cat:'Electrolitos'},
+  'Cloro':{min:98,max:107,unit:'mEq/L',cat:'Electrolitos'},
+  'HOMA IR':{min:0,max:2.5,unit:'índice',cat:'Sangre'},
 };
+
 const RECS_DB={
-  'Glucosa':{warn:{icon:'🍬',title:'Glucosa en límite superior',body:'Tu glucosa está cerca del rango alto. Conviene revisar hábitos alimenticios.',tips:['Evita bebidas azucaradas y jugos envasados','Prefiere cereales integrales sobre refinados','Realiza 30 min de ejercicio aeróbico diario','Repite el examen en 3 meses']},high:{icon:'⚠️',title:'Glucosa elevada',body:'Tu glucosa supera el rango normal. Consulta a tu médico pronto.',tips:['Agenda consulta médica en las próximas 2 semanas','Elimina azúcares añadidos de tu dieta','Camina al menos 150 min/semana','Mide en ayunas cada 2 semanas']}},
-  'Colesterol total':{warn:{icon:'🫀',title:'Colesterol en límite',body:'Tu colesterol total está cerca del límite recomendado.',tips:['Reduce grasas saturadas: frituras, embutidos','Consume más omega-3: salmón, nueces, chía','Aumenta fibra soluble: avena, legumbres','Controla en 6 meses']},high:{icon:'❗',title:'Colesterol elevado',body:'Tu colesterol total está elevado. Requiere atención médica.',tips:['Consulta con tu médico esta semana','Dieta estricta baja en grasas saturadas','Ejercicio aeróbico mínimo 5 días/semana','Posible necesidad de medicación']}},
-  'Colesterol LDL':{warn:{icon:'🫀',title:'LDL en límite alto',body:'El colesterol LDL (malo) está cerca del límite.',tips:['Reducir grasas saturadas y trans','Aumentar consumo de fibra','Ejercicio regular','Reevaluar en 3 meses']},high:{icon:'❗',title:'LDL elevado',body:'El colesterol LDL está elevado. Consulta médico.',tips:['Consulta médica pronto','Dieta mediterránea recomendada','Evitar tabaco','Posible necesidad de estatinas']}},
-  'Triglicéridos':{warn:{icon:'🍟',title:'Triglicéridos en límite',body:'Los triglicéridos elevados se asocian a riesgo cardiovascular.',tips:['Reduce alcohol y azúcares simples','Evita harinas blancas','Más proteínas magras','Controla en 3 meses']},high:{icon:'⚠️',title:'Triglicéridos elevados',body:'Triglicéridos significativamente elevados. Requiere atención.',tips:['Consulta médica urgente','Dieta sin alcohol ni azúcar refinada','Omega-3 puede ayudar','Ejercicio diario']}},
-  'Presión sistólica':{warn:{icon:'💉',title:'Presión arterial elevada',body:'Tu presión sistólica supera el rango normal.',tips:['Reduce consumo de sodio','Técnicas de relajación','Monitorea cada 3 días','Consulta si persiste más de 2 semanas']},high:{icon:'🚨',title:'Hipertensión detectada',body:'Presión sistólica alta. Consulta médico pronto.',tips:['Consulta médico esta semana','Mide a la misma hora cada día','Reduce sal y alcohol','Evita cafeína en exceso']}},
-  'Presión diastólica':{warn:{icon:'💉',title:'Presión diastólica elevada',body:'La presión diastólica está sobre el rango normal.',tips:['Reducir sal y estrés','Ejercicio moderado','Monitoreo frecuente','Consultar si persiste']},high:{icon:'🚨',title:'Presión diastólica alta',body:'Presión diastólica significativamente alta.',tips:['Consultar médico esta semana','Control diario de presión','Dieta DASH recomendada','Evitar alcohol y tabaco']}},
-  'TSH':{warn:{icon:'🦋',title:'TSH fuera de rango',body:'Tu TSH sugiere posible alteración tiroidea.',tips:['Agenda consulta con endocrinólogo','Repite el examen en 4-6 semanas','Informa síntomas: fatiga, cambio de peso','No automediques']},high:{icon:'⚠️',title:'Disfunción tiroidea probable',body:'TSH muy alterado. Requiere evaluación especializada.',tips:['Consultar endocrinólogo urgente','Solicitar T3 y T4 libre','No suspender medicación sin consultar']}},
-  'Creatinina':{warn:{icon:'🫘',title:'Creatinina en límite',body:'Posible estrés renal. Vigila tu hidratación.',tips:['Aumenta agua (min 2L/día)','Evita antiinflamatorios sin indicación','Reduce proteína animal en exceso','Controla en 2-3 meses']},high:{icon:'⚠️',title:'Creatinina elevada',body:'Posible deterioro de función renal.',tips:['Consulta esta semana','Hidratación fundamental','Evitar nefrotóxicos','Pedir evaluación completa renal']}},
-  'Hemoglobina':{warn:{icon:'🩸',title:'Hemoglobina baja',body:'Posible anemia leve.',tips:['Aumenta hierro: carnes rojas, legumbres, espinaca','Combina con vitamina C','Evita té/café junto a comidas con hierro','Controla en 2 meses']},high:{icon:'⚠️',title:'Anemia probable',body:'Hemoglobina significativamente baja. Consulta médico.',tips:['Consulta médico esta semana','Solicitar ferritina y B12','Posible suplemento de hierro','Descartar causas subyacentes']}},
-  'Vitamina D':{warn:{icon:'☀️',title:'Vitamina D insuficiente',body:'Niveles bajos de vitamina D. Afecta huesos e inmunidad.',tips:['15-20 min de sol diario','Come pescado graso, huevos','Consulta suplementación','Controla en 3 meses']},high:{icon:'☀️',title:'Vitamina D deficiente',body:'Deficiencia severa. Requiere suplementación.',tips:['Consulta médico para dosis de suplemento','Exposición solar regular','Dieta rica en calcio','Re-evaluar en 2 meses']}},
+  'Glucosa':{warn:{icon:'🍬',title:'Glucosa en límite',body:'Tu glucosa está cerca del rango alto.',tips:['Evita bebidas azucaradas','Prefiere cereales integrales','30 min de ejercicio diario','Controla en 3 meses']},high:{icon:'⚠️',title:'Glucosa elevada',body:'Tu glucosa supera el rango normal. Consulta médico.',tips:['Consulta médica en 2 semanas','Elimina azúcares añadidos','Camina 150 min/semana','Mide en ayunas cada 2 semanas']}},
+  'Colesterol total':{warn:{icon:'🫀',title:'Colesterol en límite',body:'Tu colesterol total está cerca del límite.',tips:['Reduce grasas saturadas','Más omega-3: salmón, nueces','Fibra soluble: avena, legumbres','Controla en 6 meses']},high:{icon:'❗',title:'Colesterol elevado',body:'Colesterol elevado. Requiere atención médica.',tips:['Consulta médico esta semana','Dieta baja en grasas saturadas','Ejercicio aeróbico 5 días/semana','Posible necesidad de medicación']}},
+  'Colesterol LDL':{warn:{icon:'🫀',title:'LDL en límite alto',body:'El colesterol LDL está cerca del límite.',tips:['Reducir grasas saturadas','Aumentar fibra','Ejercicio regular','Reevaluar en 3 meses']},high:{icon:'❗',title:'LDL elevado',body:'Colesterol LDL elevado.',tips:['Consulta médica pronto','Dieta mediterránea','Evitar tabaco','Posible necesidad de estatinas']}},
+  'Triglicéridos':{warn:{icon:'🍟',title:'Triglicéridos en límite',body:'Triglicéridos elevados se asocian a riesgo cardiovascular.',tips:['Reduce alcohol y azúcares','Evita harinas blancas','Más proteínas magras','Controla en 3 meses']},high:{icon:'⚠️',title:'Triglicéridos elevados',body:'Triglicéridos significativamente elevados.',tips:['Consulta médica urgente','Dieta sin alcohol ni azúcar','Omega-3 puede ayudar','Ejercicio diario']}},
+  'Vitamina D':{warn:{icon:'☀️',title:'Vitamina D insuficiente',body:'Niveles bajos. Afecta huesos e inmunidad.',tips:['15-20 min de sol diario','Come pescado graso, huevos','Consulta suplementación','Controla en 3 meses']},high:{icon:'☀️',title:'Vitamina D deficiente',body:'Deficiencia de vitamina D.',tips:['Consulta médico para suplemento','Exposición solar regular','Dieta rica en calcio','Re-evaluar en 2 meses']}},
+  'HOMA IR':{warn:{icon:'🩸',title:'HOMA IR elevándose',body:'El índice HOMA está aumentando, vigilar resistencia insulínica.',tips:['Reducir carbohidratos refinados','Ejercicio aeróbico regular','Bajar peso si hay sobrepeso','Controlar glucosa e insulina']},high:{icon:'⚠️',title:'Posible resistencia insulínica',body:'HOMA IR sobre el rango normal.',tips:['Consultar médico o endocrinólogo','Dieta baja en carbohidratos','Ejercicio diario fundamental','Descarta prediabetes']}},
 };
 const FOLLOWUP={
   'Glucosa':{warn:90,high:30},'Colesterol total':{warn:180,high:60},'Colesterol LDL':{warn:90,high:45},
-  'Triglicéridos':{warn:90,high:30},'Presión sistólica':{warn:14,high:7},'Presión diastólica':{warn:14,high:7},
-  'TSH':{warn:42,high:14},'Creatinina':{warn:90,high:30},'Hemoglobina':{warn:60,high:21},'Vitamina D':{warn:90,high:60},
+  'Triglicéridos':{warn:90,high:30},'Vitamina D':{warn:90,high:60},'HOMA IR':{warn:90,high:45},
 };
 
 function loadData(){
   try{const r=localStorage.getItem(STORAGE_KEY);if(r)return JSON.parse(r);}catch(e){}
-  return{results:[
-    {id:1,exam:'Glucosa',value:95,unit:'mg/dL',date:'2025-03-15',cat:'Sangre',lab:'Clínica Alemana',notes:''},
-    {id:2,exam:'Colesterol total',value:195,unit:'mg/dL',date:'2025-03-15',cat:'Sangre',lab:'Clínica Alemana',notes:''},
-    {id:3,exam:'Triglicéridos',value:172,unit:'mg/dL',date:'2025-03-15',cat:'Sangre',lab:'Clínica Alemana',notes:'Mejorar dieta'},
-    {id:4,exam:'Colesterol HDL',value:52,unit:'mg/dL',date:'2025-03-15',cat:'Sangre',lab:'Clínica Alemana',notes:''},
-    {id:5,exam:'Glucosa',value:102,unit:'mg/dL',date:'2024-09-10',cat:'Sangre',lab:'Lab. UC',notes:''},
-    {id:6,exam:'Colesterol total',value:210,unit:'mg/dL',date:'2024-09-10',cat:'Sangre',lab:'Lab. UC',notes:''},
-    {id:7,exam:'Presión sistólica',value:118,unit:'mmHg',date:'2025-01-22',cat:'Corazón',lab:'',notes:''},
-    {id:8,exam:'TSH',value:2.1,unit:'mUI/L',date:'2024-12-05',cat:'Tiroides',lab:'RedSalud',notes:''},
-  ],nextId:9,customCats:[],customExams:[],refs:{}};
+  return{results:SEED_DATA,nextId:100,customCats:[],customExams:[],refs:{}};
 }
 function persist(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(D));}catch(e){}}
 let D=loadData(),histFilter='Todos',fromScreen='history';
@@ -348,12 +450,12 @@ function renderHome(){
   document.getElementById('h-total').textContent=D.results.length;
   const sorted=[...D.results].sort((a,b)=>b.date.localeCompare(a.date));
   if(sorted[0]){const d=fmtDate(sorted[0].date);document.getElementById('h-date').textContent=d.month+' '+d.year;}
-  const alarms=getAlarms().filter(a=>a.daysLeft<=14);
+  const alarms=getAlarms().filter(a=>a.daysLeft<=60);
   const alEl=document.getElementById('alarms-home');
-  if(alarms.length){alEl.innerHTML=`<div class="section-title">🔔 Alertas de seguimiento</div>`+alarms.slice(0,2).map(a=>{const cl=a.status==='high'?'':'warn';const msg=a.daysLeft<=0?'¡Seguimiento vencido!':`Control en ${a.daysLeft} día${a.daysLeft!==1?'s':''}`;return`<div class="alarm-card ${cl}"><div class="alarm-title">${a.exam}</div><div class="alarm-sub">${a.value} ${a.unit} · ${a.status==='high'?'Elevado':'En límite'}</div><div class="alarm-action">📅 ${msg} · ${fmtDate(a.nextDate).full}</div></div>`;}).join('');}else{alEl.innerHTML='';}
+  if(alarms.length){alEl.innerHTML=`<div class="section-title">🔔 Alertas de seguimiento</div>`+alarms.slice(0,3).map(a=>{const cl=a.status==='high'?'':'warn';const msg=a.daysLeft<=0?'¡Seguimiento vencido!':`Control en ${a.daysLeft} día${a.daysLeft!==1?'s':''}`;return`<div class="alarm-card ${cl}"><div class="alarm-title">${a.exam}</div><div class="alarm-sub">${a.value} ${a.unit} · ${a.status==='high'?'Elevado':'En límite'}</div><div class="alarm-action">📅 ${msg} · ${fmtDate(a.nextDate).full}</div></div>`;}).join('');}else{alEl.innerHTML='';}
   const el=document.getElementById('recent-results');
-  if(!sorted.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">🩺</div>Agrega tu primer resultado</div>`;return;}
-  el.innerHTML=sorted.slice(0,5).map(r=>{const s=getStatus(r.exam,r.value);const dc=s==='ok'?'dot-ok':s==='warn'?'dot-warn':'dot-high';const vc=s==='ok'?'val-ok':s==='warn'?'val-warn':'val-high';return`<div class="exam-row" onclick="showDetail(${r.id},'home')"><div class="dot ${dc}"></div><div class="exam-info"><div class="exam-name">${r.exam}</div><div class="exam-date">${fmtDate(r.date).full}</div></div><div class="exam-val ${vc}">${r.value} <span style="font-size:11px;font-weight:400">${r.unit}</span></div></div>`;}).join('');
+  if(!sorted.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">🩺</div>Sin resultados</div>`;return;}
+  el.innerHTML=sorted.slice(0,6).map(r=>{const s=getStatus(r.exam,r.value);const dc=s==='ok'?'dot-ok':s==='warn'?'dot-warn':'dot-high';const vc=s==='ok'?'val-ok':s==='warn'?'val-warn':'val-high';return`<div class="exam-row" onclick="showDetail(${r.id},'home')"><div class="dot ${dc}"></div><div class="exam-info"><div class="exam-name">${r.exam}</div><div class="exam-date">${fmtDate(r.date).full}</div></div><div class="exam-val ${vc}">${r.value} <span style="font-size:11px;font-weight:400">${r.unit}</span></div></div>`;}).join('');
 }
 function renderHistory(){
   const cats=['Todos',...new Set(D.results.map(r=>r.cat))];
@@ -368,7 +470,7 @@ function filterHist(cat,btn){histFilter=cat;document.querySelectorAll('#history-
 function renderCharts(){
   const exams=[...new Set(D.results.map(r=>r.exam))];
   const el=document.getElementById('charts-content');
-  if(!exams.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">📈</div>Sin datos aún</div>`;return;}
+  if(!exams.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">📈</div>Sin datos</div>`;return;}
   el.innerHTML=exams.map(exam=>{const items=D.results.filter(r=>r.exam===exam).sort((a,b)=>a.date.localeCompare(b.date));const maxV=Math.max(...items.map(x=>x.value));const bars=items.map(x=>{const h=Math.max(8,Math.round((x.value/maxV)*60));const s=getStatus(exam,x.value);const color=s==='ok'?'var(--teal-400)':s==='warn'?'var(--amber-400)':'var(--red-400)';return`<div class="chart-bar-wrap"><div class="chart-val" style="color:${color}">${x.value}</div><div class="chart-bar" style="height:${h}px;background:${color}"></div><div class="chart-lbl">${fmtDate(x.date).month}<br>${fmtDate(x.date).year.slice(2)}</div></div>`;}).join('');const latest=items[items.length-1];const s=getStatus(exam,latest.value);const bc=s==='ok'?'badge-ok':s==='warn'?'badge-warn':'badge-high';const bl=s==='ok'?'Normal':s==='warn'?'Límite':'Elevado';return`<div class="card" onclick="showDetail(${latest.id},'charts')"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><div><div style="font-size:14px;font-weight:600">${exam}</div><div style="font-size:11px;color:var(--text2)">${items.length} medición${items.length>1?'es':''}</div></div><span class="badge ${bc}">${bl}</span></div><div style="display:flex;gap:5px;align-items:flex-end;height:88px;padding-bottom:3px;">${bars}</div></div>`;}).join('');
 }
 function renderRecs(){
@@ -380,11 +482,11 @@ function renderRecs(){
   if(!hasRecs&&!alarms.length)html=`<div class="card" style="text-align:center;padding:24px;"><div style="font-size:38px;margin-bottom:10px;">🎉</div><div style="font-size:16px;font-weight:600;color:var(--teal-600);margin-bottom:6px;">¡Todo en orden!</div><div style="font-size:13px;color:var(--text2)">Todos tus valores están dentro del rango normal.</div></div>`;
   const total=Object.keys(latest).length;
   if(total>0){const ok=Object.values(latest).filter(r=>getStatus(r.exam,r.value)==='ok').length;const pct=Math.round((ok/total)*100);const color=pct>=80?'var(--teal-400)':pct>=60?'var(--amber-400)':'var(--red-400)';html+=`<div class="card" style="text-align:center;"><div class="section-title">Resumen de salud</div><div style="font-size:42px;font-weight:700;color:${color};margin:8px 0">${pct}%</div><div style="font-size:13px;color:var(--text2)">${ok} de ${total} valores en rango normal</div></div>`;}
-  html+=`<div class="notice"><div class="notice-title">⚕️ Aviso importante</div><div class="notice-body">Estas recomendaciones son orientativas y no reemplazan la consulta médica profesional. Ante cualquier valor fuera de rango, consulta siempre con tu médico.</div></div><div style="height:10px"></div>`;
+  html+=`<div class="notice"><div class="notice-title">⚕️ Aviso importante</div><div class="notice-body">Estas recomendaciones son orientativas y no reemplazan la consulta médica. Consulta siempre con tu médico ante cualquier valor fuera de rango.</div></div><div style="height:10px"></div>`;
   document.getElementById('recs-content').innerHTML=html;
 }
 function renderAddForm(){
-  const allCats=['Sangre','Corazón','Riñón','Hígado','Tiroides','Vitaminas',...(D.customCats||[]),'Otro'];
+  const allCats=['Sangre','Corazón','Riñón','Hígado','Tiroides','Vitaminas','Electrolitos',...(D.customCats||[]),'Otro'];
   document.getElementById('cat-pills').innerHTML=allCats.map((c,i)=>`<button class="pill${i===0?' selected':''}" onclick="selectCat(this,'${c}')">${c}</button>`).join('');
   rebuildExamSelect('Sangre');
 }
@@ -394,22 +496,13 @@ function addNewCat(){const val=document.getElementById('new-cat-input').value.tr
 function onExamChange(){const exam=document.getElementById('exam-select').value;if(exam==='Otro'){document.getElementById('new-exam-box').style.display='block';document.getElementById('ref-info').style.display='none';return;}document.getElementById('new-exam-box').style.display='none';const ref=getRefs()[exam];if(ref){document.getElementById('unit-input').value=ref.unit;document.getElementById('ref-text').textContent=`${ref.min}–${ref.max} ${ref.unit}`;document.getElementById('ref-info').style.display='block';}else{document.getElementById('ref-info').style.display='none';}}
 function addNewExam(){const name=document.getElementById('new-exam-input').value.trim();const cat=[...document.querySelectorAll('#cat-pills .pill')].find(p=>p.classList.contains('selected'))?.textContent||'Otro';if(!name)return;if(!D.customExams)D.customExams=[];if(!D.customExams.find(e=>e.name===name&&e.cat===cat))D.customExams.push({name,cat});persist();const sel=document.getElementById('exam-select');if(![...sel.options].find(o=>o.value===name)){const opt=document.createElement('option');opt.value=name;opt.textContent=name;sel.insertBefore(opt,sel.lastElementChild);}sel.value=name;document.getElementById('new-exam-input').value='';document.getElementById('new-exam-box').style.display='none';document.getElementById('ref-info').style.display='none';toast('✓ Examen "'+name+'" agregado');}
 function saveResult(){const exam=document.getElementById('exam-select').value;const val=parseFloat(document.getElementById('val-input').value);const unit=document.getElementById('unit-input').value;const date=document.getElementById('date-input').value;if(!exam||exam==='Otro'||isNaN(val)||!date){alert('Completa examen, valor y fecha');return;}const activeCat=[...document.querySelectorAll('#cat-pills .pill')].find(p=>p.classList.contains('selected'))?.textContent||'Otro';const ref=getRefs()[exam];D.results.push({id:D.nextId++,exam,value:val,unit:unit||(ref?ref.unit:''),date,cat:ref?ref.cat:activeCat,lab:document.getElementById('lab-input').value,notes:document.getElementById('notes-input').value});persist();document.getElementById('exam-select').value='';document.getElementById('val-input').value='';document.getElementById('unit-input').value='';document.getElementById('lab-input').value='';document.getElementById('notes-input').value='';document.getElementById('ref-info').style.display='none';toast('✓ Guardado en tu dispositivo');setTimeout(()=>nav('home'),1600);}
-function showDetail(id,from){fromScreen=from;const r=D.results.find(x=>x.id===id);if(!r)return;const refs=getRefs();document.getElementById('detail-back').onclick=()=>nav(from);document.getElementById('detail-title').textContent=r.exam;document.getElementById('detail-sub').textContent=fmtDate(r.date).full+(r.lab?' · '+r.lab:'');const sameExam=D.results.filter(x=>x.exam===r.exam).sort((a,b)=>a.date.localeCompare(b.date));const idx=sameExam.findIndex(x=>x.id===id);const prev=sameExam[idx-1];let tH='';if(prev){const diff=r.value-prev.value;const arrow=diff>0?`<span style="color:var(--red-400)">▲ +${Math.abs(diff).toFixed(1)}</span>`:diff<0?`<span style="color:var(--teal-400)">▼ -${Math.abs(diff).toFixed(1)}</span>`:`<span style="color:var(--gray-400)">= Sin cambio</span>`;tH=`<div style="font-size:13px;color:var(--text2);margin-top:5px;">Anterior: ${prev.value} ${r.unit} ${arrow}</div>`;}let rH='';const rd=refs[r.exam];if(rd&&rd.max<9000){const pct=Math.min(100,Math.max(0,((r.value-rd.min)/(rd.max-rd.min))*100));const s=getStatus(r.exam,r.value);const dc=s==='ok'?'var(--teal-400)':s==='warn'?'var(--amber-400)':'var(--red-400)';rH=`<div class="section-title" style="margin-top:14px;">Rango de referencia</div><div class="range-bar"><div class="range-fill" style="width:${Math.min(pct,100)}%"></div><div class="range-dot" style="left:calc(${Math.min(pct,100)}% - 8px);background:${dc}"></div></div><div class="range-labels"><span>${rd.min}</span><span style="color:${dc};font-weight:600">${r.value}</span><span>${rd.max}</span></div><div style="font-size:11px;color:var(--text2);margin-top:4px;text-align:center;">Ref: ${rd.min}–${rd.max} ${r.unit}</div>`;}
-const maxV=Math.max(...sameExam.map(x=>x.value));const bH=sameExam.map(x=>`<div class="mini-bar${x.id===id?' current':''}" style="height:${Math.max(8,Math.round((x.value/maxV)*44))}px" title="${x.value}"></div>`).join('');const lH=sameExam.map(x=>`<span>${fmtDate(x.date).month}</span>`).join('');const nH=r.notes?`<div style="margin-top:10px;padding:9px 12px;background:var(--blue-50);border-radius:10px;font-size:13px;color:var(--blue-800);">📝 ${r.notes}</div>`:'';document.getElementById('detail-content').innerHTML=`<div class="card"><div style="font-size:32px;font-weight:700">${r.value} <span style="font-size:15px;font-weight:400;color:var(--text2)">${r.unit}</span></div>${tH}${rH}${nH}<button class="btn-danger" onclick="deleteResult(${r.id})">Eliminar resultado</button></div>${sameExam.length>1?`<div class="card"><div class="section-title">Historial: ${r.exam}</div><div class="mini-bars">${bH}</div><div class="mini-labels">${lH}</div></div>`:''}<button class="btn-secondary" onclick="nav('add')">+ Agregar nuevo resultado</button>`;nav('detail');}
+function showDetail(id,from){fromScreen=from;const r=D.results.find(x=>x.id===id);if(!r)return;const refs=getRefs();document.getElementById('detail-back').onclick=()=>nav(from);document.getElementById('detail-title').textContent=r.exam;document.getElementById('detail-sub').textContent=fmtDate(r.date).full+(r.lab?' · '+r.lab:'');const sameExam=D.results.filter(x=>x.exam===r.exam).sort((a,b)=>a.date.localeCompare(b.date));const idx=sameExam.findIndex(x=>x.id===id);const prev=sameExam[idx-1];let tH='';if(prev){const diff=r.value-prev.value;const arrow=diff>0?`<span style="color:var(--red-400)">▲ +${Math.abs(diff).toFixed(2)}</span>`:diff<0?`<span style="color:var(--teal-400)">▼ -${Math.abs(diff).toFixed(2)}</span>`:`<span style="color:var(--gray-400)">= Sin cambio</span>`;tH=`<div style="font-size:13px;color:var(--text2);margin-top:5px;">Anterior: ${prev.value} ${r.unit} ${arrow}</div>`;}let rH='';const rd=refs[r.exam];if(rd&&rd.max<9000){const pct=Math.min(100,Math.max(0,((r.value-rd.min)/(rd.max-rd.min))*100));const s=getStatus(r.exam,r.value);const dc=s==='ok'?'var(--teal-400)':s==='warn'?'var(--amber-400)':'var(--red-400)';rH=`<div class="section-title" style="margin-top:14px;">Rango de referencia</div><div class="range-bar"><div class="range-fill" style="width:${Math.min(pct,100)}%"></div><div class="range-dot" style="left:calc(${Math.min(pct,100)}% - 8px);background:${dc}"></div></div><div class="range-labels"><span>${rd.min}</span><span style="color:${dc};font-weight:600">${r.value}</span><span>${rd.max}</span></div><div style="font-size:11px;color:var(--text2);margin-top:4px;text-align:center;">Ref: ${rd.min}–${rd.max} ${r.unit}</div>`;}
+const maxV=Math.max(...sameExam.map(x=>x.value));const bH=sameExam.map(x=>`<div class="mini-bar${x.id===id?' current':''}" style="height:${Math.max(8,Math.round((x.value/maxV)*44))}px" title="${x.value}"></div>`).join('');const lH=sameExam.map(x=>`<span>${fmtDate(x.date).month} ${fmtDate(x.date).year.slice(2)}</span>`).join('');const nH=r.notes?`<div style="margin-top:10px;padding:9px 12px;background:var(--blue-50);border-radius:10px;font-size:13px;color:var(--blue-800);">📝 ${r.notes}</div>`:'';document.getElementById('detail-content').innerHTML=`<div class="card"><div style="font-size:32px;font-weight:700">${r.value} <span style="font-size:15px;font-weight:400;color:var(--text2)">${r.unit}</span></div>${tH}${rH}${nH}<button class="btn-danger" onclick="deleteResult(${r.id})">Eliminar resultado</button></div>${sameExam.length>1?`<div class="card"><div class="section-title">Evolución: ${r.exam}</div><div class="mini-bars">${bH}</div><div class="mini-labels">${lH}</div></div>`:''}<button class="btn-secondary" onclick="nav('add')">+ Agregar nuevo resultado</button>`;nav('detail');}
 function deleteResult(id){if(!confirm('¿Eliminar este resultado?'))return;D.results=D.results.filter(r=>r.id!==id);persist();nav(fromScreen);}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 
-// Service Worker
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('./sw.js').then(r=>{console.log('SW registrado');}).catch(e=>{console.log('SW error',e);});
-  });
-}
-
-// Show install banner on iOS if not standalone
-if(navigator.standalone===false && /iphone|ipad|ipod/i.test(navigator.userAgent)){
-  document.getElementById('install-banner').style.display='block';
-}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch(e=>{});});}
+if(navigator.standalone===false&&/iphone|ipad|ipod/i.test(navigator.userAgent)){document.getElementById('install-banner').style.display='block';}
 
 document.getElementById('date-input').value=new Date().toISOString().split('T')[0];
 renderAddForm();
