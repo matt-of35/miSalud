@@ -176,6 +176,7 @@ select.fi{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 #ib{display:none;background:var(--t800);color:#fff;padding:12px 16px;text-align:center;font-size:13px;line-height:1.5;flex-shrink:0;}
 #ib button{background:#fff;color:var(--t800);border:none;border-radius:8px;padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;margin-top:6px;font-family:inherit;}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
 <div id="app">
@@ -197,8 +198,8 @@ select.fi{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
     <div class="qg">
       <button class="qb" onclick="go('add')"><span class="qbi">&#10133;</span>Agregar</button>
       <button class="qb" onclick="go('import')"><span class="qbi">&#128196;</span>Importar PDF</button>
-      <button class="qb" onclick="go('studies')"><span class="qbi">&#128300;</span>Estudios</button>
-      <button class="qb" onclick="go('ophtho')"><span class="qbi">&#128065;</span>Oftalmologia</button>
+      <button class="qb" onclick="window.location='cuerpo.html'"><span class="qbi">&#129461;</span>Cuerpo</button>
+      <button class="qb" onclick="window.location='analisis.html'"><span class="qbi">&#129516;</span>Analisis</button>
     </div>
   </div>
   <div class="nav">
@@ -308,6 +309,10 @@ select.fi{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 <div class="scr" id="s-charts">
   <div class="hdr"><h1>Graficos</h1><p>Evolucion de tus valores</p></div>
   <div class="crv"></div>
+  <div style="background:var(--card);border-bottom:.5px solid var(--bd);display:flex;flex-shrink:0;">
+    <button class="nb on" id="ct-bar" onclick="setChartTab('bar')" style="flex:1;flex-direction:row;gap:6px;padding:10px;font-size:11px;border-bottom:2px solid var(--ac);color:var(--ac);">&#128202; Barras</button>
+    <button class="nb" id="ct-scat" onclick="setChartTab('scat')" style="flex:1;flex-direction:row;gap:6px;padding:10px;font-size:11px;border-bottom:2px solid transparent;">&#11835; Correlacion</button>
+  </div>
   <div class="cnt" id="chartscnt"></div>
   <div class="nav">
     <button class="nb" onclick="go('home')"><span class="ni">&#127968;</span>Inicio</button>
@@ -340,6 +345,8 @@ select.fi{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
   <div class="crv"></div>
   <div class="cnt">
     <div class="card" style="padding:0;overflow:hidden;">
+      <div class="ri" style="padding:14px 16px;" onclick="window.location='cuerpo.html'"><span style="font-size:22px;margin-right:4px;">&#129461;</span><div class="rin"><div class="rn">Cuerpo Humano</div><div class="rs">Estado general por organo</div></div><span style="color:var(--tx2)">&#8250;</span></div>
+      <div class="ri" style="padding:14px 16px;" onclick="window.location='analisis.html'"><span style="font-size:22px;margin-right:4px;">&#129516;</span><div class="rin"><div class="rn">Analisis Clinico Avanzado</div><div class="rs">Series, correlaciones, alertas, heatmap</div></div><span style="color:var(--tx2)">&#8250;</span></div>
       <div class="ri" style="padding:14px 16px;" onclick="go('import')"><span style="font-size:22px;margin-right:4px;">&#128196;</span><div class="rin"><div class="rn">Importar PDF</div><div class="rs">Carga automatica con IA</div></div><span style="color:var(--tx2)">&#8250;</span></div>
       <div class="ri" style="padding:14px 16px;" onclick="go('studies')"><span style="font-size:22px;margin-right:4px;">&#128300;</span><div class="rin"><div class="rn">Estudios medicos</div><div class="rs">Radiografia, ecografia, ECG</div></div><span style="color:var(--tx2)">&#8250;</span></div>
       <div class="ri" style="padding:14px 16px;" onclick="go('ophtho')"><span style="font-size:22px;margin-right:4px;">&#128065;</span><div class="rin"><div class="rn">Recetas oftalmologicas</div><div class="rs">Lentes y correccion visual</div></div><span style="color:var(--tx2)">&#8250;</span></div>
@@ -1051,29 +1058,77 @@ function renderCal() {
 // ============================================================
 // CHARTS
 // ============================================================
+var chartTab = 'bar';
+var chartSearch = '';
+var scatX = '';
+var scatY = '';
+var SCAT_PAIRS = [
+  {x:'Glucosa',y:'HOMA IR'},{x:'Trigliceridos',y:'Colesterol HDL'},
+  {x:'Colesterol LDL',y:'Colesterol total'},{x:'SGOT-GOT',y:'SGPT-GPT'},
+  {x:'TSH',y:'T4 libre'},{x:'Vitamina D',y:'Vitamina B12'}
+];
+
+function setChartTab(t) {
+  chartTab = t;
+  var b1=el('ct-bar'), b2=el('ct-scat');
+  if(b1&&b2){
+    b1.classList.toggle('on',t==='bar'); b1.style.borderBottomColor=t==='bar'?'var(--ac)':'transparent'; b1.style.color=t==='bar'?'var(--ac)':'var(--tx2)';
+    b2.classList.toggle('on',t==='scat'); b2.style.borderBottomColor=t==='scat'?'var(--ac)':'transparent'; b2.style.color=t==='scat'?'var(--ac)':'var(--tx2)';
+  }
+  renderCharts();
+}
+
 function renderCharts() {
+  var cnt = el('chartscnt');
+  cnt.innerHTML = '';
+  if (chartTab === 'scat') { renderScatterCharts(cnt); return; }
+  renderBarCharts(cnt);
+}
+
+function renderBarCharts(cnt) {
   var nums = D.results.filter(function(r){ return r.type === 'numeric'; });
   var examsMap = {};
   nums.forEach(function(r){ if(!examsMap[r.exam]) examsMap[r.exam] = []; examsMap[r.exam].push(r); });
-  var cnt = el('chartscnt');
-  cnt.innerHTML = '';
-  var exams = Object.keys(examsMap);
-  if (!exams.length) { cnt.innerHTML = '<div class="es"><div class="ei">&#128200;</div>Sin datos numericos</div>'; return; }
-  exams.forEach(function(exam) {
+  var allExamKeys = Object.keys(examsMap);
+  if (!allExamKeys.length) { cnt.innerHTML = '<div class="es"><div class="ei">&#128200;</div>Sin datos numericos</div>'; return; }
+
+  // Search bar
+  var srchWrap = document.createElement('div');
+  srchWrap.style.cssText = 'position:relative;margin-bottom:10px;';
+  var srch = document.createElement('input');
+  srch.type='text'; srch.placeholder='Buscar examen...';
+  srch.style.cssText = 'width:100%;padding:9px 13px 9px 36px;border:.5px solid var(--bd);border-radius:10px;font-size:13px;font-family:inherit;background:var(--card);color:var(--tx);outline:none;';
+  srch.value = chartSearch;
+  srch.oninput = function(){ chartSearch=srch.value.toLowerCase(); renderBarCharts(cnt); };
+  var icon = document.createElement('span');
+  icon.style.cssText = 'position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:16px;';
+  icon.innerHTML = '&#128269;';
+  srchWrap.appendChild(icon);
+  srchWrap.appendChild(srch);
+  cnt.appendChild(srchWrap);
+
+  var filtered = chartSearch ? allExamKeys.filter(function(k){ return k.toLowerCase().indexOf(chartSearch)>=0; }) : allExamKeys;
+  if (!filtered.length) {
+    var noRes = document.createElement('div');
+    noRes.style.cssText = 'text-align:center;padding:20px;color:var(--tx2);font-size:13px;';
+    noRes.textContent = 'Sin resultados para "'+chartSearch+'"';
+    cnt.appendChild(noRes);
+    return;
+  }
+
+  filtered.forEach(function(exam) {
     var items = examsMap[exam].slice().sort(function(a,b){ return a.date.localeCompare(b.date); });
     var maxV = Math.max.apply(null, items.map(function(x){ return x.value; }));
     var latest = items[items.length-1];
     var s = getStat(exam, latest.value);
     var bc = s==='ok'?'ok':(s==='wn'?'wn':'hi');
     var bl = s==='ok'?'Normal':(s==='wn'?'Limite':'Elevado');
-
     var card = document.createElement('div');
     card.className = 'card';
     var hd = document.createElement('div');
     hd.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;';
     hd.innerHTML = '<div><div style="font-size:14px;font-weight:600">'+exam+'</div><div style="font-size:11px;color:var(--tx2)">'+items.length+' medicion'+(items.length>1?'es':'')+'</div></div><span class="bge '+bc+'">'+bl+'</span>';
     card.appendChild(hd);
-
     var bars = document.createElement('div');
     bars.className = 'cbw';
     items.forEach(function(x) {
@@ -1090,6 +1145,144 @@ function renderCharts() {
     cnt.appendChild(card);
   });
 }
+
+function renderScatterCharts(cnt) {
+  var nums = D.results.filter(function(r){ return r.type==='numeric'; });
+  var examsMap = {};
+  nums.forEach(function(r){ if(!examsMap[r.exam]) examsMap[r.exam]=[]; examsMap[r.exam].push(r); });
+  var allEx = Object.keys(examsMap);
+
+  // Pair selectors
+  var selCard = document.createElement('div');
+  selCard.className = 'card';
+  selCard.innerHTML = '<div class="st">Par de variables</div>';
+
+  var row = document.createElement('div');
+  row.style.cssText = 'display:flex;gap:8px;margin-bottom:10px;';
+  var sx = document.createElement('select');
+  sx.style.cssText = 'flex:1;padding:9px 10px;border:.5px solid var(--bd);border-radius:10px;font-size:13px;font-family:inherit;background:var(--card);color:var(--tx);outline:none;-webkit-appearance:none;';
+  var sy = document.createElement('select');
+  sy.style.cssText = 'flex:1;padding:9px 10px;border:.5px solid var(--bd);border-radius:10px;font-size:13px;font-family:inherit;background:var(--card);color:var(--tx);outline:none;-webkit-appearance:none;';
+  var defX = document.createElement('option'); defX.value=''; defX.textContent='Eje X...'; sx.appendChild(defX);
+  var defY = document.createElement('option'); defY.value=''; defY.textContent='Eje Y...'; sy.appendChild(defY);
+  allEx.forEach(function(ex){
+    var ox=document.createElement('option'); ox.value=ex; ox.textContent=ex; if(ex===scatX)ox.selected=true; sx.appendChild(ox);
+    var oy=document.createElement('option'); oy.value=ex; oy.textContent=ex; if(ex===scatY)oy.selected=true; sy.appendChild(oy);
+  });
+  sx.onchange=function(){ scatX=sx.value; drawScatInline(cnt, scatX, scatY); };
+  sy.onchange=function(){ scatY=sy.value; drawScatInline(cnt, scatX, scatY); };
+  row.appendChild(sx); row.appendChild(sy);
+  selCard.appendChild(row);
+
+  // Quick pairs
+  var pairs = document.createElement('div');
+  pairs.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;';
+  SCAT_PAIRS.forEach(function(p) {
+    if (!examsMap[p.x] || !examsMap[p.y]) return;
+    var btn = document.createElement('button');
+    btn.style.cssText = 'padding:5px 10px;border-radius:16px;font-size:11px;font-weight:500;cursor:pointer;border:.5px solid var(--bd);background:var(--card);color:var(--tx2);font-family:inherit;';
+    btn.textContent = p.x+' / '+p.y;
+    (function(px,py){ btn.onclick = function(){
+      scatX=px; scatY=py;
+      sx.value=px; sy.value=py;
+      drawScatInline(cnt, px, py);
+    }; })(p.x,p.y);
+    pairs.appendChild(btn);
+  });
+  selCard.appendChild(pairs);
+  cnt.appendChild(selCard);
+
+  var scatCard = document.createElement('div');
+  scatCard.className = 'card';
+  scatCard.id = 'scat-inline-card';
+  cnt.appendChild(scatCard);
+
+  if (scatX && scatY) drawScatInline(cnt, scatX, scatY);
+  else {
+    scatCard.innerHTML = '<div style="text-align:center;padding:20px;color:var(--tx2);font-size:13px;">Selecciona dos variables para ver su correlacion</div>';
+    if (SCAT_PAIRS.length) {
+      var fp = SCAT_PAIRS.find(function(p){ return examsMap[p.x]&&examsMap[p.y]; });
+      if (fp) { scatX=fp.x; scatY=fp.y; sx.value=fp.x; sy.value=fp.y; drawScatInline(cnt,fp.x,fp.y); }
+    }
+  }
+}
+
+function drawScatInline(cnt, xEx, yEx) {
+  var scatCard = el('scat-inline-card');
+  if (!scatCard) return;
+  scatCard.innerHTML = '';
+
+  var nums = D.results.filter(function(r){ return r.type==='numeric'; });
+  var xItems = nums.filter(function(r){ return r.exam===xEx; }).sort(function(a,b){return a.date.localeCompare(b.date);});
+  var yItems = nums.filter(function(r){ return r.exam===yEx; }).sort(function(a,b){return a.date.localeCompare(b.date);});
+
+  if (!xItems.length || !yItems.length) {
+    scatCard.innerHTML = '<div style="text-align:center;padding:20px;color:var(--tx2);font-size:13px;">Sin datos suficientes</div>';
+    return;
+  }
+
+  var points = [];
+  xItems.forEach(function(xi) {
+    var best=null, bestDiff=999999;
+    yItems.forEach(function(yi){ var d=Math.abs(new Date(xi.date)-new Date(yi.date)); if(d<bestDiff){bestDiff=d;best=yi;} });
+    if (best && bestDiff < 200*864e5) points.push({x:xi.value,y:best.value});
+  });
+
+  if (points.length < 2) {
+    scatCard.innerHTML = '<div style="text-align:center;padding:20px;color:var(--tx2);font-size:13px;">Se necesitan al menos 2 mediciones coincidentes</div>';
+    return;
+  }
+
+  var hdr = document.createElement('div');
+  hdr.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;';
+  hdr.innerHTML = '<div style="font-size:13px;font-weight:600">'+xEx+' vs '+yEx+'</div>';
+
+  var canvasWrap = document.createElement('div');
+  canvasWrap.style.cssText = 'position:relative;height:220px;';
+  var canvas = document.createElement('canvas');
+  canvas.id = 'scat-cv';
+  canvasWrap.appendChild(canvas);
+
+  scatCard.appendChild(hdr);
+  scatCard.appendChild(canvasWrap);
+
+  // Correlation
+  var xs=points.map(function(p){return p.x;}), ys=points.map(function(p){return p.y;});
+  var n=xs.length, mx=xs.reduce(function(a,b){return a+b;})/n, my=ys.reduce(function(a,b){return a+b;})/n;
+  var num=0,denX=0,denY=0;
+  for(var i=0;i<n;i++){num+=(xs[i]-mx)*(ys[i]-my);denX+=(xs[i]-mx)*(xs[i]-mx);denY+=(ys[i]-my)*(ys[i]-my);}
+  var slope=denX?num/denX:0, intercept=my-slope*mx, r=(denX&&denY)?num/Math.sqrt(denX*denY):0;
+  var minX=Math.min.apply(null,xs), maxX=Math.max.apply(null,xs);
+
+  var xRef=getRefs()[xEx], yRef=getRefs()[yEx];
+  var ptColors=points.map(function(p){
+    var xOk=!xRef||(p.x>=xRef.min&&p.x<=xRef.max);
+    var yOk=!yRef||(p.y>=yRef.min&&p.y<=yRef.max);
+    return(!xOk||!yOk)?'#E24B4A':'#1D9E75';
+  });
+
+  new Chart(canvas, {
+    type:'scatter',
+    data:{datasets:[
+      {label:'Mediciones',data:points.map(function(p){return{x:p.x,y:p.y};}),backgroundColor:ptColors,pointRadius:7},
+      {label:'Tendencia',data:[{x:minX,y:intercept+slope*minX},{x:maxX,y:intercept+slope*maxX}],type:'line',borderColor:'#378ADD',borderWidth:2,borderDash:[5,5],pointRadius:0,fill:false}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{font:{size:11},boxWidth:10,color:'#1a1a1a'}},tooltip:{callbacks:{label:function(ctx){return xEx+':'+ctx.parsed.x+' | '+yEx+':'+ctx.parsed.y;}}}},
+      scales:{x:{title:{display:true,text:xEx,font:{size:10},color:'#888'},ticks:{font:{size:9},color:'#888'},grid:{color:'rgba(0,0,0,0.04)'}},y:{title:{display:true,text:yEx,font:{size:10},color:'#888'},ticks:{font:{size:9},color:'#888'},grid:{color:'rgba(0,0,0,0.05)'}}}
+    }
+  });
+
+  var rAbs=Math.abs(r);
+  var strength=rAbs>0.7?'Fuerte':rAbs>0.4?'Moderada':rAbs>0.2?'Debil':'Sin correlacion';
+  var infoDiv=document.createElement('div');
+  infoDiv.style.cssText='display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:.5px solid var(--bd);';
+  infoDiv.innerHTML='<div style="font-size:12px;color:var(--tx2)">Correlacion: <strong>'+strength+'</strong></div><div style="font-size:18px;font-weight:700;color:'+(rAbs>0.5?'var(--r400)':'var(--t400)')+'">r = '+r.toFixed(2)+'</div>';
+  scatCard.appendChild(infoDiv);
+}
+
+function getRefs() { return REFS; }
 
 // ============================================================
 // RECOMMENDATIONS

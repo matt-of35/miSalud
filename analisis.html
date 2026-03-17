@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1D9E75">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Analisis Clinico</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{--ac:#1D9E75;--bg:#f0f4f2;--card:#fff;--tx:#1a1a1a;--tx2:#666;--bd:rgba(0,0,0,0.09);--t50:#E1F5EE;--t100:#9FE1CB;--t400:#1D9E75;--t600:#0F6E56;--t800:#085041;--r50:#FCEBEB;--r400:#E24B4A;--r800:#791F1F;--a50:#FAEEDA;--a400:#BA7517;--a800:#633806;--b50:#E6F1FB;--b400:#378ADD;--b800:#0C447C;--p50:#EEEDFE;--p400:#7F77DD;--g100:#D3D1C7;--g400:#888780;}
+html,body{height:100%;font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx);overflow:hidden;}
+#app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto;background:var(--bg);}
+.hdr{background:var(--ac);color:#fff;padding:calc(env(safe-area-inset-top,0px)+14px) 20px 18px;flex-shrink:0;}
+.hdr h1{font-size:20px;font-weight:600;}
+.hdr p{font-size:12px;opacity:.82;margin-top:2px;}
+.hdr-row{display:flex;align-items:center;gap:10px;margin-bottom:2px;}
+.bk{background:rgba(255,255,255,.22);border:none;color:#fff;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:inherit;}
+.crv{background:var(--ac);height:18px;flex-shrink:0;position:relative;}
+.crv::after{content:'';position:absolute;bottom:0;left:0;right:0;height:18px;background:var(--bg);border-radius:18px 18px 0 0;}
+/* TABS */
+.tabs{display:flex;background:var(--card);border-bottom:1px solid var(--bd);flex-shrink:0;overflow-x:auto;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab-btn{flex-shrink:0;padding:10px 14px;font-size:12px;font-weight:500;color:var(--tx2);border:none;background:none;cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;white-space:nowrap;}
+.tab-btn.on{color:var(--ac);border-bottom-color:var(--ac);}
+/* CONTENT */
+.cnt{flex:1;overflow-y:auto;padding:14px;-webkit-overflow-scrolling:touch;}
+.card{background:var(--card);border-radius:14px;border:.5px solid var(--bd);padding:14px;margin-bottom:12px;}
+.st{font-size:11px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;}
+.bge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;}
+.ok{background:var(--t50);color:var(--t600);}
+.wn{background:var(--a50);color:var(--a400);}
+.hi{background:var(--r50);color:var(--r400);}
+/* FILTERS */
+.fi-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.fi-chip{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--bd);background:var(--card);color:var(--tx2);font-family:inherit;}
+.fi-chip.on{background:var(--ac);color:#fff;border-color:var(--ac);}
+.srch{width:100%;padding:9px 13px;border:.5px solid var(--bd);border-radius:10px;font-size:13px;font-family:inherit;background:var(--card);color:var(--tx);outline:none;margin-bottom:10px;}
+.srch:focus{border-color:var(--ac);}
+/* CANVAS WRAPPERS */
+.chart-wrap{position:relative;width:100%;margin:8px 0;}
+canvas{width:100%;border-radius:8px;}
+/* ALERTS */
+.alert-card{border-left:3px solid var(--r400);border-radius:0 12px 12px 0;background:var(--card);padding:11px 13px;margin-bottom:8px;border-top:.5px solid var(--bd);border-right:.5px solid var(--bd);border-bottom:.5px solid var(--bd);}
+.alert-card.wn{border-left-color:var(--a400);}
+.alert-card.ok{border-left-color:var(--t400);}
+.at{font-size:13px;font-weight:600;}
+.as{font-size:12px;color:var(--tx2);margin-top:3px;line-height:1.5;}
+/* HEATMAP */
+.hm-wrap{overflow-x:auto;}
+.hm-grid{display:grid;gap:2px;min-width:300px;}
+.hm-cell{height:24px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#fff;}
+.hm-label{font-size:10px;color:var(--tx2);display:flex;align-items:center;padding-right:6px;white-space:nowrap;}
+.hm-date{font-size:9px;color:var(--tx2);text-align:center;}
+/* SUMMARY */
+.sum-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:.5px solid var(--bd);}
+.sum-row:last-child{border-bottom:none;}
+.sum-name{font-size:13px;font-weight:500;}
+.sum-trend{font-size:12px;}
+.trend-up{color:var(--r400);}
+.trend-dn{color:var(--t400);}
+.trend-st{color:var(--g400);}
+/* SELECT */
+select{width:100%;padding:9px 13px;border:.5px solid var(--bd);border-radius:10px;font-size:13px;font-family:inherit;background:var(--card);color:var(--tx);outline:none;margin-bottom:10px;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:32px;}
+.date-row{display:flex;gap:8px;margin-bottom:10px;}
+.date-row input{flex:1;padding:8px 10px;border:.5px solid var(--bd);border-radius:10px;font-size:13px;font-family:inherit;background:var(--card);color:var(--tx);outline:none;}
+.date-row input:focus{border-color:var(--ac);}
+.tst{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--t800);color:#fff;border-radius:12px;padding:10px 20px;font-size:13px;opacity:0;transition:all .3s;pointer-events:none;z-index:999;}
+.tst.on{opacity:1;}
+</style>
+</head>
+<body>
+<div id="app">
+<div class="hdr">
+  <div class="hdr-row">
+    <button class="bk" onclick="window.location='index.html'">&#8592; Volver</button>
+    <h1>Analisis Clinico</h1>
+  </div>
+  <p>Visualizacion avanzada de datos de salud</p>
+</div>
+<div class="crv"></div>
+<div class="tabs" id="tabs"></div>
+<div class="cnt" id="cnt"></div>
+<div class="tst" id="tst"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// ============================================================
+// LOAD DATA FROM MAIN APP
+// ============================================================
+var SK = 'miSalud_v5';
+var D = null;
+try { var raw = localStorage.getItem(SK); if(raw) D = JSON.parse(raw); } catch(e) {}
+if (!D || !D.results) {
+  D = { results: [], studies: [], ophtho: [] };
+}
+
+var REFS = {
+  'Glucosa':{min:70,max:100,unit:'mg/dL',cat:'Sangre'},
+  'Colesterol total':{min:0,max:200,unit:'mg/dL',cat:'Sangre'},
+  'Colesterol HDL':{min:40,max:60,unit:'mg/dL',cat:'Sangre'},
+  'Colesterol LDL':{min:0,max:130,unit:'mg/dL',cat:'Sangre'},
+  'Trigliceridos':{min:0,max:150,unit:'mg/dL',cat:'Sangre'},
+  'Hemoglobina':{min:13,max:17,unit:'gr/dL',cat:'Sangre'},
+  'Hematocrito':{min:41,max:49,unit:'%',cat:'Sangre'},
+  'Leucocitos':{min:4.1,max:9.5,unit:'k/uL',cat:'Sangre'},
+  'Plaquetas':{min:150,max:350,unit:'k/uL',cat:'Sangre'},
+  'Calcio':{min:8.3,max:10.6,unit:'mg/dL',cat:'Sangre'},
+  'Fosforo':{min:2.4,max:5.1,unit:'mg/dL',cat:'Sangre'},
+  'Insulina basal':{min:3,max:25,unit:'uUI/mL',cat:'Sangre'},
+  'Creatinina':{min:0.7,max:1.3,unit:'mg/dL',cat:'Rinon'},
+  'Acido urico':{min:3.5,max:7.2,unit:'mg/dL',cat:'Rinon'},
+  'Proteinas totales':{min:5.7,max:8.2,unit:'gr/dL',cat:'Higado'},
+  'Albumina':{min:3.4,max:5,unit:'gr/dL',cat:'Higado'},
+  'Bilirrubina total':{min:0.3,max:1.2,unit:'mg/dL',cat:'Higado'},
+  'Fosfatasa alcalina':{min:46,max:116,unit:'U/L',cat:'Higado'},
+  'LDH':{min:85,max:227,unit:'U/L',cat:'Higado'},
+  'SGOT-GOT':{min:5,max:37,unit:'U/L',cat:'Higado'},
+  'SGPT-GPT':{min:16,max:63,unit:'U/L',cat:'Higado'},
+  'GGT':{min:15,max:85,unit:'U/L',cat:'Higado'},
+  'TSH':{min:0.55,max:4.78,unit:'mUI/L',cat:'Tiroides'},
+  'T4 libre':{min:0.89,max:1.76,unit:'ng/dL',cat:'Tiroides'},
+  'T4 total':{min:4.5,max:10.9,unit:'ug/dL',cat:'Tiroides'},
+  'T3 total':{min:0.6,max:1.81,unit:'ng/mL',cat:'Tiroides'},
+  'Vitamina D':{min:20,max:100,unit:'ng/mL',cat:'Vitaminas'},
+  'Vitamina B12':{min:211,max:911,unit:'pg/mL',cat:'Vitaminas'},
+  'Sodio':{min:136,max:145,unit:'mEq/L',cat:'Electrolitos'},
+  'Potasio':{min:3.5,max:5.1,unit:'mEq/L',cat:'Electrolitos'},
+  'Cloro':{min:98,max:107,unit:'mEq/L',cat:'Electrolitos'},
+  'HOMA IR':{min:0,max:2.5,unit:'indice',cat:'Sangre'}
+};
+
+var GROUPS = {
+  'Perfil lipidico': ['Colesterol total','Colesterol HDL','Colesterol LDL','Trigliceridos'],
+  'Metabolico': ['Glucosa','HOMA IR','Insulina basal'],
+  'Hepatico': ['SGOT-GOT','SGPT-GPT','GGT','Fosfatasa alcalina','Bilirrubina total'],
+  'Renal': ['Creatinina','Acido urico'],
+  'Tiroideo': ['TSH','T4 libre','T4 total','T3 total'],
+  'Hemograma': ['Hemoglobina','Hematocrito','Leucocitos','Plaquetas'],
+  'Vitaminas': ['Vitamina D','Vitamina B12'],
+  'Electrolitos': ['Sodio','Potasio','Cloro']
+};
+
+var COLORS = ['#1D9E75','#378ADD','#BA7517','#E24B4A','#7F77DD','#085041','#0C447C','#633806','#791F1F','#3C3489'];
+
+// ============================================================
+// HELPERS
+// ============================================================
+function el(id) { return document.getElementById(id); }
+function nums() { return D.results.filter(function(r){ return r.type === 'numeric'; }); }
+function getRef(exam) { return REFS[exam] || null; }
+function getColor(i) { return COLORS[i % COLORS.length]; }
+function fmt(d) {
+  if (!d) return '--';
+  var p = d.split('-');
+  return p[2]+'/'+p[1]+'/'+p[0].slice(2);
+}
+function fmtShort(d) {
+  if (!d) return '--';
+  var mo = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  var p = d.split('-');
+  return mo[parseInt(p[1])-1]+' '+p[0].slice(2);
+}
+function getByExam(exam) {
+  return nums().filter(function(r){ return r.exam === exam; }).sort(function(a,b){ return a.date.localeCompare(b.date); });
+}
+function allExams() {
+  var map = {};
+  nums().forEach(function(r){ map[r.exam] = true; });
+  return Object.keys(map).sort();
+}
+function linReg(xs, ys) {
+  var n = xs.length;
+  if (n < 2) return {slope:0, intercept:0, r:0};
+  var mx = xs.reduce(function(a,b){return a+b;},0)/n;
+  var my = ys.reduce(function(a,b){return a+b;},0)/n;
+  var num = 0, denX = 0, denY = 0;
+  for (var i=0;i<n;i++) {
+    num += (xs[i]-mx)*(ys[i]-my);
+    denX += (xs[i]-mx)*(xs[i]-mx);
+    denY += (ys[i]-my)*(ys[i]-my);
+  }
+  var slope = denX ? num/denX : 0;
+  var intercept = my - slope*mx;
+  var r = (denX*denY) ? num/Math.sqrt(denX*denY) : 0;
+  return {slope:slope, intercept:intercept, r:r};
+}
+function trend3(items) {
+  if (items.length < 2) return 'stable';
+  var last3 = items.slice(-3);
+  var xs = last3.map(function(_,i){return i;});
+  var ys = last3.map(function(x){return x.value;});
+  var reg = linReg(xs,ys);
+  var range = Math.max.apply(null,ys)-Math.min.apply(null,ys);
+  if (Math.abs(reg.slope) < 0.01 * (ys[0]||1)) return 'stable';
+  return reg.slope > 0 ? 'up' : 'down';
+}
+function destroyChart(id) {
+  var c = Chart.getChart(id);
+  if (c) c.destroy();
+}
+function toast(msg) {
+  var t = el('tst');
+  t.textContent = msg;
+  t.classList.add('on');
+  setTimeout(function(){ t.classList.remove('on'); }, 2000);
+}
+
+// ============================================================
+// TABS
+// ============================================================
+var TAB_LIST = [
+  {id:'ts', label:'Serie de Tiempo'},
+  {id:'groups', label:'Perfiles'},
+  {id:'scatter', label:'Correlaciones'},
+  {id:'delta', label:'Velocidad'},
+  {id:'heatmap', label:'Heatmap'},
+  {id:'alerts', label:'Alertas'}
+];
+var currentTab = 'ts';
+
+function buildTabs() {
+  var tabsEl = el('tabs');
+  tabsEl.innerHTML = '';
+  TAB_LIST.forEach(function(t) {
+    var btn = document.createElement('button');
+    btn.className = 'tab-btn' + (t.id===currentTab?' on':'');
+    btn.textContent = t.label;
+    (function(tid){ btn.onclick = function(){
+      currentTab = tid;
+      var btns = document.querySelectorAll('.tab-btn');
+      for(var i=0;i<btns.length;i++) btns[i].classList.remove('on');
+      btn.classList.add('on');
+      renderTab(tid);
+    }; })(t.id);
+    tabsEl.appendChild(btn);
+  });
+}
+
+function renderTab(id) {
+  var cnt = el('cnt');
+  cnt.innerHTML = '';
+  if (id==='ts') renderTimeSeries();
+  else if (id==='groups') renderGroups();
+  else if (id==='scatter') renderScatter();
+  else if (id==='delta') renderDelta();
+  else if (id==='heatmap') renderHeatmap();
+  else if (id==='alerts') renderAlerts();
+}
+
+// ============================================================
+// A. TIME SERIES
+// ============================================================
+var tsSelected = [];
+var tsDateFrom = '';
+var tsDateTo = '';
+
+function renderTimeSeries() {
+  var cnt = el('cnt');
+  var exams = allExams();
+  if (!exams.length) { cnt.innerHTML = '<div style="text-align:center;padding:40px;color:var(--tx2)">Sin datos numericos disponibles</div>'; return; }
+  if (!tsSelected.length) tsSelected = exams.slice(0,3);
+
+  // Search/filter UI
+  var card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = '<div class="st">Seleccionar indicadores</div>';
+
+  var srch = document.createElement('input');
+  srch.className = 'srch';
+  srch.placeholder = 'Buscar examen...';
+  srch.oninput = function() { filterChips(srch.value.toLowerCase()); };
+  card.appendChild(srch);
+
+  var chips = document.createElement('div');
+  chips.id = 'ts-chips';
+  chips.className = 'fi-row';
+  exams.forEach(function(ex) {
+    var c = document.createElement('button');
+    c.className = 'fi-chip' + (tsSelected.indexOf(ex)>=0?' on':'');
+    c.textContent = ex;
+    c.dataset.exam = ex;
+    (function(exam){ c.onclick = function(){
+      var idx = tsSelected.indexOf(exam);
+      if(idx>=0) tsSelected.splice(idx,1); else tsSelected.push(exam);
+      c.classList.toggle('on');
+      drawTSChart();
+    }; })(ex);
+    chips.appendChild(c);
+  });
+  card.appendChild(chips);
+
+  // Date range
+  var dr = document.createElement('div');
+  dr.className = 'date-row';
+  var d1 = document.createElement('input');
+  d1.type='date'; d1.value=tsDateFrom; d1.placeholder='Desde';
+  d1.onchange = function(){ tsDateFrom=d1.value; drawTSChart(); };
+  var d2 = document.createElement('input');
+  d2.type='date'; d2.value=tsDateTo; d2.placeholder='Hasta';
+  d2.onchange = function(){ tsDateTo=d2.value; drawTSChart(); };
+  dr.appendChild(d1); dr.appendChild(d2);
+  card.appendChild(dr);
+  cnt.appendChild(card);
+
+  // Chart card
+  var cc = document.createElement('div');
+  cc.className = 'card';
+  cc.innerHTML = '<div class="st">Evolucion temporal</div><div class="chart-wrap" style="height:260px"><canvas id="ts-canvas"></canvas></div>';
+  cnt.appendChild(cc);
+
+  // Legend card
+  var lc = document.createElement('div');
+  lc.id = 'ts-legend';
+  lc.className = 'card';
+  cnt.appendChild(lc);
+
+  drawTSChart();
+}
+
+function filterChips(q) {
+  var chips = document.querySelectorAll('#ts-chips .fi-chip');
+  for(var i=0;i<chips.length;i++) {
+    chips[i].style.display = chips[i].dataset.exam.toLowerCase().indexOf(q)>=0 ? '' : 'none';
+  }
+}
+
+function drawTSChart() {
+  destroyChart('ts-canvas');
+  var canvas = el('ts-canvas');
+  if (!canvas) return;
+  if (!tsSelected.length) { canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height); return; }
+
+  var datasets = [];
+  var allDates = new Set();
+
+  tsSelected.forEach(function(exam, ci) {
+    var items = getByExam(exam);
+    if (tsDateFrom) items = items.filter(function(x){ return x.date >= tsDateFrom; });
+    if (tsDateTo) items = items.filter(function(x){ return x.date <= tsDateTo; });
+    if (!items.length) return;
+    items.forEach(function(x){ allDates.add(x.date); });
+
+    var ref = getRef(exam);
+    var color = getColor(ci);
+    var data = items.map(function(x){ return {x: x.date, y: x.value}; });
+    var pointBG = items.map(function(x){
+      if (!ref) return color;
+      return (x.value < ref.min || x.value > ref.max) ? '#E24B4A' : color;
+    });
+
+    datasets.push({
+      label: exam,
+      data: data,
+      borderColor: color,
+      backgroundColor: color+'33',
+      pointBackgroundColor: pointBG,
+      pointRadius: 5,
+      pointHoverRadius: 7,
+      borderWidth: 2,
+      tension: 0.3,
+      fill: false,
+      yAxisID: 'y'+ci
+    });
+
+    // Reference band
+    if (ref && ref.max < 9000) {
+      datasets.push({
+        label: exam+' (min)',
+        data: items.map(function(x){ return {x:x.date, y:ref.min}; }),
+        borderColor: color+'44',
+        borderWidth: 1,
+        borderDash: [4,4],
+        pointRadius: 0,
+        fill: false,
+        yAxisID: 'y'+ci,
+        legend: false
+      });
+      datasets.push({
+        label: exam+' (max)',
+        data: items.map(function(x){ return {x:x.date, y:ref.max}; }),
+        borderColor: color+'44',
+        borderWidth: 1,
+        borderDash: [4,4],
+        pointRadius: 0,
+        backgroundColor: color+'11',
+        fill: '-1',
+        yAxisID: 'y'+ci,
+        legend: false
+      });
+    }
+  });
+
+  var scales = {x:{type:'category',ticks:{font:{size:10},maxRotation:45,color:'#888'},grid:{color:'rgba(0,0,0,0.04)'}}};
+  tsSelected.forEach(function(exam, ci) {
+    scales['y'+ci] = {
+      type:'linear',
+      position: ci%2===0?'left':'right',
+      display: tsSelected.length <= 2,
+      ticks:{font:{size:10},color:getColor(ci)},
+      grid:{drawOnChartArea:ci===0}
+    };
+  });
+
+  new Chart(canvas, {
+    type: 'line',
+    data: { datasets: datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {mode:'nearest',intersect:false},
+      plugins: {
+        legend: {
+          display: true,
+          labels: {
+            filter: function(item){ return item.text.indexOf('(min)')<0 && item.text.indexOf('(max)')<0; },
+            font:{size:11}, color:'#1a1a1a', boxWidth:12
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              if (ctx.dataset.label.indexOf('(min)')>=0||ctx.dataset.label.indexOf('(max)')>=0) return null;
+              return ctx.dataset.label+': '+ctx.parsed.y;
+            }
+          }
+        }
+      },
+      scales: scales
+    }
+  });
+
+  // Legend table
+  var lc = el('ts-legend');
+  if (!lc) return;
+  lc.innerHTML = '<div class="st">Resumen seleccionados</div>';
+  tsSelected.forEach(function(exam, ci) {
+    var items = getByExam(exam);
+    if (!items.length) return;
+    var t = trend3(items);
+    var last = items[items.length-1];
+    var ref = getRef(exam);
+    var status = ref ? (last.value<ref.min||last.value>ref.max?'Fuera de rango':'Normal') : '--';
+    var trendEl = document.createElement('div');
+    trendEl.className = 'sum-row';
+    var tIcon = t==='up'?'&#9650;':t==='down'?'&#9660;':'&#9866;';
+    var tClass = t==='up'?'trend-up':t==='down'?'trend-dn':'trend-st';
+    trendEl.innerHTML = '<div><div class="sum-name" style="color:'+getColor(ci)+'">'+exam+'</div><div style="font-size:11px;color:var(--tx2)">Ultimo: '+last.value+' '+(last.unit||'')+'</div></div><div style="text-align:right"><span class="bge '+(status==='Normal'?'ok':'hi')+'">'+status+'</span><div class="sum-trend '+tClass+'" style="margin-top:4px">'+tIcon+' '+(t==='up'?'Subiendo':t==='down'?'Bajando':'Estable')+'</div></div>';
+    lc.appendChild(trendEl);
+  });
+}
+
+// ============================================================
+// B. GROUPS (PROFILES)
+// ============================================================
+var activeGroup = 'Perfil lipidico';
+
+function renderGroups() {
+  var cnt = el('cnt');
+
+  var card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = '<div class="st">Seleccionar perfil</div>';
+  var sel = document.createElement('select');
+  Object.keys(GROUPS).forEach(function(g) {
+    var o = document.createElement('option');
+    o.value=g; o.textContent=g;
+    if(g===activeGroup) o.selected=true;
+    sel.appendChild(o);
+  });
+  sel.onchange = function(){ activeGroup=sel.value; drawGroupChart(); };
+  card.appendChild(sel);
+  cnt.appendChild(card);
+
+  var cc = document.createElement('div');
+  cc.className = 'card';
+  cc.innerHTML = '<div class="st" id="group-title">'+activeGroup+'</div><div class="chart-wrap" style="height:260px"><canvas id="grp-canvas"></canvas></div>';
+  cnt.appendChild(cc);
+
+  var sc = document.createElement('div');
+  sc.className = 'card';
+  sc.id = 'grp-summary';
+  cnt.appendChild(sc);
+
+  drawGroupChart();
+}
+
+function drawGroupChart() {
+  destroyChart('grp-canvas');
+  var canvas = el('grp-canvas');
+  if (!canvas) return;
+  var groupExams = GROUPS[activeGroup] || [];
+  var datasets = [];
+  var allDates = new Set();
+
+  groupExams.forEach(function(exam, ci) {
+    var items = getByExam(exam);
+    if (!items.length) return;
+    items.forEach(function(x){ allDates.add(x.date); });
+    datasets.push({
+      label: exam,
+      data: items.map(function(x){ return {x:x.date, y:x.value}; }),
+      borderColor: getColor(ci),
+      backgroundColor: getColor(ci)+'22',
+      pointRadius: 4,
+      borderWidth: 2,
+      tension: 0.3,
+      fill: false
+    });
+  });
+
+  if (!datasets.length) { canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height); return; }
+
+  new Chart(canvas, {
+    type: 'line',
+    data: {datasets: datasets},
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'nearest',intersect:false},
+      plugins:{legend:{labels:{font:{size:11},color:'#1a1a1a',boxWidth:12}}},
+      scales:{x:{type:'category',ticks:{font:{size:10},maxRotation:45,color:'#888'},grid:{color:'rgba(0,0,0,0.04)'}},y:{ticks:{font:{size:10},color:'#888'},grid:{color:'rgba(0,0,0,0.05)'}}}
+    }
+  });
+
+  // Summary
+  var sc = el('grp-summary');
+  if (!sc) return;
+  sc.innerHTML = '<div class="st">Estado del perfil</div>';
+  groupExams.forEach(function(exam, ci) {
+    var items = getByExam(exam);
+    if (!items.length) return;
+    var last = items[items.length-1];
+    var ref = getRef(exam);
+    var t = trend3(items);
+    var s = ref ? (last.value<ref.min?'Bajo':(last.value>ref.max?'Alto':'Normal')) : '--';
+    var row = document.createElement('div');
+    row.className = 'sum-row';
+    var tIcon = t==='up'?'&#9650;':t==='down'?'&#9660;':'&#9866;';
+    var tClass = t==='up'?'trend-up':t==='down'?'trend-dn':'trend-st';
+    row.innerHTML = '<div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:50%;background:'+getColor(ci)+';flex-shrink:0"></div><div><div class="sum-name">'+exam+'</div><div style="font-size:11px;color:var(--tx2)">'+last.value+' '+(last.unit||'')+'</div></div></div><div style="text-align:right"><span class="bge '+(s==='Normal'?'ok':s==='--'?'':s==='Bajo'?'wn':'hi')+'">'+s+'</span><div class="sum-trend '+tClass+'">'+tIcon+'</div></div>';
+    sc.appendChild(row);
+  });
+}
+
+// ============================================================
+// C. SCATTER CORRELATIONS
+// ============================================================
+var CORR_PAIRS = [
+  {x:'Glucosa', y:'HOMA IR', label:'Glucosa vs HOMA IR'},
+  {x:'Trigliceridos', y:'Colesterol HDL', label:'Trigliceridos vs HDL'},
+  {x:'Colesterol LDL', y:'Colesterol total', label:'LDL vs Colesterol total'},
+  {x:'Vitamina D', y:'Vitamina B12', label:'Vitamina D vs B12'},
+  {x:'SGOT-GOT', y:'SGPT-GPT', label:'GOT vs GPT'},
+  {x:'TSH', y:'T4 libre', label:'TSH vs T4 libre'}
+];
+var activePair = 0;
+var customX = '';
+var customY = '';
+
+function renderScatter() {
+  var cnt = el('cnt');
+
+  var card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = '<div class="st">Correlaciones predefinidas</div>';
+  var chips = document.createElement('div');
+  chips.className = 'fi-row';
+  CORR_PAIRS.forEach(function(p, i) {
+    var c = document.createElement('button');
+    c.className = 'fi-chip'+(i===activePair?' on':'');
+    c.textContent = p.label;
+    (function(idx){ c.onclick = function(){
+      activePair=idx;
+      var cs = document.querySelectorAll('#scatter-chips .fi-chip');
+      for(var j=0;j<cs.length;j++) cs[j].classList.remove('on');
+      c.classList.add('on');
+      customX=''; customY='';
+      drawScatter();
+    }; })(i);
+    chips.appendChild(c);
+  });
+  chips.id = 'scatter-chips';
+  card.appendChild(chips);
+
+  // Custom pair
+  var cx = document.createElement('div');
+  cx.innerHTML = '<div style="font-size:11px;font-weight:600;color:var(--tx2);margin-top:10px;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">O elige par personalizado:</div>';
+  var row = document.createElement('div');
+  row.style.cssText = 'display:flex;gap:8px;';
+  var sx = document.createElement('select');
+  sx.style.cssText = 'flex:1;margin-bottom:0;';
+  var sy = document.createElement('select');
+  sy.style.cssText = 'flex:1;margin-bottom:0;';
+  var defO = document.createElement('option'); defO.value=''; defO.textContent='Eje X...'; sx.appendChild(defO);
+  var defO2 = document.createElement('option'); defO2.value=''; defO2.textContent='Eje Y...'; sy.appendChild(defO2);
+  allExams().forEach(function(ex) {
+    var ox=document.createElement('option'); ox.value=ex; ox.textContent=ex; sx.appendChild(ox);
+    var oy=document.createElement('option'); oy.value=ex; oy.textContent=ex; sy.appendChild(oy);
+  });
+  sx.onchange = function(){ customX=sx.value; if(customX&&customY) drawScatter(); };
+  sy.onchange = function(){ customY=sy.value; if(customX&&customY) drawScatter(); };
+  row.appendChild(sx); row.appendChild(sy);
+  cx.appendChild(row);
+  card.appendChild(cx);
+  cnt.appendChild(card);
+
+  var cc = document.createElement('div');
+  cc.className = 'card';
+  cc.innerHTML = '<div class="st" id="scatter-title">'+CORR_PAIRS[activePair].label+'</div><div class="chart-wrap" style="height:260px"><canvas id="scat-canvas"></canvas></div>';
+  cnt.appendChild(cc);
+
+  var info = document.createElement('div');
+  info.className = 'card';
+  info.id = 'scat-info';
+  cnt.appendChild(info);
+
+  drawScatter();
+}
+
+function drawScatter() {
+  destroyChart('scat-canvas');
+  var canvas = el('scat-canvas');
+  if (!canvas) return;
+
+  var xExam = customX || CORR_PAIRS[activePair].x;
+  var yExam = customY || CORR_PAIRS[activePair].y;
+  var titleEl = el('scatter-title');
+  if(titleEl) titleEl.textContent = xExam + ' vs ' + yExam;
+
+  var xItems = getByExam(xExam);
+  var yItems = getByExam(yExam);
+  if (!xItems.length || !yItems.length) {
+    canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
+    var info = el('scat-info');
+    if(info) info.innerHTML = '<div style="color:var(--tx2);font-size:13px;text-align:center;padding:10px;">Sin datos suficientes para esta correlacion</div>';
+    return;
+  }
+
+  // Match by date proximity
+  var points = [];
+  xItems.forEach(function(xi) {
+    var best = null, bestDiff = 999999;
+    yItems.forEach(function(yi) {
+      var d1 = new Date(xi.date).getTime(), d2 = new Date(yi.date).getTime();
+      var diff = Math.abs(d1-d2);
+      if (diff < bestDiff) { bestDiff=diff; best=yi; }
+    });
+    if (best && bestDiff < 180*864e5) points.push({x:xi.value, y:best.value, date:xi.date});
+  });
+
+  if (points.length < 2) {
+    var info2 = el('scat-info');
+    if(info2) info2.innerHTML = '<div style="color:var(--tx2);font-size:13px;text-align:center;padding:10px;">Se necesitan al menos 2 mediciones coincidentes</div>';
+    return;
+  }
+
+  var xs = points.map(function(p){ return p.x; });
+  var ys = points.map(function(p){ return p.y; });
+  var reg = linReg(xs.map(function(_,i){return i;}), ys);
+  var xReg = linReg(xs, ys);
+
+  // Trend line
+  var minX = Math.min.apply(null,xs), maxX = Math.max.apply(null,xs);
+  var trendData = [{x:minX, y:xReg.intercept+xReg.slope*minX},{x:maxX, y:xReg.intercept+xReg.slope*maxX}];
+
+  // Color points by status
+  var xRef = getRef(xExam), yRef = getRef(yExam);
+  var ptColors = points.map(function(p) {
+    var xOk = !xRef || (p.x>=xRef.min && p.x<=xRef.max);
+    var yOk = !yRef || (p.y>=yRef.min && p.y<=yRef.max);
+    return (!xOk||!yOk) ? '#E24B4A' : '#1D9E75';
+  });
+
+  new Chart(canvas, {
+    type: 'scatter',
+    data: {
+      datasets: [
+        {
+          label: 'Mediciones',
+          data: points.map(function(p){ return {x:p.x,y:p.y}; }),
+          backgroundColor: ptColors,
+          pointRadius: 7,
+          pointHoverRadius: 9
+        },
+        {
+          label: 'Tendencia',
+          data: trendData,
+          type: 'line',
+          borderColor: '#378ADD',
+          borderWidth: 2,
+          borderDash: [5,5],
+          pointRadius: 0,
+          fill: false
+        }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{labels:{font:{size:11},boxWidth:12,color:'#1a1a1a'}},
+        tooltip:{callbacks:{label:function(ctx){ return xExam+': '+ctx.parsed.x+' | '+yExam+': '+ctx.parsed.y; }}}
+      },
+      scales:{
+        x:{title:{display:true,text:xExam+' ('+(xRef?xRef.unit:'')+')',font:{size:11},color:'#888'},ticks:{font:{size:10},color:'#888'},grid:{color:'rgba(0,0,0,0.04)'}},
+        y:{title:{display:true,text:yExam+' ('+(yRef?yRef.unit:'')+')',font:{size:11},color:'#888'},ticks:{font:{size:10},color:'#888'},grid:{color:'rgba(0,0,0,0.05)'}}
+      }
+    }
+  });
+
+  // Correlation info
+  var r = xReg.r;
+  var rAbs = Math.abs(r);
+  var strength = rAbs > 0.7 ? 'Fuerte' : rAbs > 0.4 ? 'Moderada' : rAbs > 0.2 ? 'Debil' : 'Sin correlacion';
+  var direction = r > 0 ? 'positiva' : r < 0 ? 'negativa' : '';
+  var info3 = el('scat-info');
+  if(info3) {
+    info3.innerHTML = '<div class="st">Analisis de correlacion</div>';
+    var row = document.createElement('div');
+    row.className = 'sum-row';
+    row.innerHTML = '<div><div class="sum-name">Coeficiente r</div><div style="font-size:11px;color:var(--tx2)">Correlacion '+direction+'</div></div><div style="text-align:right"><div style="font-size:22px;font-weight:700;color:'+(rAbs>0.5?'var(--r400)':'var(--t400)')+'">'+r.toFixed(2)+'</div><div style="font-size:11px;color:var(--tx2)">'+strength+'</div></div>';
+    info3.appendChild(row);
+    var row2 = document.createElement('div');
+    row2.className = 'sum-row';
+    row2.innerHTML = '<div class="sum-name">Puntos analizados</div><div style="font-size:14px;font-weight:600">'+points.length+'</div>';
+    info3.appendChild(row2);
+    var row3 = document.createElement('div');
+    row3.className = 'sum-row';
+    var interp = rAbs>0.7?'Cuando '+xExam+' aumenta, '+yExam+' '+(r>0?'aumenta':'disminuye')+' significativamente.':rAbs>0.4?'Correlacion '+direction+' moderada entre ambas variables.':'No hay correlacion lineal clara entre estas variables.';
+    row3.innerHTML = '<div style="font-size:12px;color:var(--tx2);line-height:1.6">'+interp+'</div>';
+    info3.appendChild(row3);
+  }
+}
+
+// ============================================================
+// D. DELTA / VELOCITY OF CHANGE
+// ============================================================
+var deltaExam = '';
+
+function renderDelta() {
+  var cnt = el('cnt');
+  var exams = allExams();
+  if (!exams.length) { cnt.innerHTML = '<div style="text-align:center;padding:40px;color:var(--tx2)">Sin datos</div>'; return; }
+  if (!deltaExam) deltaExam = exams[0];
+
+  var card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = '<div class="st">Indicador</div>';
+  var sel = document.createElement('select');
+  exams.forEach(function(ex) {
+    var o=document.createElement('option'); o.value=ex; o.textContent=ex;
+    if(ex===deltaExam) o.selected=true;
+    sel.appendChild(o);
+  });
+  sel.onchange = function(){ deltaExam=sel.value; drawDelta(); };
+  card.appendChild(sel);
+  cnt.appendChild(card);
+
+  var cc = document.createElement('div');
+  cc.className = 'card';
+  cc.innerHTML = '<div class="st">Velocidad de cambio entre mediciones</div><div class="chart-wrap" style="height:200px"><canvas id="delta-canvas"></canvas></div>';
+  cnt.appendChild(cc);
+
+  var sc = document.createElement('div');
+  sc.className = 'card';
+  sc.id = 'delta-summary';
+  cnt.appendChild(sc);
+
+  drawDelta();
+}
+
+function drawDelta() {
+  destroyChart('delta-canvas');
+  var canvas = el('delta-canvas');
+  if (!canvas) return;
+  var items = getByExam(deltaExam);
+  if (items.length < 2) {
+    var sc = el('delta-summary');
+    if(sc) sc.innerHTML = '<div style="color:var(--tx2);font-size:13px;text-align:center;padding:10px;">Se necesitan al menos 2 mediciones</div>';
+    return;
+  }
+
+  var deltas = [];
+  var labels = [];
+  for (var i=1;i<items.length;i++) {
+    var d = items[i].value - items[i-1].value;
+    deltas.push(parseFloat(d.toFixed(3)));
+    labels.push(fmtShort(items[i-1].date)+' -> '+fmtShort(items[i].date));
+  }
+
+  var maxAbs = Math.max.apply(null, deltas.map(Math.abs));
+  var colors = deltas.map(function(d) {
+    var pct = maxAbs ? Math.abs(d)/maxAbs : 0;
+    if (pct > 0.7) return d>0?'#E24B4A':'#1D9E75';
+    if (pct > 0.3) return d>0?'#BA7517':'#378ADD';
+    return '#888780';
+  });
+
+  new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Delta',
+        data: deltas,
+        backgroundColor: colors,
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){ return (ctx.parsed.y>0?'+':'')+ctx.parsed.y+' '+(items[0].unit||''); }}}},
+      scales:{
+        x:{ticks:{font:{size:9},maxRotation:45,color:'#888'},grid:{display:false}},
+        y:{ticks:{font:{size:10},color:'#888'},grid:{color:'rgba(0,0,0,0.05)'},title:{display:true,text:'Cambio ('+(items[0].unit||'')+')',font:{size:10},color:'#888'}}
+      }
+    }
+  });
+
+  // Summary
+  var sc = el('delta-summary');
+  if (!sc) return;
+  sc.innerHTML = '<div class="st">Analisis de cambio</div>';
+  var maxD = Math.max.apply(null, deltas);
+  var minD = Math.min.apply(null, deltas);
+  var avgD = deltas.reduce(function(a,b){return a+b;},0)/deltas.length;
+  var abruptIdx = deltas.map(function(d,i){ return {d:Math.abs(d),i:i}; }).sort(function(a,b){return b.d-a.d;});
+
+  var rows = [
+    {name:'Cambio maximo', val:'+'+maxD},
+    {name:'Cambio minimo', val:''+minD},
+    {name:'Variacion promedio', val:(avgD>0?'+':'')+avgD.toFixed(2)},
+    {name:'Cambio mas abrupto', val:(deltas[abruptIdx[0].i]>0?'+':'')+deltas[abruptIdx[0].i]+' ('+labels[abruptIdx[0].i]+')'}
+  ];
+
+  rows.forEach(function(r) {
+    var row = document.createElement('div');
+    row.className = 'sum-row';
+    row.innerHTML = '<div class="sum-name">'+r.name+'</div><div style="font-size:13px;font-weight:600">'+r.val+' '+(items[0].unit||'')+'</div>';
+    sc.appendChild(row);
+  });
+
+  // Detect sustained trend
+  var last3 = deltas.slice(-3);
+  var allPos = last3.every(function(d){return d>0;});
+  var allNeg = last3.every(function(d){return d<0;});
+  if (allPos || allNeg) {
+    var alert = document.createElement('div');
+    alert.className = 'alert-card'+(allPos?' ':' ok');
+    alert.innerHTML = '<div class="at">'+(allPos?'Tendencia ascendente sostenida':'Tendencia descendente sostenida')+'</div><div class="as">'+deltaExam+' ha '+(allPos?'aumentado':'disminuido')+' en las ultimas 3 mediciones consecutivas.</div>';
+    sc.appendChild(alert);
+  }
+}
+
+// ============================================================
+// E. HEATMAP
+// ============================================================
+function renderHeatmap() {
+  var cnt = el('cnt');
+  var ns = nums();
+  if (!ns.length) { cnt.innerHTML = '<div style="text-align:center;padding:40px;color:var(--tx2)">Sin datos</div>'; return; }
+
+  // Get all unique dates and exams
+  var datesSet = new Set(), examsSet = new Set();
+  ns.forEach(function(r){ datesSet.add(r.date); examsSet.add(r.exam); });
+  var dates = Array.from(datesSet).sort();
+  var exams = Array.from(examsSet).sort();
+
+  // Build value matrix
+  var matrix = {};
+  exams.forEach(function(ex){ matrix[ex] = {}; });
+  ns.forEach(function(r){ matrix[r.exam][r.date] = r.value; });
+
+  var card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = '<div class="st">Heatmap de estado por indicador y tiempo</div><div style="font-size:12px;color:var(--tx2);margin-bottom:10px">Verde=Normal | Amarillo=Limite | Rojo=Elevado | Gris=Sin dato</div>';
+
+  var wrap = document.createElement('div');
+  wrap.className = 'hm-wrap';
+
+  var colW = Math.max(50, Math.floor((window.innerWidth-80)/dates.length));
+  var totalW = colW*dates.length+120;
+
+  // Header row
+  var hRow = document.createElement('div');
+  hRow.style.cssText = 'display:flex;margin-bottom:4px;min-width:'+totalW+'px;';
+  var spacer = document.createElement('div');
+  spacer.style.cssText = 'width:120px;flex-shrink:0;';
+  hRow.appendChild(spacer);
+  dates.forEach(function(d) {
+    var dc = document.createElement('div');
+    dc.className = 'hm-date';
+    dc.style.cssText = 'width:'+colW+'px;flex-shrink:0;';
+    dc.textContent = fmtShort(d);
+    hRow.appendChild(dc);
+  });
+  wrap.appendChild(hRow);
+
+  exams.forEach(function(exam) {
+    var ref = getRef(exam);
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:2px;margin-bottom:2px;align-items:center;min-width:'+totalW+'px;';
+
+    var lbl = document.createElement('div');
+    lbl.className = 'hm-label';
+    lbl.style.cssText = 'width:120px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;';
+    lbl.textContent = exam;
+    lbl.title = exam;
+    row.appendChild(lbl);
+
+    dates.forEach(function(d) {
+      var cell = document.createElement('div');
+      cell.className = 'hm-cell';
+      cell.style.cssText = 'width:'+colW+'px;flex-shrink:0;';
+      var v = matrix[exam][d];
+      if (v === undefined) {
+        cell.style.background = '#D3D1C7';
+        cell.textContent = '';
+      } else if (!ref) {
+        cell.style.background = '#888780';
+        cell.textContent = v;
+      } else if (v < ref.min) {
+        var pct = Math.max(0.3, 1-(ref.min-v)/(ref.min*0.3));
+        cell.style.background = 'rgba(186,117,23,'+pct+')';
+        cell.textContent = v;
+        cell.style.fontSize = '9px';
+      } else if (v > ref.max) {
+        var pct2 = Math.min(1, 0.5+(v-ref.max)/(ref.max*0.2));
+        cell.style.background = 'rgba(226,75,74,'+pct2+')';
+        cell.textContent = v;
+        cell.style.fontSize = '9px';
+      } else {
+        var pct3 = 0.6;
+        cell.style.background = 'rgba(29,158,117,'+pct3+')';
+        cell.textContent = v;
+        cell.style.fontSize = '9px';
+      }
+      row.appendChild(cell);
+    });
+    wrap.appendChild(row);
+  });
+
+  // Legend
+  var leg = document.createElement('div');
+  leg.style.cssText = 'display:flex;gap:12px;margin-top:10px;flex-wrap:wrap;';
+  [{color:'rgba(29,158,117,0.7)',label:'Normal'},{color:'rgba(186,117,23,0.7)',label:'Limite'},{color:'rgba(226,75,74,0.7)',label:'Elevado'},{color:'#D3D1C7',label:'Sin dato'}].forEach(function(l){
+    var ld = document.createElement('div');
+    ld.style.cssText = 'display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tx2);';
+    ld.innerHTML = '<div style="width:12px;height:12px;border-radius:3px;background:'+l.color+'"></div>'+l.label;
+    leg.appendChild(ld);
+  });
+
+  card.appendChild(wrap);
+  card.appendChild(leg);
+  cnt.appendChild(card);
+}
+
+// ============================================================
+// F. CLINICAL ALERTS
+// ============================================================
+function renderAlerts() {
+  var cnt = el('cnt');
+  var ns = nums();
+  if (!ns.length) { cnt.innerHTML = '<div style="text-align:center;padding:40px;color:var(--tx2)">Sin datos para analizar</div>'; return; }
+
+  // Build latest and items maps
+  var latest = {};
+  var itemsMap = {};
+  ns.forEach(function(r){
+    if(!latest[r.exam]||r.date>latest[r.exam].date) latest[r.exam]=r;
+    if(!itemsMap[r.exam]) itemsMap[r.exam]=[];
+    itemsMap[r.exam].push(r);
+  });
+  Object.keys(itemsMap).forEach(function(k){ itemsMap[k].sort(function(a,b){return a.date.localeCompare(b.date);}); });
+
+  var alerts = [];
+
+  // Cardiovascular risk
+  var ldl = latest['Colesterol LDL'];
+  var hdl = latest['Colesterol HDL'];
+  var trig = latest['Trigliceridos'];
+  var colTot = latest['Colesterol total'];
+
+  if (ldl && ldl.value > 130) {
+    var ldlTrend = trend3(itemsMap['Colesterol LDL']||[]);
+    alerts.push({sev:'hi',cat:'Riesgo Cardiovascular',title:'LDL elevado'+(ldlTrend==='up'?' en aumento':''),body:'LDL='+ldl.value+' mg/dL. '+(ldlTrend==='up'?'Tendencia ascendente sostenida. Consulte cardiologia o medicina interna.':'Supera el rango optimo (<130 mg/dL).')});
+  }
+  if (hdl && hdl.value < 40) {
+    alerts.push({sev:'hi',cat:'Riesgo Cardiovascular',title:'HDL bajo (factor de riesgo)',body:'HDL='+hdl.value+' mg/dL. Un HDL bajo es factor de riesgo independiente. Ejercicio aerobico y dieta.'});
+  }
+  if (trig && hdl && trig.value > 150 && hdl.value < 50) {
+    alerts.push({sev:'hi',cat:'Riesgo Cardiovascular',title:'Sindrome metabolico (TG alto + HDL bajo)',body:'Trigliceridos='+trig.value+' y HDL='+hdl.value+'. Combinacion de alto riesgo cardiovascular y metabolico.'});
+  }
+  if (colTot && colTot.value > 200) {
+    var colTrend = trend3(itemsMap['Colesterol total']||[]);
+    alerts.push({sev:colTot.value>239?'hi':'wn',cat:'Riesgo Cardiovascular',title:'Colesterol total elevado',body:'Colesterol='+colTot.value+' mg/dL. '+(colTrend==='up'?'Con tendencia al alza.':'')});
+  }
+
+  // Metabolic risk
+  var glu = latest['Glucosa'];
+  var homa = latest['HOMA IR'];
+  var ins = latest['Insulina basal'];
+
+  if (glu && glu.value > 100) {
+    alerts.push({sev:glu.value>125?'hi':'wn',cat:'Riesgo Metabolico',title:glu.value>125?'Glucosa en rango diabetico':'Glucosa en limite (prediabetes)',body:'Glucosa='+glu.value+' mg/dL. '+(glu.value>125?'Requiere evaluacion medica urgente.':'Controlar habitos alimenticios y actividad fisica.')});
+  }
+  if (homa && homa.value > 2.5) {
+    alerts.push({sev:'hi',cat:'Riesgo Metabolico',title:'Resistencia insulinica (HOMA IR elevado)',body:'HOMA IR='+homa.value+'. Supera el limite de 2.5. Indica posible resistencia insulinica. Evaluar con endocrinologo.'});
+  }
+  if (ins && ins.value > 15 && ins.value <= 25) {
+    alerts.push({sev:'wn',cat:'Riesgo Metabolico',title:'Insulina basal en rango alto',body:'Insulina='+ins.value+' uUI/mL. En rango superior, puede indicar resistencia insulinica compensada.'});
+  }
+
+  // Renal risk
+  var creat = latest['Creatinina'];
+  if (creat) {
+    var creatTrend = trend3(itemsMap['Creatinina']||[]);
+    if (creat.value > 1.3 || creatTrend === 'up') {
+      alerts.push({sev:creat.value>1.3?'hi':'wn',cat:'Riesgo Renal',title:'Creatinina'+(creat.value>1.3?' elevada':' con tendencia ascendente'),body:'Creatinina='+creat.value+' mg/dL. '+(creatTrend==='up'?'Tendencia ascendente en mediciones consecutivas. ':'')+'Monitorizar funcion renal.'});
+    }
+  }
+
+  // Hepatic risk
+  var got = latest['SGOT-GOT'];
+  var gpt = latest['SGPT-GPT'];
+  var ggt = latest['GGT'];
+  if ((got && got.value > 37) || (gpt && gpt.value > 63)) {
+    var ratio = got && gpt ? (got.value/gpt.value).toFixed(2) : null;
+    alerts.push({sev:'hi',cat:'Riesgo Hepatico',title:'Transaminasas elevadas',body:(got?'GOT='+got.value:'')+' '+(gpt?'GPT='+gpt.value:'')+'. '+(ratio?'Relacion GOT/GPT='+ratio+'. ':'')+' Evaluar funcion hepatica completa.'});
+  }
+  if (ggt && ggt.value > 85) {
+    alerts.push({sev:'hi',cat:'Riesgo Hepatico',title:'GGT elevada',body:'GGT='+ggt.value+' U/L. Puede indicar esteatosis hepatica, consumo de alcohol o dano hepatico.'});
+  }
+
+  // Thyroid
+  var tsh = latest['TSH'];
+  if (tsh && (tsh.value < 0.55 || tsh.value > 4.78)) {
+    alerts.push({sev:'hi',cat:'Disfuncion Tiroidea',title:tsh.value<0.55?'TSH baja (posible hipertiroidismo)':'TSH alta (posible hipotiroidismo)',body:'TSH='+tsh.value+' mUI/L. Rango normal: 0.55-4.78. Consultar endocrinologo y solicitar T3/T4.'});
+  }
+
+  // Vitamin D
+  var vitD = latest['Vitamina D'];
+  if (vitD && vitD.value < 20) {
+    var vitTrend = trend3(itemsMap['Vitamina D']||[]);
+    alerts.push({sev:'hi',cat:'Deficiencias',title:'Deficiencia de Vitamina D',body:'Vitamina D='+vitD.value+' ng/mL. Deficiencia severa (<20). '+(vitTrend==='dn'?'Con tendencia descendente. ':'')+'Suplementacion recomendada.'});
+  } else if (vitD && vitD.value < 30) {
+    alerts.push({sev:'wn',cat:'Deficiencias',title:'Vitamina D insuficiente',body:'Vitamina D='+vitD.value+' ng/mL. Insuficiencia (20-30). Aumentar exposicion solar y/o suplementar.'});
+  }
+
+  // Sustained trend alerts (3+ consecutive)
+  Object.keys(itemsMap).forEach(function(exam) {
+    var items = itemsMap[exam];
+    if (items.length < 3) return;
+    var last3 = items.slice(-3);
+    var allUp = last3.every(function(x,i){ return i===0 || x.value > last3[i-1].value; });
+    var allDn = last3.every(function(x,i){ return i===0 || x.value < last3[i-1].value; });
+    var ref = getRef(exam);
+    var lastVal = last3[2].value;
+    var isAbnormal = ref && (lastVal < ref.min || lastVal > ref.max);
+    if ((allUp || allDn) && isAbnormal) {
+      var alreadyAlerted = alerts.some(function(a){ return a.title.indexOf(exam)>=0; });
+      if (!alreadyAlerted) {
+        alerts.push({sev:'wn',cat:'Tendencia Sostenida',title:exam+': '+(allUp?'subiendo':'bajando')+' 3 mediciones consecutivas',body:exam+' = '+lastVal+' '+(items[0].unit||'')+'. Cambio sostenido que requiere atencion aunque el valor sea borderline.'});
+      }
+    }
+  });
+
+  // No alerts
+  if (!alerts.length) {
+    alerts.push({sev:'ok',cat:'Estado General',title:'Sin alertas criticas',body:'Todos los indicadores analizados estan dentro del rango normal o sin tendencias preocupantes.'});
+  }
+
+  // Group by category
+  var byCat = {};
+  alerts.forEach(function(a){
+    if(!byCat[a.cat]) byCat[a.cat]=[];
+    byCat[a.cat].push(a);
+  });
+
+  // Summary card
+  var hiCount = alerts.filter(function(a){return a.sev==='hi';}).length;
+  var wnCount = alerts.filter(function(a){return a.sev==='wn';}).length;
+  var okCount = alerts.filter(function(a){return a.sev==='ok';}).length;
+
+  var sumCard = document.createElement('div');
+  sumCard.className = 'card';
+  var scoreColor = hiCount>2?'var(--r400)':hiCount>0?'var(--a400)':'var(--t400)';
+  sumCard.innerHTML = '<div class="st">Resumen de riesgos</div><div style="display:flex;gap:12px;justify-content:center;padding:8px 0;">'+(hiCount?'<div style="text-align:center"><div style="font-size:28px;font-weight:700;color:var(--r400)">'+hiCount+'</div><div style="font-size:11px;color:var(--tx2)">Critico</div></div>':'')+'<div style="text-align:center"><div style="font-size:28px;font-weight:700;color:var(--a400)">'+wnCount+'</div><div style="font-size:11px;color:var(--tx2)">Atencion</div></div><div style="text-align:center"><div style="font-size:28px;font-weight:700;color:var(--t400)">'+okCount+'</div><div style="font-size:11px;color:var(--tx2)">Normal</div></div></div>';
+  cnt.appendChild(sumCard);
+
+  // Alerts by category
+  Object.keys(byCat).forEach(function(cat) {
+    var stEl = document.createElement('div');
+    stEl.className = 'st';
+    stEl.style.marginTop = '4px';
+    stEl.textContent = cat;
+    cnt.appendChild(stEl);
+
+    byCat[cat].forEach(function(a) {
+      var ac = document.createElement('div');
+      ac.className = 'alert-card'+(a.sev==='wn'?' wn':a.sev==='ok'?' ok':'');
+      ac.innerHTML = '<div class="at">'+a.title+'</div><div class="as">'+a.body+'</div>';
+      cnt.appendChild(ac);
+    });
+  });
+
+  // Clinical summary
+  var sumClin = document.createElement('div');
+  sumClin.className = 'card';
+  sumClin.innerHTML = '<div class="st">Resumen clinico interpretativo</div>';
+  var lines = [];
+  if (hiCount === 0 && wnCount === 0) lines.push('Perfil de laboratorio dentro de parametros normales. Se recomienda mantener controles anuales.');
+  if (hiCount > 0) lines.push('Se detectaron '+hiCount+' hallazgo(s) critico(s) que requieren evaluacion medica.');
+  if (wnCount > 0) lines.push(wnCount+' indicador(es) en zona limite. Se recomienda seguimiento en 3-6 meses.');
+  var cvRisk = alerts.filter(function(a){return a.cat==='Riesgo Cardiovascular' && a.sev==='hi';}).length;
+  if (cvRisk >= 2) lines.push('Multiples factores de riesgo cardiovascular presentes. Consulta cardiologica recomendada.');
+  var metRisk = alerts.filter(function(a){return a.cat==='Riesgo Metabolico';}).length;
+  if (metRisk >= 2) lines.push('Patron metabolico alterado. Evaluacion endocrinologica sugerida.');
+
+  lines.forEach(function(l) {
+    var p = document.createElement('p');
+    p.style.cssText = 'font-size:13px;line-height:1.7;color:var(--tx);margin-bottom:6px;';
+    p.textContent = l;
+    sumClin.appendChild(p);
+  });
+
+  var disc = document.createElement('p');
+  disc.style.cssText = 'font-size:11px;color:var(--tx2);margin-top:8px;padding-top:8px;border-top:.5px solid var(--bd);line-height:1.6;';
+  disc.textContent = 'Este analisis es orientativo y no reemplaza la consulta medica profesional.';
+  sumClin.appendChild(disc);
+  cnt.appendChild(sumClin);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+buildTabs();
+renderTab(currentTab);
+</script>
+</body>
+</html>
