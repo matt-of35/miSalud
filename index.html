@@ -703,9 +703,34 @@ var MONTHS_FULL = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Ago
 // ============================================================
 // STATE
 // ============================================================
+var DATA_VERSION = 4; // Incrementar aqui cada vez que se agregan datos al SEED
+
 function loadD() {
-  try { var r = localStorage.getItem(SK); if (r) return JSON.parse(r); } catch(e) {}
-  return {results: JSON.parse(JSON.stringify(SEED_RESULTS)), nextId:160, cCats:[], cExams:[], studies:[], ophtho:[], nextSid:1, nextOid:1};
+  try {
+    var r = localStorage.getItem(SK);
+    if (r) {
+      var saved = JSON.parse(r);
+      // Si la version guardada es antigua, fusionar con el SEED actualizado
+      if (!saved.dataVersion || saved.dataVersion < DATA_VERSION) {
+        // Construir mapa de IDs existentes
+        var existingIds = {};
+        (saved.results || []).forEach(function(x){ existingIds[x.id] = true; });
+        // Agregar solo los resultados del SEED que no existen aun
+        var toAdd = SEED_RESULTS.filter(function(s){ return !existingIds[s.id]; });
+        if (toAdd.length > 0) {
+          saved.results = (saved.results || []).concat(toAdd);
+        }
+        // Actualizar nextId si es necesario
+        if (!saved.nextId || saved.nextId < 160) saved.nextId = 160;
+        saved.dataVersion = DATA_VERSION;
+        // Guardar version actualizada
+        try { localStorage.setItem(SK, JSON.stringify(saved)); } catch(e) {}
+      }
+      return saved;
+    }
+  } catch(e) {}
+  var fresh = {results: JSON.parse(JSON.stringify(SEED_RESULTS)), nextId:160, cCats:[], cExams:[], studies:[], ophtho:[], nextSid:1, nextOid:1, dataVersion:DATA_VERSION};
+  return fresh;
 }
 function save() { try { localStorage.setItem(SK, JSON.stringify(D)); } catch(e) {} }
 var D = loadD();

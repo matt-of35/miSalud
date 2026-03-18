@@ -98,10 +98,25 @@ html,body{height:100%;font-family:'DM Sans',system-ui,sans-serif;background:var(
 <script src="datos.js"></script>
 <script>
 var SK = APP_SK || 'miSalud_v5';
+var DATA_VERSION = 4;
 var D = null;
-try { var raw = localStorage.getItem(SK); if(raw) D = JSON.parse(raw); } catch(e) {}
+try {
+  var raw = localStorage.getItem(SK);
+  if (raw) {
+    D = JSON.parse(raw);
+    if (!D.dataVersion || D.dataVersion < DATA_VERSION) {
+      var existingIds = {};
+      (D.results || []).forEach(function(x){ existingIds[x.id] = true; });
+      var toAdd = SEED_RESULTS.filter(function(s){ return !existingIds[s.id]; });
+      if (toAdd.length > 0) D.results = (D.results || []).concat(toAdd);
+      if (!D.nextId || D.nextId < 160) D.nextId = 160;
+      D.dataVersion = DATA_VERSION;
+      try { localStorage.setItem(SK, JSON.stringify(D)); } catch(e) {}
+    }
+  }
+} catch(e) {}
 if (!D || !D.results || !D.results.length) {
-  D = { results: JSON.parse(JSON.stringify(SEED_RESULTS)), studies: [], ophtho: [], nextId: 120 };
+  D = { results: JSON.parse(JSON.stringify(SEED_RESULTS)), studies: [], ophtho: [], nextId: 160, dataVersion: DATA_VERSION };
 }
 
 var REFS = {
