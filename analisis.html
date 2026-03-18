@@ -84,15 +84,17 @@ select{width:100%;padding:9px 13px;border:.5px solid var(--bd);border-radius:10p
 <div class="tst" id="tst"></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="datos.js"></script>
 <script>
 // ============================================================
-// LOAD DATA FROM MAIN APP
+// LOAD DATA FROM MAIN APP (localStorage) with seed fallback
 // ============================================================
-var SK = 'miSalud_v5';
+var SK = APP_SK || 'miSalud_v5';
 var D = null;
 try { var raw = localStorage.getItem(SK); if(raw) D = JSON.parse(raw); } catch(e) {}
-if (!D || !D.results) {
-  D = { results: [], studies: [], ophtho: [] };
+if (!D || !D.results || !D.results.length) {
+  // Fallback to seed data if localStorage is empty
+  D = { results: JSON.parse(JSON.stringify(SEED_RESULTS)), studies: [], ophtho: [], nextId: 120 };
 }
 
 var REFS = {
@@ -546,12 +548,24 @@ function drawGroupChart() {
 // C. SCATTER CORRELATIONS
 // ============================================================
 var CORR_PAIRS = [
-  {x:'Glucosa', y:'HOMA IR', label:'Glucosa vs HOMA IR'},
-  {x:'Trigliceridos', y:'Colesterol HDL', label:'Trigliceridos vs HDL'},
-  {x:'Colesterol LDL', y:'Colesterol total', label:'LDL vs Colesterol total'},
-  {x:'Vitamina D', y:'Vitamina B12', label:'Vitamina D vs B12'},
-  {x:'SGOT-GOT', y:'SGPT-GPT', label:'GOT vs GPT'},
-  {x:'TSH', y:'T4 libre', label:'TSH vs T4 libre'}
+  {x:'Glucosa', y:'HOMA IR', label:'Glucosa vs HOMA IR',
+   desc:'Relacion entre glucosa en ayunas y resistencia insulinica. A mayor glucosa con HOMA IR elevado, mayor riesgo de prediabetes o diabetes tipo 2.',
+   clinical:'Normal: ambos dentro de rango. Alerta: HOMA IR > 2.5 con glucosa > 100 sugiere sindrome metabolico.'},
+  {x:'Trigliceridos', y:'Colesterol HDL', label:'Trigliceridos vs HDL',
+   desc:'El cociente TG/HDL es uno de los mejores indicadores de riesgo cardiovascular e insulinorresistencia. TG altos con HDL bajo es patron de alto riesgo.',
+   clinical:'Optimo: TG < 150 y HDL > 50. Riesgo alto: TG > 200 y HDL < 40.'},
+  {x:'Colesterol LDL', y:'Colesterol total', label:'LDL vs Colesterol total',
+   desc:'El LDL es la fraccion mas aterogena del colesterol total. Ambos deben seguir tendencia similar. Una discrepancia puede indicar HDL muy alto o bajo.',
+   clinical:'Optimo: LDL < 100 y total < 200. LDL deberia representar aprox 60-70% del colesterol total.'},
+  {x:'Vitamina D', y:'Vitamina B12', label:'Vitamina D vs B12',
+   desc:'Ambas son vitaminas esenciales con deficiencias frecuentes. No hay correlacion biologica directa, pero codeficiencias son comunes en personas con dieta limitada o poca exposicion solar.',
+   clinical:'Deficiencia D: < 20 ng/mL. Deficiencia B12: < 211 pg/mL. Corregir ambas si estan bajas.'},
+  {x:'SGOT-GOT', y:'SGPT-GPT', label:'GOT vs GPT',
+   desc:'Ambas transaminasas son marcadores de dano hepatico. GPT es mas especifica del higado. La relacion GOT/GPT orienta el diagnostico.',
+   clinical:'Normales: GOT < 37 y GPT < 63. Relacion GOT/GPT > 2 orienta a hepatitis alcoholica.'},
+  {x:'TSH', y:'T4 libre', label:'TSH vs T4 libre',
+   desc:'TSH y T4 libre tienen una relacion inversa: cuando la tiroides falla, TSH sube y T4 baja. Esta correlacion negativa confirma o descarta disfuncion tiroidea.',
+   clinical:'Hipotiroidismo: TSH alto + T4 bajo. Hipertiroidismo: TSH bajo + T4 alto.'}
 ];
 var activePair = 0;
 var customX = '';
@@ -606,7 +620,7 @@ function renderScatter() {
 
   var cc = document.createElement('div');
   cc.className = 'card';
-  cc.innerHTML = '<div class="st" id="scatter-title">'+CORR_PAIRS[activePair].label+'</div><div class="chart-wrap" style="height:260px"><canvas id="scat-canvas"></canvas></div>';
+  cc.innerHTML = '<div class="st" id="scatter-title">'+CORR_PAIRS[activePair].label+'</div><div id="scatter-desc-preview"></div><div class="chart-wrap" style="height:260px"><canvas id="scat-canvas"></canvas></div>';
   cnt.appendChild(cc);
 
   var info = document.createElement('div');
@@ -626,6 +640,18 @@ function drawScatter() {
   var yExam = customY || CORR_PAIRS[activePair].y;
   var titleEl = el('scatter-title');
   if(titleEl) titleEl.textContent = xExam + ' vs ' + yExam;
+
+  // Update description preview
+  var pairDef = null;
+  CORR_PAIRS.forEach(function(p){ if(p.x===xExam&&p.y===yExam) pairDef=p; });
+  var descPrev = el('scatter-desc-preview');
+  if (descPrev) {
+    if (pairDef && pairDef.desc) {
+      descPrev.innerHTML = '<div style="background:var(--b50);border-radius:8px;padding:9px 11px;margin:6px 0 10px;border:.5px solid var(--b100);font-size:12px;color:var(--b800);line-height:1.6;">'+pairDef.desc+'</div>';
+    } else {
+      descPrev.innerHTML = '';
+    }
+  }
 
   var xItems = getByExam(xExam);
   var yItems = getByExam(yExam);
@@ -711,23 +737,55 @@ function drawScatter() {
   var r = xReg.r;
   var rAbs = Math.abs(r);
   var strength = rAbs > 0.7 ? 'Fuerte' : rAbs > 0.4 ? 'Moderada' : rAbs > 0.2 ? 'Debil' : 'Sin correlacion';
-  var direction = r > 0 ? 'positiva' : r < 0 ? 'negativa' : '';
+  var direction = r > 0.1 ? 'positiva' : r < -0.1 ? 'negativa' : 'nula';
+
+  // Find pair definition for descriptions
+  var pairDef = null;
+  CORR_PAIRS.forEach(function(p){ if(p.x===xExam&&p.y===yExam) pairDef=p; });
+
   var info3 = el('scat-info');
   if(info3) {
-    info3.innerHTML = '<div class="st">Analisis de correlacion</div>';
+    info3.innerHTML = '';
+
+    // Description box
+    if (pairDef && pairDef.desc) {
+      var descBox = document.createElement('div');
+      descBox.style.cssText = 'background:var(--b50);border-radius:10px;padding:10px 12px;margin-bottom:12px;border:.5px solid var(--b100);';
+      descBox.innerHTML = '<div style="font-size:11px;font-weight:600;color:var(--b800);margin-bottom:4px;">Que mide esta correlacion?</div><div style="font-size:12px;color:var(--b800);line-height:1.6;">'+pairDef.desc+'</div>';
+      info3.appendChild(descBox);
+    }
+
+    info3.innerHTML += '<div class="st">Resultado estadistico</div>';
+
     var row = document.createElement('div');
     row.className = 'sum-row';
     row.innerHTML = '<div><div class="sum-name">Coeficiente r</div><div style="font-size:11px;color:var(--tx2)">Correlacion '+direction+'</div></div><div style="text-align:right"><div style="font-size:22px;font-weight:700;color:'+(rAbs>0.5?'var(--r400)':'var(--t400)')+'">'+r.toFixed(2)+'</div><div style="font-size:11px;color:var(--tx2)">'+strength+'</div></div>';
     info3.appendChild(row);
+
     var row2 = document.createElement('div');
     row2.className = 'sum-row';
     row2.innerHTML = '<div class="sum-name">Puntos analizados</div><div style="font-size:14px;font-weight:600">'+points.length+'</div>';
     info3.appendChild(row2);
-    var row3 = document.createElement('div');
-    row3.className = 'sum-row';
+
     var interp = rAbs>0.7?'Cuando '+xExam+' aumenta, '+yExam+' '+(r>0?'aumenta':'disminuye')+' significativamente.':rAbs>0.4?'Correlacion '+direction+' moderada entre ambas variables.':'No hay correlacion lineal clara entre estas variables.';
-    row3.innerHTML = '<div style="font-size:12px;color:var(--tx2);line-height:1.6">'+interp+'</div>';
+    var row3 = document.createElement('div');
+    row3.style.cssText = 'padding:8px 0;font-size:12px;color:var(--tx2);line-height:1.6;border-top:.5px solid var(--bd);margin-top:4px;';
+    row3.textContent = interp;
     info3.appendChild(row3);
+
+    // Clinical note
+    if (pairDef && pairDef.clinical) {
+      var clinDiv = document.createElement('div');
+      clinDiv.style.cssText = 'background:var(--t50);border-radius:10px;padding:10px 12px;margin-top:10px;border:.5px solid var(--t100);';
+      clinDiv.innerHTML = '<div style="font-size:11px;font-weight:600;color:var(--t600);margin-bottom:3px;">Interpretacion clinica</div><div style="font-size:12px;color:var(--t800);line-height:1.6;">'+pairDef.clinical+'</div>';
+      info3.appendChild(clinDiv);
+    }
+
+    // Color legend
+    var legDiv = document.createElement('div');
+    legDiv.style.cssText = 'display:flex;gap:14px;margin-top:8px;';
+    legDiv.innerHTML = '<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tx2);"><div style="width:10px;height:10px;border-radius:50%;background:#1D9E75"></div>Dentro de rango</div><div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tx2);"><div style="width:10px;height:10px;border-radius:50%;background:#E24B4A"></div>Fuera de rango</div>';
+    info3.appendChild(legDiv);
   }
 }
 

@@ -1063,9 +1063,24 @@ var chartSearch = '';
 var scatX = '';
 var scatY = '';
 var SCAT_PAIRS = [
-  {x:'Glucosa',y:'HOMA IR'},{x:'Trigliceridos',y:'Colesterol HDL'},
-  {x:'Colesterol LDL',y:'Colesterol total'},{x:'SGOT-GOT',y:'SGPT-GPT'},
-  {x:'TSH',y:'T4 libre'},{x:'Vitamina D',y:'Vitamina B12'}
+  {x:'Glucosa',y:'HOMA IR',
+   desc:'Relacion entre glucosa en ayunas y resistencia insulinica. A mayor glucosa con HOMA IR elevado, mayor riesgo de prediabetes o diabetes tipo 2.',
+   clinical:'Normal: ambos dentro de rango. Alerta: HOMA IR > 2.5 con glucosa > 100 sugiere sindrome metabolico.'},
+  {x:'Trigliceridos',y:'Colesterol HDL',
+   desc:'El cociente TG/HDL es uno de los mejores indicadores de riesgo cardiovascular e insulinorresistencia. Trigliceridos altos con HDL bajo es un patron de alto riesgo.',
+   clinical:'Optimo: TG < 150 y HDL > 50. Riesgo alto: TG > 200 y HDL < 40.'},
+  {x:'Colesterol LDL',y:'Colesterol total',
+   desc:'El LDL es la fraccion mas aterogena del colesterol total. Ambos deben seguir una tendencia similar. Una discrepancia puede indicar HDL muy alto o muy bajo.',
+   clinical:'Optimo: LDL < 100 y total < 200. El LDL deberia representar aprox el 60-70% del colesterol total.'},
+  {x:'SGOT-GOT',y:'SGPT-GPT',
+   desc:'Ambas transaminasas son marcadores de dano hepatico. GPT es mas especifica del higado. La relacion GOT/GPT orienta el diagnostico: mayor de 2 sugiere dano alcoholico.',
+   clinical:'Normales: GOT < 37 y GPT < 63. Relacion GOT/GPT > 2 orienta a hepatitis alcoholica.'},
+  {x:'TSH',y:'T4 libre',
+   desc:'TSH y T4 libre tienen una relacion inversa: cuando la tiroides falla, TSH sube y T4 baja. Esta correlacion negativa confirma o descarta disfuncion tiroidea.',
+   clinical:'Hipotiroidismo: TSH alto + T4 bajo. Hipertiroidismo: TSH bajo + T4 alto.'},
+  {x:'Vitamina D',y:'Vitamina B12',
+   desc:'Ambas son vitaminas esenciales con deficiencias frecuentes. No hay correlacion biologica directa, pero codeficiencias son comunes en personas con dieta limitada o poca exposicion solar.',
+   clinical:'Deficiencia D: < 20 ng/mL. Deficiencia B12: < 211 pg/mL. Corregir ambas si estan bajas.'}
 ];
 
 function setChartTab(t) {
@@ -1180,13 +1195,17 @@ function renderScatterCharts(cnt) {
   SCAT_PAIRS.forEach(function(p) {
     if (!examsMap[p.x] || !examsMap[p.y]) return;
     var btn = document.createElement('button');
-    btn.style.cssText = 'padding:5px 10px;border-radius:16px;font-size:11px;font-weight:500;cursor:pointer;border:.5px solid var(--bd);background:var(--card);color:var(--tx2);font-family:inherit;';
+    btn.id = 'pair-btn-'+p.x.replace(/ /g,'-')+'-'+p.y.replace(/ /g,'-');
+    btn.style.cssText = 'padding:5px 10px;border-radius:16px;font-size:11px;font-weight:500;cursor:pointer;border:.5px solid var(--bd);background:var(--card);color:var(--tx2);font-family:inherit;transition:all .15s;';
     btn.textContent = p.x+' / '+p.y;
-    (function(px,py){ btn.onclick = function(){
+    (function(px,py,pb){ btn.onclick = function(){
       scatX=px; scatY=py;
       sx.value=px; sy.value=py;
+      // Reset all pair buttons
+      document.querySelectorAll('[id^="pair-btn-"]').forEach(function(b){ b.style.background='var(--card)'; b.style.color='var(--tx2)'; b.style.borderColor='var(--bd)'; });
+      pb.style.background='var(--t50)'; pb.style.color='var(--t600)'; pb.style.borderColor='var(--t400)';
       drawScatInline(cnt, px, py);
-    }; })(p.x,p.y);
+    }; })(p.x,p.y,btn);
     pairs.appendChild(btn);
   });
   selCard.appendChild(pairs);
@@ -1212,6 +1231,10 @@ function drawScatInline(cnt, xEx, yEx) {
   if (!scatCard) return;
   scatCard.innerHTML = '';
 
+  // Find matching pair description
+  var pairDef = null;
+  SCAT_PAIRS.forEach(function(p){ if(p.x===xEx&&p.y===yEx) pairDef=p; });
+
   var nums = D.results.filter(function(r){ return r.type==='numeric'; });
   var xItems = nums.filter(function(r){ return r.exam===xEx; }).sort(function(a,b){return a.date.localeCompare(b.date);});
   var yItems = nums.filter(function(r){ return r.exam===yEx; }).sort(function(a,b){return a.date.localeCompare(b.date);});
@@ -1234,8 +1257,19 @@ function drawScatInline(cnt, xEx, yEx) {
   }
 
   var hdr = document.createElement('div');
-  hdr.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;';
-  hdr.innerHTML = '<div style="font-size:13px;font-weight:600">'+xEx+' vs '+yEx+'</div>';
+  hdr.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;';
+  hdr.innerHTML = '<div style="font-size:13px;font-weight:600">'+xEx+' vs '+yEx+'</div><div style="font-size:11px;color:var(--tx2)">'+points.length+' puntos</div>';
+
+  // Description box for known pairs
+  if (pairDef && pairDef.desc) {
+    var descBox = document.createElement('div');
+    descBox.style.cssText = 'background:var(--b50);border-radius:10px;padding:10px 12px;margin-bottom:10px;border:.5px solid var(--b100);';
+    descBox.innerHTML = '<div style="font-size:11px;font-weight:600;color:var(--b800);margin-bottom:4px;">Que mide esta correlacion?</div><div style="font-size:12px;color:var(--b800);line-height:1.6;">'+pairDef.desc+'</div>';
+    scatCard.appendChild(hdr);
+    scatCard.appendChild(descBox);
+  } else {
+    scatCard.appendChild(hdr);
+  }
 
   var canvasWrap = document.createElement('div');
   canvasWrap.style.cssText = 'position:relative;height:220px;';
@@ -1243,7 +1277,6 @@ function drawScatInline(cnt, xEx, yEx) {
   canvas.id = 'scat-cv';
   canvasWrap.appendChild(canvas);
 
-  scatCard.appendChild(hdr);
   scatCard.appendChild(canvasWrap);
 
   // Correlation
@@ -1264,22 +1297,45 @@ function drawScatInline(cnt, xEx, yEx) {
   new Chart(canvas, {
     type:'scatter',
     data:{datasets:[
-      {label:'Mediciones',data:points.map(function(p){return{x:p.x,y:p.y};}),backgroundColor:ptColors,pointRadius:7},
+      {label:'Mediciones',data:points.map(function(p){return{x:p.x,y:p.y};}),backgroundColor:ptColors,pointRadius:7,pointHoverRadius:9},
       {label:'Tendencia',data:[{x:minX,y:intercept+slope*minX},{x:maxX,y:intercept+slope*maxX}],type:'line',borderColor:'#378ADD',borderWidth:2,borderDash:[5,5],pointRadius:0,fill:false}
     ]},
     options:{
       responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{font:{size:11},boxWidth:10,color:'#1a1a1a'}},tooltip:{callbacks:{label:function(ctx){return xEx+':'+ctx.parsed.x+' | '+yEx+':'+ctx.parsed.y;}}}},
-      scales:{x:{title:{display:true,text:xEx,font:{size:10},color:'#888'},ticks:{font:{size:9},color:'#888'},grid:{color:'rgba(0,0,0,0.04)'}},y:{title:{display:true,text:yEx,font:{size:10},color:'#888'},ticks:{font:{size:9},color:'#888'},grid:{color:'rgba(0,0,0,0.05)'}}}
+      plugins:{
+        legend:{labels:{font:{size:11},boxWidth:10,color:'#1a1a1a'}},
+        tooltip:{callbacks:{label:function(ctx){return xEx+': '+ctx.parsed.x+(xRef?' '+xRef.unit:'')+' | '+yEx+': '+ctx.parsed.y+(yRef?' '+yRef.unit:'');}}}
+      },
+      scales:{
+        x:{title:{display:true,text:xEx+(xRef?' ('+xRef.unit+')':''),font:{size:10},color:'#888'},ticks:{font:{size:9},color:'#888'},grid:{color:'rgba(0,0,0,0.04)'}},
+        y:{title:{display:true,text:yEx+(yRef?' ('+yRef.unit+')':''),font:{size:10},color:'#888'},ticks:{font:{size:9},color:'#888'},grid:{color:'rgba(0,0,0,0.05)'}}
+      }
     }
   });
 
   var rAbs=Math.abs(r);
   var strength=rAbs>0.7?'Fuerte':rAbs>0.4?'Moderada':rAbs>0.2?'Debil':'Sin correlacion';
+  var dirLabel = r > 0.1 ? 'positiva' : r < -0.1 ? 'negativa' : 'nula';
+
+  // Correlation row
   var infoDiv=document.createElement('div');
   infoDiv.style.cssText='display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:.5px solid var(--bd);';
-  infoDiv.innerHTML='<div style="font-size:12px;color:var(--tx2)">Correlacion: <strong>'+strength+'</strong></div><div style="font-size:18px;font-weight:700;color:'+(rAbs>0.5?'var(--r400)':'var(--t400)')+'">r = '+r.toFixed(2)+'</div>';
+  infoDiv.innerHTML='<div><div style="font-size:12px;color:var(--tx2)">Correlacion '+dirLabel+'</div><div style="font-size:12px;font-weight:600;color:var(--tx)">'+strength+'</div></div><div style="text-align:right"><div style="font-size:22px;font-weight:700;color:'+(rAbs>0.5?'var(--r400)':'var(--t400)')+'">r = '+r.toFixed(2)+'</div><div style="font-size:10px;color:var(--tx2)">coeficiente</div></div>';
   scatCard.appendChild(infoDiv);
+
+  // Clinical note for known pairs
+  if (pairDef && pairDef.clinical) {
+    var clinDiv = document.createElement('div');
+    clinDiv.style.cssText = 'background:var(--t50);border-radius:10px;padding:10px 12px;margin-top:10px;border:.5px solid var(--t100);';
+    clinDiv.innerHTML = '<div style="font-size:11px;font-weight:600;color:var(--t600);margin-bottom:3px;">Interpretacion clinica</div><div style="font-size:12px;color:var(--t800);line-height:1.6;">'+pairDef.clinical+'</div>';
+    scatCard.appendChild(clinDiv);
+  }
+
+  // Color legend
+  var legDiv = document.createElement('div');
+  legDiv.style.cssText = 'display:flex;gap:14px;margin-top:8px;';
+  legDiv.innerHTML = '<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tx2);"><div style="width:10px;height:10px;border-radius:50%;background:#1D9E75"></div>Dentro de rango</div><div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tx2);"><div style="width:10px;height:10px;border-radius:50%;background:#E24B4A"></div>Fuera de rango</div>';
+  scatCard.appendChild(legDiv);
 }
 
 function getRefs() { return REFS; }
@@ -1920,6 +1976,8 @@ if (navigator.standalone === false && /iphone|ipad|ipod/i.test(navigator.userAge
   el('ib').style.display = 'block';
 }
 el('dtin').value = new Date().toISOString().split('T')[0];
+// Always persist data so other modules can read it
+save();
 renderAdd();
 renderHome();
 </script>

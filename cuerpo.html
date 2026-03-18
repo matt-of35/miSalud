@@ -95,11 +95,14 @@ html,body{height:100%;font-family:'DM Sans',system-ui,sans-serif;background:var(
   <div class="panel-body" id="panel-body"></div>
 </div>
 </div>
+<script src="datos.js"></script>
 <script>
-var SK = 'miSalud_v5';
+var SK = APP_SK || 'miSalud_v5';
 var D = null;
 try { var raw = localStorage.getItem(SK); if(raw) D = JSON.parse(raw); } catch(e) {}
-if (!D || !D.results) D = {results:[]};
+if (!D || !D.results || !D.results.length) {
+  D = { results: JSON.parse(JSON.stringify(SEED_RESULTS)), studies: [], ophtho: [], nextId: 120 };
+}
 
 var REFS = {
   'Glucosa':{min:70,max:100,unit:'mg/dL'},
