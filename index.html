@@ -427,7 +427,7 @@ select.fi{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 // ============================================================
 // DATA
 // ============================================================
-var SK='miSalud_v5', AK='miSalud_apikey';
+var SK='miSalud_v6', AK='miSalud_apikey';
 
 var SEED_RESULTS = [
   {id:1,type:'numeric',exam:'Creatinina',value:0.87,unit:'mg/dL',date:'2023-07-15',cat:'Rinon',lab:'BioNet La Florida',notes:''},
@@ -703,7 +703,7 @@ var MONTHS_FULL = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Ago
 // ============================================================
 // STATE
 // ============================================================
-var DATA_VERSION = 4; // Incrementar aqui cada vez que se agregan datos al SEED
+var DATA_VERSION = 5; // Incrementar aqui cada vez que se agregan datos al SEED
 
 function loadD() {
   try {
@@ -721,7 +721,7 @@ function loadD() {
           saved.results = (saved.results || []).concat(toAdd);
         }
         // Actualizar nextId si es necesario
-        if (!saved.nextId || saved.nextId < 160) saved.nextId = 160;
+        if (!saved.nextId || saved.nextId < 380) saved.nextId = 380;
         saved.dataVersion = DATA_VERSION;
         // Guardar version actualizada
         try { localStorage.setItem(SK, JSON.stringify(saved)); } catch(e) {}
@@ -729,7 +729,7 @@ function loadD() {
       return saved;
     }
   } catch(e) {}
-  var fresh = {results: JSON.parse(JSON.stringify(SEED_RESULTS)), nextId:160, cCats:[], cExams:[], studies:[], ophtho:[], nextSid:1, nextOid:1, dataVersion:DATA_VERSION};
+  var fresh = {results: JSON.parse(JSON.stringify(SEED_RESULTS)), nextId:380, cCats:[], cExams:[], studies:[], ophtho:[], nextSid:1, nextOid:1, dataVersion:DATA_VERSION};
   return fresh;
 }
 function save() { try { localStorage.setItem(SK, JSON.stringify(D)); } catch(e) {} }
