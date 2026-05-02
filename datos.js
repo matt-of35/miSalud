@@ -397,7 +397,7 @@ var SEED_RESULTS = [
   {id:376,type:'qualitative',exam:'Orina - Proteinas',qualResult:'Negativo',date:'2024-09-11',cat:'Orina',lab:'BioNet La Florida',notes:''},
   {id:377,type:'qualitative',exam:'Orina - Glucosa',qualResult:'Negativo',date:'2024-09-11',cat:'Orina',lab:'BioNet La Florida',notes:''}
 ];
-var APP_SK = "miSalud_v6";
+var APP_SK = "miSalud_v7";
 var REFS = {
   'Glucosa':{min:70,max:100,unit:'mg/dL',cat:'Sangre'},
   'Colesterol total':{min:0,max:200,unit:'mg/dL',cat:'Sangre'},

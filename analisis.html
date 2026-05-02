@@ -89,7 +89,7 @@ select{width:100%;padding:9px 13px;border:.5px solid var(--bd);border-radius:10p
 // ============================================================
 // LOAD DATA FROM MAIN APP (localStorage) with seed fallback
 // ============================================================
-var SK = APP_SK || 'miSalud_v6';
+var SK = APP_SK || 'miSalud_v7';
 var DATA_VERSION = 5;
 var D = null;
 try {
@@ -98,11 +98,13 @@ try {
     D = JSON.parse(raw);
     // Fusionar datos nuevos si la version es antigua
     if (!D.dataVersion || D.dataVersion < DATA_VERSION) {
-      var existingIds = {};
-      (D.results || []).forEach(function(x){ existingIds[x.id] = true; });
-      var toAdd = SEED_RESULTS.filter(function(s){ return !existingIds[s.id]; });
-      if (toAdd.length > 0) D.results = (D.results || []).concat(toAdd);
+      var userAdded = (D.results || []).filter(function(x){ return x.id >= 380; });
+      D.results = JSON.parse(JSON.stringify(SEED_RESULTS)).concat(userAdded);
       if (!D.nextId || D.nextId < 380) D.nextId = 380;
+      if (!D.cCats)  D.cCats  = [];
+      if (!D.cExams) D.cExams = [];
+      if (!D.studies) D.studies = [];
+      if (!D.ophtho)  D.ophtho  = [];
       D.dataVersion = DATA_VERSION;
       try { localStorage.setItem(SK, JSON.stringify(D)); } catch(e) {}
     }

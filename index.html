@@ -427,7 +427,7 @@ select.fi{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 // ============================================================
 // DATA
 // ============================================================
-var SK='miSalud_v6', AK='miSalud_apikey';
+var SK='miSalud_v7', AK='miSalud_apikey';
 
 var SEED_RESULTS = [
   {id:1,type:'numeric',exam:'Creatinina',value:0.87,unit:'mg/dL',date:'2023-07-15',cat:'Rinon',lab:'BioNet La Florida',notes:''},
@@ -586,7 +586,246 @@ var SEED_RESULTS = [
   {id:151,type:'qualitative',exam:'Orina - Leucocitos',qualResult:'Negativo',date:'2026-03-14',cat:'Orina',lab:'BioNet La Florida',notes:''},
   {id:152,type:'qualitative',exam:'Orina - Nitritos',qualResult:'Negativo',date:'2026-03-14',cat:'Orina',lab:'BioNet La Florida',notes:''},
   {id:153,type:'qualitative',exam:'Orina - Proteinas',qualResult:'Negativo',date:'2026-03-14',cat:'Orina',lab:'BioNet La Florida',notes:''},
-  {id:154,type:'qualitative',exam:'Orina - Glucosa',qualResult:'Negativo',date:'2026-03-14',cat:'Orina',lab:'BioNet La Florida',notes:''}
+  {id:154,type:'qualitative',exam:'Orina - Glucosa',qualResult:'Negativo',date:'2026-03-14',cat:'Orina',lab:'BioNet La Florida',notes:''},
+
+  // === 23/11/2020 - BioNet La Florida (24 años) ===
+  // Perfil Bioquimico
+  {id:155,type:'numeric',exam:'Glucosa',value:85,unit:'mg/dL',date:'2020-11-23',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:156,type:'numeric',exam:'Nitrogeno ureico',value:10,unit:'mg/dL',date:'2020-11-23',cat:'Rinon',lab:'BioNet La Florida',notes:''},
+  {id:157,type:'numeric',exam:'Uremia',value:21,unit:'mg/dL',date:'2020-11-23',cat:'Rinon',lab:'BioNet La Florida',notes:''},
+  {id:158,type:'numeric',exam:'Colesterol total',value:205,unit:'mg/dL',date:'2020-11-23',cat:'Sangre',lab:'BioNet La Florida',notes:'Elevado'},
+  {id:159,type:'numeric',exam:'Acido urico',value:3.5,unit:'mg/dL',date:'2020-11-23',cat:'Rinon',lab:'BioNet La Florida',notes:''},
+  {id:160,type:'numeric',exam:'Proteinas totales',value:7.4,unit:'gr/dL',date:'2020-11-23',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:161,type:'numeric',exam:'Albumina',value:4.4,unit:'gr/dL',date:'2020-11-23',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:162,type:'numeric',exam:'Calcio',value:9.6,unit:'mg/dL',date:'2020-11-23',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:163,type:'numeric',exam:'Fosforo',value:3.5,unit:'mg/dL',date:'2020-11-23',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:164,type:'numeric',exam:'Bilirrubina total',value:0.9,unit:'mg/dL',date:'2020-11-23',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:165,type:'numeric',exam:'Fosfatasa alcalina',value:62,unit:'U/L',date:'2020-11-23',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:166,type:'numeric',exam:'LDH',value:173,unit:'U/L',date:'2020-11-23',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:167,type:'numeric',exam:'SGOT-GOT',value:34,unit:'U/L',date:'2020-11-23',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  // Perfil Lipidico
+  {id:168,type:'numeric',exam:'Colesterol HDL',value:52.1,unit:'mg/dL',date:'2020-11-23',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:169,type:'numeric',exam:'Colesterol LDL',value:133.9,unit:'mg/dL',date:'2020-11-23',cat:'Sangre',lab:'BioNet La Florida',notes:'Limite alto'},
+  {id:170,type:'numeric',exam:'Colesterol VLDL',value:19,unit:'mg/dL',date:'2020-11-23',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:171,type:'numeric',exam:'Trigliceridos',value:95,unit:'mg/dL',date:'2020-11-23',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  // Perfil Hepatico
+  {id:172,type:'numeric',exam:'Bilirrubina directa',value:0.20,unit:'mg/dL',date:'2020-11-23',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:173,type:'numeric',exam:'SGPT-GPT',value:77,unit:'U/L',date:'2020-11-23',cat:'Higado',lab:'BioNet La Florida',notes:'Elevado - fuera de rango (16-63)'},
+  {id:174,type:'numeric',exam:'GGT',value:23,unit:'U/L',date:'2020-11-23',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:175,type:'numeric',exam:'Protrombina',value:93.3,unit:'%',date:'2020-11-23',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:176,type:'numeric',exam:'INR',value:1.04,unit:'ratio',date:'2020-11-23',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  // Tiroides
+  {id:177,type:'numeric',exam:'TSH',value:1.56,unit:'mUI/L',date:'2020-11-23',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:178,type:'numeric',exam:'T4 libre',value:1.34,unit:'ng/dL',date:'2020-11-23',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:179,type:'numeric',exam:'T4 total',value:7.8,unit:'ug/dL',date:'2020-11-23',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:180,type:'numeric',exam:'T3 total',value:1.13,unit:'ng/mL',date:'2020-11-23',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  // Hemograma
+  {id:181,type:'numeric',exam:'Hemoglobina',value:16.7,unit:'gr/dL',date:'2020-11-23',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:182,type:'numeric',exam:'Hematocrito',value:50.0,unit:'%',date:'2020-11-23',cat:'Sangre',lab:'BioNet La Florida',notes:'Limite alto'},
+  {id:183,type:'numeric',exam:'VCM',value:101.4,unit:'fL',date:'2020-11-23',cat:'Sangre',lab:'BioNet La Florida',notes:'Macrocitosis leve - fuera de rango (82-99)'},
+  {id:184,type:'numeric',exam:'HCM',value:33.8,unit:'pg',date:'2020-11-23',cat:'Sangre',lab:'BioNet La Florida',notes:'Fuera de rango (28-32)'},
+  {id:185,type:'numeric',exam:'CHCM',value:33.4,unit:'gr/dL',date:'2020-11-23',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:186,type:'numeric',exam:'RDW',value:12.1,unit:'%',date:'2020-11-23',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:187,type:'numeric',exam:'Plaquetas',value:237,unit:'k/uL',date:'2020-11-23',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:188,type:'numeric',exam:'Leucocitos',value:4.4,unit:'k/uL',date:'2020-11-23',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  // Cualitativos
+  {id:189,type:'qualitative',exam:'VIH Anticuerpos',qualResult:'No Reactivo',date:'2020-11-23',cat:'Serologia',lab:'BioNet La Florida',notes:''},
+  {id:190,type:'qualitative',exam:'VDRL',qualResult:'No Reactivo',date:'2020-11-23',cat:'Serologia',lab:'BioNet La Florida',notes:''},
+  {id:191,type:'qualitative',exam:'Orina - Leucocitos',qualResult:'Negativo',date:'2020-11-23',cat:'Orina',lab:'BioNet La Florida',notes:''},
+  {id:192,type:'qualitative',exam:'Orina - Nitritos',qualResult:'Negativo',date:'2020-11-23',cat:'Orina',lab:'BioNet La Florida',notes:''},
+  {id:193,type:'qualitative',exam:'Orina - Proteinas',qualResult:'Negativo',date:'2020-11-23',cat:'Orina',lab:'BioNet La Florida',notes:''},
+  {id:194,type:'qualitative',exam:'Orina - Glucosa',qualResult:'Negativo',date:'2020-11-23',cat:'Orina',lab:'BioNet La Florida',notes:''},
+
+  // === 01/10/2021 - BioNet La Florida (25 años) ===
+  {id:195,type:'numeric',exam:'Creatinina',value:0.9,unit:'mg/dL',date:'2021-10-01',cat:'Rinon',lab:'BioNet La Florida',notes:''},
+  {id:196,type:'numeric',exam:'Vitamina B12',value:320,unit:'pg/mL',date:'2021-10-01',cat:'Vitaminas',lab:'BioNet La Florida',notes:''},
+  {id:197,type:'numeric',exam:'Vitamina D',value:14.48,unit:'ng/mL',date:'2021-10-01',cat:'Vitaminas',lab:'BioNet La Florida',notes:'Deficiencia - bajo rango (20-100)'},
+  {id:198,type:'numeric',exam:'HbA1c',value:4.9,unit:'%',date:'2021-10-01',cat:'Sangre',lab:'BioNet La Florida',notes:'Ref menor o igual a 6'},
+  {id:199,type:'numeric',exam:'Glucosa',value:79,unit:'mg/dL',date:'2021-10-01',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:200,type:'numeric',exam:'Nitrogeno ureico',value:15,unit:'mg/dL',date:'2021-10-01',cat:'Rinon',lab:'BioNet La Florida',notes:''},
+  {id:201,type:'numeric',exam:'Uremia',value:32,unit:'mg/dL',date:'2021-10-01',cat:'Rinon',lab:'BioNet La Florida',notes:''},
+  {id:202,type:'numeric',exam:'Colesterol total',value:181,unit:'mg/dL',date:'2021-10-01',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:203,type:'numeric',exam:'Acido urico',value:3.4,unit:'mg/dL',date:'2021-10-01',cat:'Rinon',lab:'BioNet La Florida',notes:'Bajo rango (3.5-7.2)'},
+  {id:204,type:'numeric',exam:'Proteinas totales',value:7.2,unit:'gr/dL',date:'2021-10-01',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:205,type:'numeric',exam:'Albumina',value:4.1,unit:'gr/dL',date:'2021-10-01',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:206,type:'numeric',exam:'Calcio',value:9.7,unit:'mg/dL',date:'2021-10-01',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:207,type:'numeric',exam:'Fosforo',value:3.0,unit:'mg/dL',date:'2021-10-01',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:208,type:'numeric',exam:'Bilirrubina total',value:0.9,unit:'mg/dL',date:'2021-10-01',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:209,type:'numeric',exam:'Fosfatasa alcalina',value:61,unit:'U/L',date:'2021-10-01',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:210,type:'numeric',exam:'LDH',value:171,unit:'U/L',date:'2021-10-01',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:211,type:'numeric',exam:'SGOT-GOT',value:16,unit:'U/L',date:'2021-10-01',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:212,type:'numeric',exam:'Colesterol HDL',value:46.9,unit:'mg/dL',date:'2021-10-01',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:213,type:'numeric',exam:'Colesterol LDL',value:119.9,unit:'mg/dL',date:'2021-10-01',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:214,type:'numeric',exam:'Colesterol VLDL',value:14.2,unit:'mg/dL',date:'2021-10-01',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:215,type:'numeric',exam:'Trigliceridos',value:71,unit:'mg/dL',date:'2021-10-01',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:216,type:'numeric',exam:'Bilirrubina directa',value:0.30,unit:'mg/dL',date:'2021-10-01',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:217,type:'numeric',exam:'SGPT-GPT',value:20,unit:'U/L',date:'2021-10-01',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:218,type:'numeric',exam:'GGT',value:14,unit:'U/L',date:'2021-10-01',cat:'Higado',lab:'BioNet La Florida',notes:'Bajo rango (15-85)'},
+  {id:219,type:'numeric',exam:'Protrombina',value:87.9,unit:'%',date:'2021-10-01',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:220,type:'numeric',exam:'INR',value:1.06,unit:'ratio',date:'2021-10-01',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:221,type:'numeric',exam:'TSH',value:1.61,unit:'mUI/L',date:'2021-10-01',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:222,type:'numeric',exam:'T4 libre',value:1.34,unit:'ng/dL',date:'2021-10-01',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:223,type:'numeric',exam:'T4 total',value:7,unit:'ug/dL',date:'2021-10-01',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:224,type:'numeric',exam:'T3 total',value:1.16,unit:'ng/mL',date:'2021-10-01',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:225,type:'numeric',exam:'Insulina basal',value:9.1,unit:'uUI/mL',date:'2021-10-01',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:226,type:'numeric',exam:'HOMA IR',value:1.7,unit:'indice',date:'2021-10-01',cat:'Sangre',lab:'BioNet La Florida',notes:'Ref menos de 2.5'},
+  {id:227,type:'numeric',exam:'Hemoglobina',value:15.9,unit:'gr/dL',date:'2021-10-01',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:228,type:'numeric',exam:'Hematocrito',value:46.0,unit:'%',date:'2021-10-01',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:229,type:'numeric',exam:'VCM',value:98.4,unit:'fL',date:'2021-10-01',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:230,type:'numeric',exam:'HCM',value:34,unit:'pg',date:'2021-10-01',cat:'Sangre',lab:'BioNet La Florida',notes:'Fuera de rango (28-32)'},
+  {id:231,type:'numeric',exam:'CHCM',value:34.6,unit:'gr/dL',date:'2021-10-01',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:232,type:'numeric',exam:'RDW',value:11.9,unit:'%',date:'2021-10-01',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:233,type:'numeric',exam:'Plaquetas',value:238,unit:'k/uL',date:'2021-10-01',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:234,type:'numeric',exam:'Leucocitos',value:5.2,unit:'k/uL',date:'2021-10-01',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:235,type:'qualitative',exam:'VDRL',qualResult:'No Reactivo',date:'2021-10-01',cat:'Serologia',lab:'BioNet La Florida',notes:''},
+  {id:236,type:'qualitative',exam:'VIH Anticuerpos',qualResult:'No Reactivo',date:'2021-10-01',cat:'Serologia',lab:'BioNet La Florida',notes:''},
+  {id:237,type:'qualitative',exam:'Hepatitis B HBsAg',qualResult:'No Reactivo',date:'2021-10-01',cat:'Serologia',lab:'BioNet La Florida',notes:''},
+  {id:238,type:'qualitative',exam:'Hepatitis C Anti-HVC',qualResult:'No Reactivo',date:'2021-10-01',cat:'Serologia',lab:'BioNet La Florida',notes:''},
+  {id:239,type:'qualitative',exam:'Urocultivo',qualResult:'Negativo',date:'2021-10-01',cat:'Orina',lab:'BioNet La Florida',notes:'0 UFC/mL - 24h incubacion'},
+  {id:240,type:'qualitative',exam:'Orina - Leucocitos',qualResult:'Negativo',date:'2021-10-01',cat:'Orina',lab:'BioNet La Florida',notes:''},
+  {id:241,type:'qualitative',exam:'Orina - Nitritos',qualResult:'Negativo',date:'2021-10-01',cat:'Orina',lab:'BioNet La Florida',notes:''},
+  {id:242,type:'qualitative',exam:'Orina - Proteinas',qualResult:'Negativo',date:'2021-10-01',cat:'Orina',lab:'BioNet La Florida',notes:''},
+  {id:243,type:'qualitative',exam:'Orina - Glucosa',qualResult:'Negativo',date:'2021-10-01',cat:'Orina',lab:'BioNet La Florida',notes:''},
+
+  // === 26/03/2022 - BioNet La Florida (25 años) ===
+  {id:244,type:'numeric',exam:'Creatinina',value:0.92,unit:'mg/dL',date:'2022-03-26',cat:'Rinon',lab:'BioNet La Florida',notes:''},
+  {id:245,type:'numeric',exam:'Vitamina B12',value:323,unit:'pg/mL',date:'2022-03-26',cat:'Vitaminas',lab:'BioNet La Florida',notes:''},
+  {id:246,type:'numeric',exam:'HbA1c',value:4.9,unit:'%',date:'2022-03-26',cat:'Sangre',lab:'BioNet La Florida',notes:'Ref menor o igual a 6'},
+  {id:247,type:'numeric',exam:'Glucosa',value:88,unit:'mg/dL',date:'2022-03-26',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:248,type:'numeric',exam:'Nitrogeno ureico',value:12,unit:'mg/dL',date:'2022-03-26',cat:'Rinon',lab:'BioNet La Florida',notes:''},
+  {id:249,type:'numeric',exam:'Uremia',value:26,unit:'mg/dL',date:'2022-03-26',cat:'Rinon',lab:'BioNet La Florida',notes:''},
+  {id:250,type:'numeric',exam:'Colesterol total',value:185,unit:'mg/dL',date:'2022-03-26',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:251,type:'numeric',exam:'Acido urico',value:3.5,unit:'mg/dL',date:'2022-03-26',cat:'Rinon',lab:'BioNet La Florida',notes:''},
+  {id:252,type:'numeric',exam:'Proteinas totales',value:6.9,unit:'gr/dL',date:'2022-03-26',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:253,type:'numeric',exam:'Albumina',value:4.1,unit:'gr/dL',date:'2022-03-26',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:254,type:'numeric',exam:'Calcio',value:9.8,unit:'mg/dL',date:'2022-03-26',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:255,type:'numeric',exam:'Fosforo',value:3.3,unit:'mg/dL',date:'2022-03-26',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:256,type:'numeric',exam:'Bilirrubina total',value:0.8,unit:'mg/dL',date:'2022-03-26',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:257,type:'numeric',exam:'Fosfatasa alcalina',value:57,unit:'U/L',date:'2022-03-26',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:258,type:'numeric',exam:'LDH',value:134,unit:'U/L',date:'2022-03-26',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:259,type:'numeric',exam:'SGOT-GOT',value:21,unit:'U/L',date:'2022-03-26',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:260,type:'numeric',exam:'Colesterol HDL',value:41.4,unit:'mg/dL',date:'2022-03-26',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:261,type:'numeric',exam:'Colesterol LDL',value:111.2,unit:'mg/dL',date:'2022-03-26',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:262,type:'numeric',exam:'Colesterol VLDL',value:32.4,unit:'mg/dL',date:'2022-03-26',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:263,type:'numeric',exam:'Trigliceridos',value:162,unit:'mg/dL',date:'2022-03-26',cat:'Sangre',lab:'BioNet La Florida',notes:'Limite alto (150-199)'},
+  {id:264,type:'numeric',exam:'TSH',value:1.41,unit:'mUI/L',date:'2022-03-26',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:265,type:'numeric',exam:'T4 libre',value:1.28,unit:'ng/dL',date:'2022-03-26',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:266,type:'numeric',exam:'Insulina basal',value:5.7,unit:'uUI/mL',date:'2022-03-26',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:267,type:'numeric',exam:'HOMA IR',value:1.2,unit:'indice',date:'2022-03-26',cat:'Sangre',lab:'BioNet La Florida',notes:'Ref menos de 2.5'},
+  {id:268,type:'numeric',exam:'Hemoglobina',value:16.1,unit:'gr/dL',date:'2022-03-26',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:269,type:'numeric',exam:'Hematocrito',value:48.2,unit:'%',date:'2022-03-26',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:270,type:'numeric',exam:'VCM',value:100.6,unit:'fL',date:'2022-03-26',cat:'Sangre',lab:'BioNet La Florida',notes:'Macrocitosis leve - fuera de rango (82-99)'},
+  {id:271,type:'numeric',exam:'HCM',value:33.6,unit:'pg',date:'2022-03-26',cat:'Sangre',lab:'BioNet La Florida',notes:'Fuera de rango (28-32)'},
+  {id:272,type:'numeric',exam:'CHCM',value:33.4,unit:'gr/dL',date:'2022-03-26',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:273,type:'numeric',exam:'RDW',value:12.2,unit:'%',date:'2022-03-26',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:274,type:'numeric',exam:'Plaquetas',value:238,unit:'k/uL',date:'2022-03-26',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:275,type:'numeric',exam:'Leucocitos',value:4.8,unit:'k/uL',date:'2022-03-26',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:276,type:'qualitative',exam:'VDRL',qualResult:'No Reactivo',date:'2022-03-26',cat:'Serologia',lab:'BioNet La Florida',notes:''},
+  {id:277,type:'qualitative',exam:'VIH Anticuerpos',qualResult:'No Reactivo',date:'2022-03-26',cat:'Serologia',lab:'BioNet La Florida',notes:''},
+  {id:278,type:'qualitative',exam:'Urocultivo',qualResult:'Negativo',date:'2022-03-26',cat:'Orina',lab:'BioNet La Florida',notes:'0 UFC/mL - 24h incubacion'},
+  {id:279,type:'qualitative',exam:'Orina - Leucocitos',qualResult:'Negativo',date:'2022-03-26',cat:'Orina',lab:'BioNet La Florida',notes:''},
+  {id:280,type:'qualitative',exam:'Orina - Nitritos',qualResult:'Negativo',date:'2022-03-26',cat:'Orina',lab:'BioNet La Florida',notes:''},
+  {id:281,type:'qualitative',exam:'Orina - Proteinas',qualResult:'Negativo',date:'2022-03-26',cat:'Orina',lab:'BioNet La Florida',notes:''},
+  {id:282,type:'qualitative',exam:'Orina - Glucosa',qualResult:'Negativo',date:'2022-03-26',cat:'Orina',lab:'BioNet La Florida',notes:''},
+
+  // === 10/01/2023 - BioNet La Florida (26 años) ===
+  {id:283,type:'numeric',exam:'Creatinina',value:0.92,unit:'mg/dL',date:'2023-01-10',cat:'Rinon',lab:'BioNet La Florida',notes:''},
+  {id:284,type:'numeric',exam:'Vitamina B12',value:220,unit:'pg/mL',date:'2023-01-10',cat:'Vitaminas',lab:'BioNet La Florida',notes:''},
+  {id:285,type:'numeric',exam:'Vitamina D',value:42.64,unit:'ng/mL',date:'2023-01-10',cat:'Vitaminas',lab:'BioNet La Florida',notes:''},
+  {id:286,type:'numeric',exam:'HbA1c',value:4.8,unit:'%',date:'2023-01-10',cat:'Sangre',lab:'BioNet La Florida',notes:'Ref menor o igual a 6'},
+  {id:287,type:'numeric',exam:'Glucosa',value:85,unit:'mg/dL',date:'2023-01-10',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:288,type:'numeric',exam:'Nitrogeno ureico',value:11,unit:'mg/dL',date:'2023-01-10',cat:'Rinon',lab:'BioNet La Florida',notes:''},
+  {id:289,type:'numeric',exam:'Uremia',value:24,unit:'mg/dL',date:'2023-01-10',cat:'Rinon',lab:'BioNet La Florida',notes:''},
+  {id:290,type:'numeric',exam:'Colesterol total',value:162,unit:'mg/dL',date:'2023-01-10',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:291,type:'numeric',exam:'Acido urico',value:4.1,unit:'mg/dL',date:'2023-01-10',cat:'Rinon',lab:'BioNet La Florida',notes:''},
+  {id:292,type:'numeric',exam:'Proteinas totales',value:7.3,unit:'gr/dL',date:'2023-01-10',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:293,type:'numeric',exam:'Albumina',value:4.2,unit:'gr/dL',date:'2023-01-10',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:294,type:'numeric',exam:'Calcio',value:9.4,unit:'mg/dL',date:'2023-01-10',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:295,type:'numeric',exam:'Fosforo',value:3.3,unit:'mg/dL',date:'2023-01-10',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:296,type:'numeric',exam:'Bilirrubina total',value:0.9,unit:'mg/dL',date:'2023-01-10',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:297,type:'numeric',exam:'Fosfatasa alcalina',value:50,unit:'U/L',date:'2023-01-10',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:298,type:'numeric',exam:'LDH',value:174,unit:'U/L',date:'2023-01-10',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:299,type:'numeric',exam:'SGOT-GOT',value:68,unit:'U/L',date:'2023-01-10',cat:'Higado',lab:'BioNet La Florida',notes:'Elevado - fuera de rango (5-37)'},
+  {id:300,type:'numeric',exam:'Colesterol HDL',value:45.7,unit:'mg/dL',date:'2023-01-10',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:301,type:'numeric',exam:'Colesterol LDL',value:102.9,unit:'mg/dL',date:'2023-01-10',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:302,type:'numeric',exam:'Colesterol VLDL',value:13.4,unit:'mg/dL',date:'2023-01-10',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:303,type:'numeric',exam:'Trigliceridos',value:67,unit:'mg/dL',date:'2023-01-10',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:304,type:'numeric',exam:'Bilirrubina directa',value:0.30,unit:'mg/dL',date:'2023-01-10',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:305,type:'numeric',exam:'SGPT-GPT',value:34,unit:'U/L',date:'2023-01-10',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:306,type:'numeric',exam:'GGT',value:14,unit:'U/L',date:'2023-01-10',cat:'Higado',lab:'BioNet La Florida',notes:'Bajo rango (15-85)'},
+  {id:307,type:'numeric',exam:'Protrombina',value:84.5,unit:'%',date:'2023-01-10',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:308,type:'numeric',exam:'INR',value:1.09,unit:'ratio',date:'2023-01-10',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:309,type:'numeric',exam:'TSH',value:1.21,unit:'mUI/L',date:'2023-01-10',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:310,type:'numeric',exam:'T4 libre',value:1.34,unit:'ng/dL',date:'2023-01-10',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:311,type:'numeric',exam:'Insulina basal',value:5.7,unit:'uUI/mL',date:'2023-01-10',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:312,type:'numeric',exam:'Sodio',value:141,unit:'mEq/L',date:'2023-01-10',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
+  {id:313,type:'numeric',exam:'Potasio',value:4.1,unit:'mEq/L',date:'2023-01-10',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
+  {id:314,type:'numeric',exam:'Cloro',value:106,unit:'mEq/L',date:'2023-01-10',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
+  {id:315,type:'numeric',exam:'Hemoglobina',value:15.9,unit:'gr/dL',date:'2023-01-10',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:316,type:'numeric',exam:'Hematocrito',value:47.8,unit:'%',date:'2023-01-10',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:317,type:'numeric',exam:'VCM',value:97.7,unit:'fL',date:'2023-01-10',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:318,type:'numeric',exam:'HCM',value:32.6,unit:'pg',date:'2023-01-10',cat:'Sangre',lab:'BioNet La Florida',notes:'Fuera de rango (28-32)'},
+  {id:319,type:'numeric',exam:'CHCM',value:33.3,unit:'gr/dL',date:'2023-01-10',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:320,type:'numeric',exam:'RDW',value:12.2,unit:'%',date:'2023-01-10',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:321,type:'numeric',exam:'Plaquetas',value:214,unit:'k/uL',date:'2023-01-10',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:322,type:'numeric',exam:'Leucocitos',value:4.0,unit:'k/uL',date:'2023-01-10',cat:'Sangre',lab:'BioNet La Florida',notes:'Limite bajo (4.1-9.5)'},
+  {id:323,type:'qualitative',exam:'VDRL',qualResult:'No Reactivo',date:'2023-01-10',cat:'Serologia',lab:'BioNet La Florida',notes:''},
+  {id:324,type:'qualitative',exam:'Orina - Leucocitos',qualResult:'Negativo',date:'2023-01-10',cat:'Orina',lab:'BioNet La Florida',notes:''},
+  {id:325,type:'qualitative',exam:'Orina - Nitritos',qualResult:'Negativo',date:'2023-01-10',cat:'Orina',lab:'BioNet La Florida',notes:''},
+  {id:326,type:'qualitative',exam:'Orina - Proteinas',qualResult:'Negativo',date:'2023-01-10',cat:'Orina',lab:'BioNet La Florida',notes:''},
+  {id:327,type:'qualitative',exam:'Orina - Glucosa',qualResult:'Negativo',date:'2023-01-10',cat:'Orina',lab:'BioNet La Florida',notes:''},
+
+  // === 11/09/2024 - BioNet La Florida (28 años) ===
+  {id:328,type:'numeric',exam:'Creatinina',value:0.97,unit:'mg/dL',date:'2024-09-11',cat:'Rinon',lab:'BioNet La Florida',notes:''},
+  {id:329,type:'numeric',exam:'Vitamina B12',value:326,unit:'pg/mL',date:'2024-09-11',cat:'Vitaminas',lab:'BioNet La Florida',notes:''},
+  {id:330,type:'numeric',exam:'Vitamina D',value:10.11,unit:'ng/mL',date:'2024-09-11',cat:'Vitaminas',lab:'BioNet La Florida',notes:'Deficiencia severa - bajo rango (20-100)'},
+  {id:331,type:'numeric',exam:'Glucosa',value:85,unit:'mg/dL',date:'2024-09-11',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:332,type:'numeric',exam:'Nitrogeno ureico',value:14,unit:'mg/dL',date:'2024-09-11',cat:'Rinon',lab:'BioNet La Florida',notes:''},
+  {id:333,type:'numeric',exam:'Uremia',value:30,unit:'mg/dL',date:'2024-09-11',cat:'Rinon',lab:'BioNet La Florida',notes:''},
+  {id:334,type:'numeric',exam:'Colesterol total',value:177,unit:'mg/dL',date:'2024-09-11',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:335,type:'numeric',exam:'Acido urico',value:3.5,unit:'mg/dL',date:'2024-09-11',cat:'Rinon',lab:'BioNet La Florida',notes:''},
+  {id:336,type:'numeric',exam:'Proteinas totales',value:7.4,unit:'gr/dL',date:'2024-09-11',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:337,type:'numeric',exam:'Albumina',value:4.2,unit:'gr/dL',date:'2024-09-11',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:338,type:'numeric',exam:'Calcio',value:9,unit:'mg/dL',date:'2024-09-11',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:339,type:'numeric',exam:'Fosforo',value:3.9,unit:'mg/dL',date:'2024-09-11',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:340,type:'numeric',exam:'Bilirrubina total',value:1.4,unit:'mg/dL',date:'2024-09-11',cat:'Higado',lab:'BioNet La Florida',notes:'Elevado - fuera de rango (0.3-1.2)'},
+  {id:341,type:'numeric',exam:'Fosfatasa alcalina',value:54,unit:'U/L',date:'2024-09-11',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:342,type:'numeric',exam:'LDH',value:148,unit:'U/L',date:'2024-09-11',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:343,type:'numeric',exam:'SGOT-GOT',value:9,unit:'U/L',date:'2024-09-11',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:344,type:'numeric',exam:'Bilirrubina directa',value:0.50,unit:'mg/dL',date:'2024-09-11',cat:'Higado',lab:'BioNet La Florida',notes:'Elevado - fuera de rango (0-0.30)'},
+  {id:345,type:'numeric',exam:'Bilirrubina indirecta',value:0.90,unit:'mg/dL',date:'2024-09-11',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:346,type:'numeric',exam:'SGPT-GPT',value:17,unit:'U/L',date:'2024-09-11',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:347,type:'numeric',exam:'GGT',value:18,unit:'U/L',date:'2024-09-11',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:348,type:'numeric',exam:'Protrombina',value:105.1,unit:'%',date:'2024-09-11',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:349,type:'numeric',exam:'INR',value:0.97,unit:'ratio',date:'2024-09-11',cat:'Higado',lab:'BioNet La Florida',notes:''},
+  {id:350,type:'numeric',exam:'TSH',value:1.53,unit:'mUI/L',date:'2024-09-11',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:351,type:'numeric',exam:'T4 libre',value:1.66,unit:'ng/dL',date:'2024-09-11',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:352,type:'numeric',exam:'T4 total',value:8.6,unit:'ug/dL',date:'2024-09-11',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:353,type:'numeric',exam:'T3 total',value:1.29,unit:'ng/mL',date:'2024-09-11',cat:'Tiroides',lab:'BioNet La Florida',notes:''},
+  {id:354,type:'numeric',exam:'Insulina basal',value:9.7,unit:'uUI/mL',date:'2024-09-11',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:355,type:'numeric',exam:'HOMA IR',value:2,unit:'indice',date:'2024-09-11',cat:'Sangre',lab:'BioNet La Florida',notes:'Ref menos de 2.5'},
+  {id:356,type:'numeric',exam:'Sodio',value:140,unit:'mEq/L',date:'2024-09-11',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
+  {id:357,type:'numeric',exam:'Potasio',value:4.4,unit:'mEq/L',date:'2024-09-11',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
+  {id:358,type:'numeric',exam:'Cloro',value:104,unit:'mEq/L',date:'2024-09-11',cat:'Electrolitos',lab:'BioNet La Florida',notes:''},
+  {id:359,type:'numeric',exam:'Hemoglobina',value:15.5,unit:'gr/dL',date:'2024-09-11',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:360,type:'numeric',exam:'Hematocrito',value:45.2,unit:'%',date:'2024-09-11',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:361,type:'numeric',exam:'VCM',value:100.2,unit:'fL',date:'2024-09-11',cat:'Sangre',lab:'BioNet La Florida',notes:'Macrocitosis leve - fuera de rango (82-99)'},
+  {id:362,type:'numeric',exam:'HCM',value:34.5,unit:'pg',date:'2024-09-11',cat:'Sangre',lab:'BioNet La Florida',notes:'Fuera de rango (28-32)'},
+  {id:363,type:'numeric',exam:'CHCM',value:34.4,unit:'gr/dL',date:'2024-09-11',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:364,type:'numeric',exam:'RDW',value:11.8,unit:'%',date:'2024-09-11',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:365,type:'numeric',exam:'Plaquetas',value:213,unit:'k/uL',date:'2024-09-11',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:366,type:'numeric',exam:'Leucocitos',value:4.6,unit:'k/uL',date:'2024-09-11',cat:'Sangre',lab:'BioNet La Florida',notes:''},
+  {id:367,type:'numeric',exam:'Herpes I IgG',value:3.6,unit:'Index Value',date:'2024-09-11',cat:'Serologia',lab:'BioNet La Florida',notes:'Positivo (>1.1) - seropositivo HSV-1'},
+  {id:368,type:'numeric',exam:'Herpes II IgG',value:0.2,unit:'Index Value',date:'2024-09-11',cat:'Serologia',lab:'BioNet La Florida',notes:'Negativo (<0.90)'},
+  {id:369,type:'qualitative',exam:'VDRL',qualResult:'No Reactivo',date:'2024-09-11',cat:'Serologia',lab:'BioNet La Florida',notes:''},
+  {id:370,type:'qualitative',exam:'VIH Anticuerpos',qualResult:'No Reactivo',date:'2024-09-11',cat:'Serologia',lab:'BioNet La Florida',notes:''},
+  {id:371,type:'qualitative',exam:'Hepatitis B HBsAg',qualResult:'No Reactivo',date:'2024-09-11',cat:'Serologia',lab:'BioNet La Florida',notes:''},
+  {id:372,type:'qualitative',exam:'Hepatitis C Anti-HVC',qualResult:'No Reactivo',date:'2024-09-11',cat:'Serologia',lab:'BioNet La Florida',notes:''},
+  {id:373,type:'qualitative',exam:'Panel ITS PCR',qualResult:'Negativo',date:'2024-09-11',cat:'Serologia',lab:'BioNet La Florida',notes:'5 patogenos negativos: Chlamydia, Gonorrhoeae, Mycoplasma hominis, Mycoplasma genitalium, Ureaplasma spp'},
+  {id:374,type:'qualitative',exam:'Orina - Leucocitos',qualResult:'Negativo',date:'2024-09-11',cat:'Orina',lab:'BioNet La Florida',notes:''},
+  {id:375,type:'qualitative',exam:'Orina - Nitritos',qualResult:'Negativo',date:'2024-09-11',cat:'Orina',lab:'BioNet La Florida',notes:''},
+  {id:376,type:'qualitative',exam:'Orina - Proteinas',qualResult:'Negativo',date:'2024-09-11',cat:'Orina',lab:'BioNet La Florida',notes:''},
+  {id:377,type:'qualitative',exam:'Orina - Glucosa',qualResult:'Negativo',date:'2024-09-11',cat:'Orina',lab:'BioNet La Florida',notes:''}
 ];
 
 var REFS = {
@@ -627,7 +866,17 @@ var REFS = {
   'CHCM':{min:32,max:36,unit:'gr/dL',cat:'Sangre'},
   'RDW':{min:11.5,max:14.5,unit:'%',cat:'Sangre'},
   'IgE Dermatoph. pteronyssinus':{min:0,max:0.35,unit:'IU/mL',cat:'Alergias'},
-  'IgE Dermatofagoide farinae':{min:0,max:0.35,unit:'IU/mL',cat:'Alergias'}
+  'IgE Dermatofagoide farinae':{min:0,max:0.35,unit:'IU/mL',cat:'Alergias'},
+  'Nitrogeno ureico':{min:7,max:23,unit:'mg/dL',cat:'Rinon'},
+  'Uremia':{min:15,max:49,unit:'mg/dL',cat:'Rinon'},
+  'Bilirrubina directa':{min:0,max:0.30,unit:'mg/dL',cat:'Higado'},
+  'Bilirrubina indirecta':{min:0.1,max:0.9,unit:'mg/dL',cat:'Higado'},
+  'Colesterol VLDL':{min:0,max:30,unit:'mg/dL',cat:'Sangre'},
+  'HbA1c':{min:0,max:6,unit:'%',cat:'Sangre'},
+  'Protrombina':{min:70,max:130,unit:'%',cat:'Higado'},
+  'INR':{min:0.8,max:1.2,unit:'ratio',cat:'Higado'},
+  'Herpes I IgG':{min:0,max:0.90,unit:'Index Value',cat:'Serologia'},
+  'Herpes II IgG':{min:0,max:0.90,unit:'Index Value',cat:'Serologia'}
 };
 
 var CAT_SCH = {
@@ -710,26 +959,28 @@ function loadD() {
     var r = localStorage.getItem(SK);
     if (r) {
       var saved = JSON.parse(r);
-      // Si la version guardada es antigua, fusionar con el SEED actualizado
       if (!saved.dataVersion || saved.dataVersion < DATA_VERSION) {
-        // Construir mapa de IDs existentes
-        var existingIds = {};
-        (saved.results || []).forEach(function(x){ existingIds[x.id] = true; });
-        // Agregar solo los resultados del SEED que no existen aun
-        var toAdd = SEED_RESULTS.filter(function(s){ return !existingIds[s.id]; });
-        if (toAdd.length > 0) {
-          saved.results = (saved.results || []).concat(toAdd);
-        }
-        // Actualizar nextId si es necesario
+        // Rebuild seed map by ID for overwrite (not skip)
+        var seedMap = {};
+        SEED_RESULTS.forEach(function(s){ seedMap[s.id] = s; });
+        // Keep user-added records (id >= 380) and replace/add all seed records
+        var userAdded = (saved.results || []).filter(function(x){ return x.id >= 380; });
+        saved.results = JSON.parse(JSON.stringify(SEED_RESULTS)).concat(userAdded);
         if (!saved.nextId || saved.nextId < 380) saved.nextId = 380;
+        if (!saved.cCats)  saved.cCats  = [];
+        if (!saved.cExams) saved.cExams = [];
+        if (!saved.studies) saved.studies = [];
+        if (!saved.ophtho)  saved.ophtho  = [];
+        if (!saved.nextSid) saved.nextSid = 1;
+        if (!saved.nextOid) saved.nextOid = 1;
         saved.dataVersion = DATA_VERSION;
-        // Guardar version actualizada
         try { localStorage.setItem(SK, JSON.stringify(saved)); } catch(e) {}
       }
       return saved;
     }
   } catch(e) {}
   var fresh = {results: JSON.parse(JSON.stringify(SEED_RESULTS)), nextId:380, cCats:[], cExams:[], studies:[], ophtho:[], nextSid:1, nextOid:1, dataVersion:DATA_VERSION};
+  try { localStorage.setItem(SK, JSON.stringify(fresh)); } catch(e) {}
   return fresh;
 }
 function save() { try { localStorage.setItem(SK, JSON.stringify(D)); } catch(e) {} }
